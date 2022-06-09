@@ -1,0 +1,463 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>深入理解Java虚拟机11 | JeckFS</title><meta name="keywords" content="深入理解Java虚拟机"><meta name="author" content="YFS"><meta name="copyright" content="YFS"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="[第11章]] 即时编译器 1.解释器与编译器的关系 程序启动时间 执行效率 解释器与编译器的平衡 激进优化，逆优化   2.即时编译器的种类 3.编译器的模式 混合模式 解释模式 编译模式   4.分层编译 性能监控从不开启到全面开启的过程   5.编译对象及触发条件 5.1 热点代码 5.2 热点代码的评估方式 基于采样的热点探测 基于计数器的热点探测 方法调用计数器：异步编译请求 回边计数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解Java虚拟机11">
+<meta property="og:url" content="http://jeckfs.gitee.io/JeckFS/2020/05/26/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA11/index.html">
+<meta property="og:site_name" content="JeckFS">
+<meta property="og:description" content="[第11章]] 即时编译器 1.解释器与编译器的关系 程序启动时间 执行效率 解释器与编译器的平衡 激进优化，逆优化   2.即时编译器的种类 3.编译器的模式 混合模式 解释模式 编译模式   4.分层编译 性能监控从不开启到全面开启的过程   5.编译对象及触发条件 5.1 热点代码 5.2 热点代码的评估方式 基于采样的热点探测 基于计数器的热点探测 方法调用计数器：异步编译请求 回边计数">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+<meta property="article:published_time" content="2020-05-25T23:12:10.000Z">
+<meta property="article:modified_time" content="2022-06-09T12:50:05.196Z">
+<meta property="article:author" content="YFS">
+<meta property="article:tag" content="深入理解Java虚拟机">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><link rel="shortcut icon" href="/JeckFS/img/favicon.png"><link rel="canonical" href="http://jeckfs.gitee.io/JeckFS/2020/05/26/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA11/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/JeckFS/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/JeckFS/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '深入理解Java虚拟机11',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-06-09 20:50:05'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/JeckFS/archives/"><div class="headline">文章</div><div class="length-num">203</div></a><a href="/JeckFS/tags/"><div class="headline">标签</div><div class="length-num">59</div></a><a href="/JeckFS/categories/"><div class="headline">分类</div><div class="length-num">54</div></a></div><hr/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/JeckFS/">JeckFS</a></span><div id="menus"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">深入理解Java虚拟机11</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-05-25T23:12:10.000Z" title="发表于 2020-05-26 07:12:10">2020-05-26</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-06-09T12:50:05.196Z" title="更新于 2022-06-09 20:50:05">2022-06-09</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/JeckFS/categories/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/">深入理解Java虚拟机</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="深入理解Java虚拟机11"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><blockquote class="pullquote mindmap mindmap-md"><ul>
+<li>[第11章]]<ul>
+<li>即时编译器<ul>
+<li>1.解释器与编译器的关系<ul>
+<li>程序启动时间</li>
+<li>执行效率</li>
+<li>解释器与编译器的平衡</li>
+<li>激进优化，逆优化</li>
+</ul>
+</li>
+<li>2.即时编译器的种类</li>
+<li>3.编译器的模式<ul>
+<li>混合模式</li>
+<li>解释模式</li>
+<li>编译模式</li>
+</ul>
+</li>
+<li>4.分层编译<ul>
+<li>性能监控从不开启到全面开启的过程</li>
+</ul>
+</li>
+<li>5.编译对象及触发条件<ul>
+<li>5.1 热点代码</li>
+<li>5.2 热点代码的评估方式<ul>
+<li>基于采样的热点探测</li>
+<li>基于计数器的热点探测<ul>
+<li>方法调用计数器：异步编译请求</li>
+<li>回边计数器：栈上替换</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>5.3 热点代码的评估过程</li>
+<li>概念<ul>
+<li>栈上替换</li>
+<li>热度衰减</li>
+<li>半衰周期</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>6.编译过程<ul>
+<li>客户端编译过程<ul>
+<li>字节码-&gt;HIR-&gt;LIR-&gt;本地代码</li>
+</ul>
+</li>
+<li>服务端编译过程<ul>
+<li>-XX: +PrintCompilation</li>
+<li>-XX: +PrintInlinine</li>
+<li>-XX: +PrintAssembly</li>
+<li>-XX: PrintOptoAssembly</li>
+<li>-XX: +PrintLIR</li>
+<li>-XX: +PrintCFGToFile</li>
+<li>-XX: +PrintIdealGraphFile</li>
+<li>理想图</li>
+<li>基本块</li>
+</ul>
+</li>
+<li>相关参数</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>提前编译器<ul>
+<li>提前编译的两种方式<ul>
+<li>动态提前编译（即时编译缓存）</li>
+<li>静态翻译</li>
+</ul>
+</li>
+<li>提前编译与即时编译的比较<ul>
+<li>过程间分析</li>
+<li>性能分析制导优化</li>
+<li>基金预测性优化</li>
+<li>链接时优化</li>
+</ul>
+</li>
+<li>Jaotc提前编译器<ul>
+<li>生成静态链接库<ul>
+<li>-XX:AOTLibrary</li>
+</ul>
+</li>
+<li>使用提前编译的静态链接库<ul>
+<li>-J-XX:+UseCompressedOops</li>
+<li>-J-XX:+UseG1GC</li>
+<li>-J-Xms4g</li>
+<li>—compile-for-tiered</li>
+<li>—info</li>
+<li>—compile-commands</li>
+</ul>
+</li>
+<li>虚拟机对于支持静态链接库的局限性</li>
+<li>与静态链接库相关的两个命令：ldd, nm</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>即时编译的重要优化技术<ul>
+<li>方法内联<ul>
+<li>作用</li>
+<li>什么是虚方法</li>
+<li>虚方法有哪些</li>
+<li>虚方法如何内联</li>
+<li>非虚方法如何内联</li>
+<li>一些概念<ul>
+<li>类型继承关系分析</li>
+<li>守护内联</li>
+<li>激进预测性优化</li>
+<li>内联缓存<ul>
+<li>单态内联缓存</li>
+<li>超多台内联缓存</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>逃逸分析<ul>
+<li>两种逃逸分析</li>
+<li>栈上分配</li>
+<li>标量替换</li>
+<li>同步消除</li>
+<li>-XX：+DoEscapeAnalysis</li>
+<li>-XX：+PrintEscapeAnalysis</li>
+<li>-XX：+EliminateAllocations</li>
+<li>+XX：+EliminateLocks</li>
+<li>-XX：+PrintEliminateAllocations</li>
+</ul>
+</li>
+<li>公共子表达式消除</li>
+<li>数组边界检查消除</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<h1 id="一、即时编译器"><a href="#一、即时编译器" class="headerlink" title="一、即时编译器"></a>一、即时编译器</h1><h2 id="1-1-解释器与编译器的关系"><a href="#1-1-解释器与编译器的关系" class="headerlink" title="1.1 解释器与编译器的关系"></a>1.1 解释器与编译器的关系</h2><ol>
+<li>解释器的执行方式是边解释边执行，在启动后就可以直接执行。能缩短程序执行的启动时间；<br>经过编译器直接将.class文件编译成本地文件，因为涉及到编译时的优化问题，所以比较耗时，但是它的执行效率是最高的。</li>
+<li>为了平衡程序的启动时间与执行的效率，解释器与编译器是交替运行的。在前期解释器先负责执行，对于热点代码，交给编译器编译，因为它的执行次数很高，老是解释执行会影响执行效率，对这样的代码来说花费一定的时间编译执行代价是较低的；同样的，编译器在编译时可能采取激进优化的方式。所谓<strong>激进优化</strong>就是编译器以大概率选择一些认为编译后是正确的代码，然后编译，当出现比如动态加载某些类后类的继承关系出现变化，或者出现罕见陷阱的情况，虚拟机会采取<strong>逆优化</strong>的方式由编译执行转为解释执行。</li>
+</ol>
+
+<h2 id="1-2-编译器的种类"><a href="#1-2-编译器的种类" class="headerlink" title="1.2 编译器的种类"></a>1.2 编译器的种类</h2><ol>
+<li><p>客户端编译器(C1编译器)</p>
+</li>
+<li><p>服务端编译器(C2编译器)</p>
+</li>
+</ol>
+<h2 id="1-3-编译器的模式"><a href="#1-3-编译器的模式" class="headerlink" title="1.3 编译器的模式"></a>1.3 编译器的模式</h2><p>-client指定虚拟机运行在客户端模式<br>-server指定虚拟机运行在服务端模式</p>
+<p>无论解释器还是编译期，客户端模式和服务端模式搭配使用，就是<strong>混合模式</strong>。</p>
+<p><strong>解释模式</strong>：强制虚拟机只解释执行。使用-Xint参数来指定</p>
+<p><strong>编译模式</strong>：优先采用编译方式执行程序，对于编译无法进行的情况解释器介入执行过程。 -Xcomp参数来指定。</p>
+<h2 id="1-4-分层编译"><a href="#1-4-分层编译" class="headerlink" title="1.4 分层编译"></a>1.4 分层编译</h2><ul>
+<li>第0层：纯解释执行。不开启性能监控</li>
+<li>第1层：客户端编译器执行，不开启性能监控</li>
+<li>第2层：客户端编译器执行，开启方法调用次数及回边次数的性能监控。</li>
+<li>第3层：客户端编译器执行，开启全部的性能监控。包括方法调用次数、回边次数、收集和分支跳转、虚方法调用版本等统计信息。</li>
+<li>第4层：服务端编译器执行，开启全部性能监控，耗时更长，会根据性能监控信息进行不可靠的激进优化。</li>
+</ul>
+<p><strong>层次的交互关系：</strong></p>
+
+<h2 id="1-5-编译对象及触发条件"><a href="#1-5-编译对象及触发条件" class="headerlink" title="1.5 编译对象及触发条件"></a>1.5 编译对象及触发条件</h2><p>1.1 2中说了对于热点代码需要编译执行。那到底什么是热点代码？热点代码的评估标准是什么？热点代码的评估方式是什么？弄清了这三个问题就明白了编译对象及触发条件。</p>
+<p><strong>1.5.1 什么是热点代码？</strong><br>热点代码是：</p>
+<ul>
+<li>会多次被执行的方法</li>
+<li>会多次被执行的循环体</li>
+</ul>
+<p><strong>1.5.2 热点代码的评估方式</strong></p>
+<ol>
+<li>基于采样的热点探测。<br>虚拟机经常<strong>周期性</strong>检测<strong>每个线程</strong>的栈上是哪个方法在执行。这样当某个方法被探测到的次数较多时，就认为它是热点代码。<br>缺点是：对于某些特殊情况，如线程阻塞时这种探测方式就是不准的。<br>优点是：将栈展开，可以知道方法的调用关系。</li>
+<li>基于计数器的热点探测。<br>分两种，一种是使用<strong>方法调用计数器</strong>，探测“热点方法”。另一种是使用<strong>回边计数器</strong>，探测“热点循环体”。<br>当方法调用次数与回边次数之和超过一定阈值就<strong>触发</strong>即使编译。<br>所谓<strong>回边</strong>就是：在循环边界往回跳转。<br>缺点是：不能获取方法的调用关系。<br>优点是：统计结果准确。</li>
+</ol>
+<p><strong>1.5.3. 热点代码的评估过程</strong><br>   方法调用计数器触发即时编译：<br>   <br>   默认情况下，方法调用计数器在发送即时编译请求后，不会等待而是继续解释执行，<strong>不会同步等待</strong>。</p>
+<p>   回边计数器触发即时编译：<br>   </p>
+<p><strong>1.5.4. 一些概念：</strong><br>   对于“热点方法”，“热点循环体”他们编译的对象都是方法，不同点在于执行入口(从方法第几条字节码指令开始执行)不同，编译时会传入<strong>执行入口点字节码序号(Byte Code Index, BCI)</strong>。</p>
+<p>   <strong>栈上替换</strong>：热点代码编译后的本地文件会<strong>在方法执行过程中</strong>，直接替换掉在栈上运行的方法，所以叫栈上替换。</p>
+<p>   <strong>热度衰减</strong>：在方法调用计数器统计过程中，默认设置下，一段时间内(半衰周期)方法被调用的次数不足以触发即使编译的情况下，会将该方法的调用计数器减少一半。这个过程被称为方法调用计数器热度的衰减。<br>   -XX: -UseCounterDecay：关闭热度衰减。关闭后方法计数器统计方法调用的绝对次数。只要系统运行时间够长，程序中绝大部分方法都会编译成本地代码。这点有点儿和二级缓存类似。细品，你仔细品。另外，由于方法调用计数器存在热度衰减问题，所以该计数器统计的次数在不关闭热度衰减的情况下，统计的是相对频率。<br>   -XX: CounterHalfLifeTime：指定半衰周期，单位：秒。</p>
+<h2 id="1-6-编译过程"><a href="#1-6-编译过程" class="headerlink" title="1.6 编译过程"></a>1.6 编译过程</h2><p>无论方法调用产生的标准编译请求，还是栈上替换编译请求。当虚拟机在未完成编译前，仍然解释执行，此时编译动作由后台编译线程进行。当使用-XX: -BackgroundCompilation禁止后台编译时，且触发编译条件时，执行线程提交编译请求后会一直等待，直到能够执行编译后的本地代码。</p>
+<h3 id="1-6-1-客户端编译器的编译过程"><a href="#1-6-1-客户端编译器的编译过程" class="headerlink" title="1.6.1 客户端编译器的编译过程"></a>1.6.1 客户端编译器的编译过程</h3>
+<p>HIR: High-Level Intermediate Representation, 与目标机器指令集无关的中间表示。<br>SSA: Static Single Assignment，静态单分配。HIR使用SSA的形式代表代码值。编译随后的优化。<br>LIR: Low-Level Intermediate Representation，与目标机器指令集相关的中间表示。</p>
+<h3 id="1-6-2-服务端编译器的编译过程"><a href="#1-6-2-服务端编译器的编译过程" class="headerlink" title="1.6.2 服务端编译器的编译过程"></a>1.6.2 服务端编译器的编译过程</h3><p>服务端编译器速度缓慢，但远远超过传统的静态优化编译器；相对于客户端编译器，其代码质量大大提高，可大幅缩减本地代码的执行时间。</p>
+<p>测试代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">NUM</span> <span class="operator">=</span> <span class="number">15000</span>;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="type">int</span> <span class="title function_">doubleValue</span><span class="params">(<span class="type">int</span> i)</span> &#123;</span><br><span class="line">   <span class="comment">// 这个空循环用于后面演示JIT代码优化过程</span></span><br><span class="line">   <span class="keyword">for</span>(<span class="type">int</span> j=<span class="number">0</span>; j&lt;<span class="number">100000</span>; j++);</span><br><span class="line">   <span class="keyword">return</span> i * <span class="number">2</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="type">long</span> <span class="title function_">calcSum</span><span class="params">()</span> &#123;</span><br><span class="line">   <span class="type">long</span> <span class="variable">sum</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">   <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;= <span class="number">100</span>; i++) &#123;</span><br><span class="line">      sum += doubleValue(i);</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">   <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; NUM; i++) &#123;</span><br><span class="line">      calcSum();</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>从外部观察服务端即时编译的过程需要设置一些参数：</p>
+<ul>
+<li>-XX: +PrintCompilation<br>打印编译成本地代码的方法名称。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">VM option &#x27;+PrintCompilation&#x27;</span><br><span class="line">310 1 java.lang.String::charAt (33 bytes)</span><br><span class="line">329 2 org.fenixsoft.jit.Test::calcSum (26 bytes)</span><br><span class="line">329 3 org.fenixsoft.jit.Test::doubleValue (4 bytes)</span><br><span class="line">332 1% org.fenixsoft.jit.Test::main @ 5 (20 bytes)</span><br></pre></td></tr></table></figure>
+<code>%表示是由回边计数器触发的栈上替换编译。栈上替换替换的仍是整个方法，因为此时方法正在栈上运行，所以叫栈上替换。</code></li>
+<li>-XX: +PrintInlinine<br>打印方法内联信息。
+<blockquote>
+<p>方法内联：doubleValue()被内联编译到calcSum()中，calcSum()内联编译到main()中。当执行main()时，不会调用calcSum()与doubleValue(),这样就没有方法分派的开销.</p>
+</blockquote>
+</li>
+<li>-XX: +PrintAssembly<br>打印被编译方法的汇编代码。此操作需要用到反汇编适配器。<blockquote>
+<p>部署反汇编适配器：<br>1.下载64位 hsdis-amd64适配器(不同架构选用不同适配器)<br>2.将适配器放在与jvm.dll, libjvm.so相同路径下(JAVA_HOME/lib/amd64/server)。<br>使用该参数的前提是：HotSpot虚拟机必须是FastDebug或ShowDebug优化级别的。若是Product版虚拟机，需加入-XX: +UnlockDiagnosticVMOptions打开虚拟机诊断模式。</p>
+</blockquote>
+</li>
+<li>-XX: PrintOptoAssembly<br>无hsdis插件时，用于输出比较接近最终结果的中间代码表示。用于服务端模式的虚拟机。</li>
+<li>-XX: +PrintLIR<br>无hsdis插件时，用于输出比较接近最终结果的中间代码表示。用于客户端模式的虚拟机。</li>
+<li>-XX: +PrintCFGToFile<br>将客户端编译器编译过程的各个阶段输出到文件中。譬如字节码、HIR生成、LIR生成、寄存器分配过程、本地代码生成等数据。<br>分析工具：Java Hotspot Client Compiler Visualizer</li>
+<li>-XX: +PrintIdealGraphFile<br>将服务端编译器编译过程的各个阶段输出到文件中。<br>分析工具：Ideal Graph Visualizer</li>
+</ul>
+<p><strong>服务端编译过程分析：</strong><br>在FastDebug或SlowDebug优化级别的虚拟机中加入<code>-XX：PrintIdealGraphLevel=2-XX：PrintIdeal-GraphFile=ideal.xml</code>，产生ideal.xml文件，该文件包含了服务端编译器编译代码的全过程信息。使用Ideal Graph Visualizer对此文件进行分析。</p>
+
+<p>doubleValue()中空循环的优化掉的过程，以及各个优化的过程。</p>
+<p>After Parsing阶段是服务端刚完成解析，尚未做任何优化时的理想图表示。其中有一些<strong>基本块</strong>基本块是程序按照<strong>控制流</strong>分割出的最小代码块，它有唯一的入口和唯一的出口，当块中的第一条指令被执行，那么块内所有的指令都会按照顺序全部执行一次。<br></p>
+<h1 id="二、提前编译器"><a href="#二、提前编译器" class="headerlink" title="二、提前编译器"></a>二、提前编译器</h1><h2 id="1-提前编译的两种方式"><a href="#1-提前编译的两种方式" class="headerlink" title="1.提前编译的两种方式"></a>1.提前编译的两种方式</h2><ul>
+<li>动态提前编译(或叫即时编译缓存)。<blockquote>
+<p>方法是把原本即时编译器在运行时要做的编译工作提前做好并保存下来，下次用到可以直接加载进来。<br>本质是给即时编译做缓存加速，去改善Java程序的启动时间，但达到最高性能需要一定时间的预热。<br>产品：Jaotc</p>
+</blockquote>
+</li>
+<li>静态翻译<blockquote>
+<p>类似于传统C、C++编译器，在程序运行之前把程序代码编译成机器代码。</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="2-提前编译与即时编译的比较"><a href="#2-提前编译与即时编译的比较" class="headerlink" title="2.提前编译与即时编译的比较"></a>2.提前编译与即时编译的比较</h2><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">编译方式</th>
+<th style="text-align:center">占用程序运行时间和运算资源</th>
+<th style="text-align:center"><span>与目标机器、HotSpot虚&lt;/br&gt;拟机运行时参数有关</span></th>
+<th style="text-align:center"><span>性能分析制导优化、&lt;/br&gt;激进预测性优化、&lt;/br&gt;链接时优化</span></th>
+<th style="text-align:center"><span>平台中立性、&lt;/br&gt;字节膨胀、&lt;/br&gt;动态扩展</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">即时编译</td>
+<td style="text-align:center">是</td>
+<td style="text-align:center">否</td>
+<td style="text-align:center">是</td>
+<td style="text-align:center">是</td>
+</tr>
+<tr>
+<td style="text-align:center">提前编译</td>
+<td style="text-align:center">否，支持“过程间分析”</td>
+<td style="text-align:center">是，如采用不同的垃圾收集器、生成内存屏障代码等</td>
+<td style="text-align:center">否</td>
+<td style="text-align:center">否</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>过程间分析(全程序分析)</strong>：<br>能够获取某个程序点上某个变量的值是否一定为变量、某段代码块是否永远不可能被使用、在某个点调用的某个虚方法是否只能有单一版本等一些譬如对流敏感、对路径敏感、对上下文敏感、对字段敏感等信息。</p>
+<p>这种优化措施很慢但是能获得更好的运行时性能。</p>
+<p>目前的虚拟机做不到真正的全程序分析，常用方式：</p>
+<ul>
+<li>借助大规模方法内联，以过程内分析来模拟过程检分析的部分效果。</li>
+<li>借助可假设的激进优化</li>
+</ul>
+<p><strong>性能分析制导优化</strong>：<br>即时编译时利用收集的性能监控信息(静态分析无法获得)分析出明显的偏好性，对执行频繁的热代码集中优化和分配更好的资源给它(分支预测、寄存器、缓存等)。</p>
+<blockquote>
+<p>可能用到的性能监控信息：某个程序点抽象类通常是什么实际类型、条件判断通常会走哪条分支、方法调用通常会选择哪个版本、循环通常会进行多少次等。</p>
+</blockquote>
+<p><strong>激进预测性优化</strong>：<br>利用性能监控信息，对一些正确的可能性很大的但无法保证绝对正确的代码进行优化，出错了就逆优化。提前编译属于静态的，不可能逆优化，所以它也不能激进优化。如果逆优化的概率足够低，这种优化就越有效。<br>比如虚拟机会通过类继承关系分析等一系列激进的猜测去做虚拟化，保证绝大部分的虚方法都能顺利内联。</p>
+<p><strong>链接时优化</strong>：<br>由于即时编译是将class文件在运行期被加载进虚拟机内存中，然后在即时编译器里产生优化后的代码。所以它可以自然打破主程序与动态链接库在编译时完全独立，两者各自编译、优化自己的代码的问题。对于那些跨链接库边界的调用提前编译是无法优化的。</p>
+<h2 id="3-实战：Jaotc提前编译器"><a href="#3-实战：Jaotc提前编译器" class="headerlink" title="3.实战：Jaotc提前编译器"></a>3.实战：Jaotc提前编译器</h2><p>作用是：减少程序的启动时间，以及到达全速性能的预热时间。<br>限制：针对特定物理机器、使用必需目标虚拟机的运行参数。当前只能比较顺利编译java.base模块。</p>
+<ol>
+<li><p>生成静态链接库</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 以简单的HelloWorld为例</span><br><span class="line">$ javac HelloWorld.java</span><br><span class="line">$ java HelloWorld</span><br><span class="line">Hello World!</span><br><span class="line">$ jaotc --output libHelloWorld.so HelloWorld.class</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>查询静态库属性</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ldd检查是否是静态链接库</span></span><br><span class="line">$ ldd libHelloWorld.so</span><br><span class="line">statically linked</span><br><span class="line"></span><br><span class="line"><span class="comment"># nm检查库中是否包含HelloWorld的构造函数与main()的入口信息</span></span><br><span class="line">$ nm libHelloWorld.so</span><br><span class="line">……</span><br><span class="line">0000000000002a20 t HelloWorld.()V</span><br><span class="line">0000000000002b20 t HelloWorld.main([Ljava/lang/String;)V</span><br></pre></td></tr></table></figure></blockquote>
+</li>
+<li>使用静态链接库运行<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">java -XX:AOTLibrary=./libHelloWorld.so HelloWorld</span><br><span class="line">Hello World!</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>将java.base包编译成类似静态链接库。</p>
+<ol>
+<li>排除不支持提前编译的方法。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">// java.base-list.txt文件</span><br><span class="line"></span><br><span class="line"># jaotc: java.lang.StackOverflowError</span><br><span class="line">exclude sun.util.resources.LocaleNames.getContents()[[Ljava/lang/Object;</span><br><span class="line">exclude sun.util.resources.TimeZoneNames.getContents()[[Ljava/lang/Object;</span><br><span class="line">exclude sun.util.resources.cldr.LocaleNames.getContents()[[Ljava/lang/Object;</span><br><span class="line">exclude sun.util.resources..*.LocaleNames_.*.getContents\(\)\[\[Ljava/lang/Object;</span><br><span class="line">exclude sun.util.resources..*.LocaleNames_.*_.*.getContents\(\)\[\[Ljava/lang/Object;</span><br><span class="line">exclude sun.util.resources..*.TimeZoneNames_.*.getContents\(\)\[\[Ljava/lang/Object;</span><br><span class="line">exclude sun.util.resources..*.TimeZoneNames_.*_.*.getContents\(\)\[\[Ljava/lang/Object;</span><br><span class="line"># java.lang.Error: Trampoline must not be defined by the bootstrap classloader</span><br><span class="line">exclude sun.reflect.misc.Trampoline.&lt;clinit&gt;()V</span><br><span class="line">exclude sun.reflect.misc.Trampoline.invoke(Ljava/lang/reflect/Method;Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;</span><br><span class="line"># JVM asserts</span><br><span class="line">exclude com.sun.crypto.provider.AESWrapCipher.engineUnwrap([BLjava/lang/String;I)Ljava/security/Key;</span><br><span class="line">exclude sun.security.ssl.*</span><br><span class="line">exclude sun.net.RegisteredDomain.&lt;clinit&gt;()V</span><br><span class="line"># Huge methods</span><br><span class="line">exclude jdk.internal.module.SystemModules.descriptors()[Ljava/lang/module/ModuleDescriptor;</span><br></pre></td></tr></table></figure></li>
+<li>编译<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">jaotc -J-XX:+UseCompressedOops -J-XX:+UseG1GC -J-Xmx4g</span><br><span class="line">--compile-for-tiered --info --compile-commands java.base-list.txt</span><br><span class="line">--output libjava.base-coop.so --module java.base</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>不同参数的虚拟机需要不同的运行参数的静态链接库。需要时根据虚拟机参数现编译。<br>Jaotc仅支持G1和Parallel(PS+PS Old)两种垃圾收集器。</p>
+</blockquote>
+</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">// 运行于i7-8750H、32GB内存笔记本</span><br><span class="line"></span><br><span class="line">$ jaotc -J-XX:+UseCompressedOops -J-XX:+UseG1GC -J-Xmx4g --compile-for-tiered --info --compile-commands java.base-list.txt --output libjava.base-coop.so --module java.base</span><br><span class="line">Compiling libjava.base-coop.so...</span><br><span class="line">6177 classes found (335 ms)</span><br><span class="line">55845 methods total, 49575 methods to compile (1037 ms)</span><br><span class="line">Compiling with 4 threads</span><br><span class="line">……</span><br><span class="line">49575 methods compiled, 0 methods failed (138821 ms)</span><br><span class="line">Parsing compiled code (906 ms)</span><br><span class="line">Processing metadata (10867 ms)</span><br><span class="line">Preparing stubs binary (0 ms)</span><br><span class="line">Preparing compiled binary (103 ms)</span><br><span class="line">Creating binary: libjava.base-coop.o (2719 ms)</span><br><span class="line">Creating shared library: libjava.base-coop.so (5812 ms)</span><br><span class="line">Total time: 163609 ms</span><br></pre></td></tr></table></figure>
+<p>运行：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">java -XX:AOTLibrary=java_base/libjava.base-coop.so,./libHelloWorld.so HelloWorld</span><br><span class="line">Hello World!</span><br></pre></td></tr></table></figure></p>
+<p>使用<code>-XX: +PrintAOT</code>确认哪些方法使用了提前编译的版本。<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">// 不适用java.base静态链接库</span><br><span class="line">$ java -XX:+PrintAOT -XX:AOTLibrary=./libHelloWorld.so HelloWorld</span><br><span class="line">11 1 loaded ./libHelloWorld.so aot library</span><br><span class="line">105 1 aot[ 1] HelloWorld.()V</span><br><span class="line">105 2 aot[ 1] HelloWorld.main([Ljava/lang/String;)V</span><br><span class="line">Hello World!</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">// 使用java.base静态链接库</span><br><span class="line">java -XX:AOTLibrary=java_base/libjava.base-coop.so,./libHelloWorld.so HelloWorld</span><br><span class="line">Hello World!</span><br><span class="line">13 1 loaded java_base/libjava.base-coop.so aot library</span><br><span class="line">13 2 loaded ./libHelloWorld.so aot library</span><br><span class="line">[Found [Z in java_base/libjava.base-coop.so]</span><br><span class="line">…… // 省略其他输出</span><br><span class="line">[Found [J in java_base/libjava.base-coop.so]</span><br><span class="line">31 1 aot[ 1] java.lang.Object.()V</span><br><span class="line">31 2 aot[ 1] java.lang.Object.finalize()V</span><br><span class="line">…… // 省略其他输出</span><br></pre></td></tr></table></figure></p>
+<h1 id="三、即时编译器优化技术"><a href="#三、即时编译器优化技术" class="headerlink" title="三、即时编译器优化技术"></a>三、即时编译器优化技术</h1><p>即时编译器的代码优化都是基于代码的中间表示或者机器码，而不是源码。</p>
+<h2 id="1-示例"><a href="#1-示例" class="headerlink" title="1.示例"></a>1.示例</h2><ol>
+<li>优化前的代码<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">B</span> &#123;</span><br><span class="line">   <span class="type">int</span> value;</span><br><span class="line">   <span class="keyword">final</span> <span class="type">int</span> <span class="title function_">get</span><span class="params">()</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> value;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">foo</span><span class="params">()</span> &#123;</span><br><span class="line">   y = b.get();</span><br><span class="line">   <span class="comment">// ...do stuff...</span></span><br><span class="line">   z = b.get();</span><br><span class="line">   sum = y + z;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>方法内联后的代码<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">foo</span><span class="params">()</span> &#123;</span><br><span class="line">   y = b.value;</span><br><span class="line">   <span class="comment">// ...do stuff...</span></span><br><span class="line">   z = b.value;</span><br><span class="line">   sum = y + z;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>冗余存储消除的代码<br>假设do stuff不会改变b.value的值。可将z=b.value;替换为z=y;<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">foo</span><span class="params">()</span> &#123;</span><br><span class="line">   y = b.value;</span><br><span class="line">   <span class="comment">// ...do stuff...</span></span><br><span class="line">   z = y;</span><br><span class="line">   sum = y + z;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>复写传播后的代码<br>因为z=y; 所以变量z可用y来替换。<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">foo</span><span class="params">()</span> &#123;</span><br><span class="line">   y = b.value;</span><br><span class="line">   <span class="comment">// ...do stuff...</span></span><br><span class="line">   y = y;</span><br><span class="line">   sum = y + y;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>无用代码消除后的代码<br>无用代码是可能永远不会被执行的代码，也可能是完全没有意义的代码。<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">foo</span><span class="params">()</span> &#123;</span><br><span class="line">   y = b.value;</span><br><span class="line">   <span class="comment">// ...do stuff...</span></span><br><span class="line">   sum = y + y;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="2-重要的优化技术"><a href="#2-重要的优化技术" class="headerlink" title="2. 重要的优化技术"></a>2. 重要的优化技术</h2><h3 id="2-1-方法内联"><a href="#2-1-方法内联" class="headerlink" title="2.1 方法内联"></a>2.1 方法内联</h3><p>将目标方法原封不动的复制到发起调用的方法中，避免发生真实的方法调用。<br>可消除方法调用的成本(如查找方法版本、建立栈帧等)；为后续优化手段做铺垫。方法内联膨胀后便于在更大范围内进行后续的优化。</p>
+<p><strong>什么是虚方法？</strong><br>Java使用虚方法实现多态，即子类中被override修饰的重写方法。这些方法都可能存在多于一个版本的方法接收者。</p>
+<p>可直接进行内联的方法(非虚方法)：<br>○ invokespecial指令调用的私有方法、实例构造器、父类方法；<br>○ invokestatic指令调用的静态方法；<br>○ final修饰的方法；</p>
+<p>由于其存在多个版本，所以只能在运行时确定是哪个版本的方法。为了解决虚方法内联问题，Java虚拟机引入了<strong>类型继承关系分析(Class Hierarchy Analysis, CHA)</strong>的技术，用于确定目前已加载的类中，某个接口是否有多于一种的实现、某个类是否存在子类、某个子类是否覆盖了父类的某个虚方法等信息。<br>对于虚方法：</p>
+<ul>
+<li>向CHA查询该方法，若只有一个版本，则进行<strong>守护内联</strong>，若加载到新的类型从而改变了CHA的结论，则进行<strong>激进预测性优化</strong>；</li>
+<li><p>向CHA查询该方法，若有多个版本，则使用<strong>内联缓存</strong>缩减方法调用的开销。</p>
+<ul>
+<li><p>单态内联缓存：<br>建立在目标方法正常入口之前的缓存。在方法调用之前，内联缓存状态为空，当第一次调用发生后，缓存记录下方法接收者的版本信息，并且每次进行方法调用时都比较接收者的版本。如果以后进来的每次调用的方法接收者版本都是一样的，那么这时它就是一种单态内联缓存。相比于废墟方法调用，仅多了一次类型判断的开销。</p>
+</li>
+<li><p>超多态内联缓存<br>但如果真的出现方法接收者不一致的情况，就说明程序用到了虚方法的多态特性，这时候会退化成超多态内联缓存，其开销相当于真正查找虚方法表来进行方法分派。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-2-逃逸分析"><a href="#2-2-逃逸分析" class="headerlink" title="2.2 逃逸分析"></a>2.2 逃逸分析</h3><p>并不直接优化代码，而是为其他优化措施提供依据的分析技术。</p>
+<ul>
+<li>方法逃逸<br>对象可能被外部方法引用，但不会被其他线程引用。</li>
+<li>线程逃逸<br>对象被其他线程引用。</li>
+</ul>
+<p>若对象不会逃逸到方法外或者线程外，可采用的优化技术有：</p>
+<ul>
+<li>栈上分配。<br>在Java堆上分配的对象是各线程可见和共享的，这部分对象的销毁是需要垃圾收集器处理的。若对象作用域仅限于<strong>本线程内</strong>，则可以在栈上为该对象分配内存，随栈帧的出栈而销毁。这部分对象会随着方法的结束而自动销毁，减少垃圾收集子系统的压力。</li>
+<li>标量替换。<br>将Java对象的成员变量拆分为原始类型来访问的过程，成为标量替换。对于<strong>作用域仅限于本方法内的对象</strong>，可以不创建该对象，直接在栈上分配和读写拆分后的原始类型变量。它是栈上分配的一种特例。</li>
+<li>同步消除。<br>对于不会逃逸到线程之外的对象，它的线程同步的措施可以消除掉。</li>
+</ul>
+<p>用到的参数：<br><code>-XX：+DoEscapeAnalysis</code>：手动开启逃逸分析。<br><code>-XX：+PrintEscapeAnalysis</code>：查看逃逸分析结果。<br><code>-XX：+EliminateAllocations</code>：开启标量替换。<br><code>+XX：+EliminateLocks</code>：开启同步消除。<br><code>-XX：+PrintEliminateAllocations</code>：查看标量替换情况。</p>
+<p>逃逸分析需要进行复杂的<strong>数据流敏感的过程间分析</strong>，才能确定执行时对此对象的影响。由于逃逸分析的复杂度较高，可能开启后并不能导致性能提升。</p>
+<p>示例：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 完全未优化的代码</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">test</span><span class="params">(<span class="type">int</span> x)</span> &#123;</span><br><span class="line">   <span class="type">int</span> <span class="variable">xx</span> <span class="operator">=</span> x + <span class="number">2</span>;</span><br><span class="line">   <span class="type">Point</span> <span class="variable">p</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Point</span>(xx, <span class="number">42</span>);</span><br><span class="line">   <span class="keyword">return</span> p.getX();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 步骤1：构造函数内联后的样子</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">test</span><span class="params">(<span class="type">int</span> x)</span> &#123;</span><br><span class="line">   <span class="type">int</span> <span class="variable">xx</span> <span class="operator">=</span> x + <span class="number">2</span>;</span><br><span class="line">   <span class="type">Point</span> <span class="variable">p</span> <span class="operator">=</span> point_memory_alloc(); <span class="comment">// 在堆中分配P对象的示意方法</span></span><br><span class="line">   p.x = xx; <span class="comment">// Point构造函数被内联后的样子</span></span><br><span class="line">   p.y = <span class="number">42</span></span><br><span class="line">   <span class="keyword">return</span> p.x; <span class="comment">// Point::getX()被内联后的样子</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 步骤2：Point对象不会逃逸到方法外，进行标量替换后的样子</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">test</span><span class="params">(<span class="type">int</span> x)</span> &#123;</span><br><span class="line">   <span class="type">int</span> <span class="variable">xx</span> <span class="operator">=</span> x + <span class="number">2</span>;</span><br><span class="line">   <span class="type">int</span> <span class="variable">px</span> <span class="operator">=</span> xx;</span><br><span class="line">   <span class="type">int</span> <span class="variable">py</span> <span class="operator">=</span> <span class="number">42</span></span><br><span class="line">   <span class="keyword">return</span> px;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 步骤3：经过数据流分析，消除Point对象。做无效代码消除后的样子</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">test</span><span class="params">(<span class="type">int</span> x)</span> &#123;</span><br><span class="line">   <span class="keyword">return</span> x + <span class="number">2</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="2-3-公共子表达式消除"><a href="#2-3-公共子表达式消除" class="headerlink" title="2.3 公共子表达式消除"></a>2.3 公共子表达式消除</h3><p>相同的表达式出现在了不同的地方，其计算结果可以在后面用到时直接给出，而不必重复计算。<br>根据表达式的分布范围，可分为<strong>局部公共子表达式消除</strong>、<strong>全局公共子表达式消除</strong>。</p>
+<p>示例：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 待优化代码</span></span><br><span class="line"><span class="type">int</span> <span class="variable">d</span> <span class="operator">=</span> (c * b) * <span class="number">12</span> + a + (a + b * c);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 未作任何优化的字节码</span></span><br><span class="line">iload_2 <span class="comment">// b</span></span><br><span class="line">imul <span class="comment">// 计算b*c</span></span><br><span class="line">bipush <span class="number">12</span> <span class="comment">// 推入12</span></span><br><span class="line">imul <span class="comment">// 计算(c * b) * 12</span></span><br><span class="line">iload_1 <span class="comment">// a</span></span><br><span class="line">iadd <span class="comment">// 计算(c * b) * 12 + a</span></span><br><span class="line">iload_1 <span class="comment">// a</span></span><br><span class="line">iload_2 <span class="comment">// b</span></span><br><span class="line">iload_3 <span class="comment">// c</span></span><br><span class="line">imul <span class="comment">// 计算b * c</span></span><br><span class="line">iadd <span class="comment">// 计算a + b * c</span></span><br><span class="line">iadd <span class="comment">// 计算(c * b) * 12 + a + a + b * c</span></span><br><span class="line">istore </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 即时编译时的优化</span></span><br><span class="line"><span class="type">int</span> <span class="variable">d</span> <span class="operator">=</span> E * <span class="number">12</span> + a + (a + E);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 代数化简优化（并不属于公共子表达式消除优化范围内）</span></span><br><span class="line"><span class="type">int</span> <span class="variable">d</span> <span class="operator">=</span> E * <span class="number">13</span> + a + a;</span><br></pre></td></tr></table></figure></p>
+<h3 id="2-4-数组边界检查消除"><a href="#2-4-数组边界检查消除" class="headerlink" title="2.4 数组边界检查消除"></a>2.4 数组边界检查消除</h3><p>每次数组读写都会隐含一次范围条件判定操作，降低了性能。在<strong>经过数据流分析</strong>后，若循环变量的取值范围永远在[0，foo.length)之间，那么该数组的上下界检查就会被消除掉。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://jeckfs.gitee.io/JeckFS">YFS</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://jeckfs.gitee.io/JeckFS/2020/05/26/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA11/">http://jeckfs.gitee.io/JeckFS/2020/05/26/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA11/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://jeckfs.gitee.io/JeckFS" target="_blank">JeckFS</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/JeckFS/tags/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/">深入理解Java虚拟机</a></div><div class="post_share"><div class="social-share" data-image="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/JeckFS/2020/05/28/%E6%9C%AC%E5%9C%B0idea%E5%AE%89%E8%A3%85jclasslib%E6%8F%92%E4%BB%B6/"><img class="prev-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/JeckFS/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">本地idea安装jclasslib插件</div></div></a></div><div class="next-post pull-right"><a href="/JeckFS/2020/05/24/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA10/"><img class="next-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/JeckFS/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">深入理解Java虚拟机10</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/JeckFS/2020/07/30/G1%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8/" title="G1垃圾收集器"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-07-30</div><div class="title">G1垃圾收集器</div></div></a></div><div><a href="/JeckFS/2020/06/13/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA9/" title="深入理解Java虚拟机9"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-06-13</div><div class="title">深入理解Java虚拟机9</div></div></a></div><div><a href="/JeckFS/2020/05/24/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA10/" title="深入理解Java虚拟机10"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-05-24</div><div class="title">深入理解Java虚拟机10</div></div></a></div><div><a href="/JeckFS/2020/05/28/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA6/" title="深入理解Java虚拟机6"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-05-28</div><div class="title">深入理解Java虚拟机6</div></div></a></div><div><a href="/JeckFS/2020/06/02/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA7/" title="深入理解Java虚拟机7"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-06-02</div><div class="title">深入理解Java虚拟机7</div></div></a></div><div><a href="/JeckFS/2020/06/08/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA8/" title="深入理解Java虚拟机8"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-06-08</div><div class="title">深入理解Java虚拟机8</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/JeckFS/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">YFS</div><div class="author-info__description">快乐每一天</div></div><div class="card-info-data site-data is-center"><a href="/JeckFS/archives/"><div class="headline">文章</div><div class="length-num">203</div></a><a href="/JeckFS/tags/"><div class="headline">标签</div><div class="length-num">59</div></a><a href="/JeckFS/categories/"><div class="headline">分类</div><div class="length-num">54</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%8D%B3%E6%97%B6%E7%BC%96%E8%AF%91%E5%99%A8"><span class="toc-number">1.</span> <span class="toc-text">一、即时编译器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-%E8%A7%A3%E9%87%8A%E5%99%A8%E4%B8%8E%E7%BC%96%E8%AF%91%E5%99%A8%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number">1.1.</span> <span class="toc-text">1.1 解释器与编译器的关系</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-%E7%BC%96%E8%AF%91%E5%99%A8%E7%9A%84%E7%A7%8D%E7%B1%BB"><span class="toc-number">1.2.</span> <span class="toc-text">1.2 编译器的种类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3-%E7%BC%96%E8%AF%91%E5%99%A8%E7%9A%84%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.3.</span> <span class="toc-text">1.3 编译器的模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-4-%E5%88%86%E5%B1%82%E7%BC%96%E8%AF%91"><span class="toc-number">1.4.</span> <span class="toc-text">1.4 分层编译</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-5-%E7%BC%96%E8%AF%91%E5%AF%B9%E8%B1%A1%E5%8F%8A%E8%A7%A6%E5%8F%91%E6%9D%A1%E4%BB%B6"><span class="toc-number">1.5.</span> <span class="toc-text">1.5 编译对象及触发条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-6-%E7%BC%96%E8%AF%91%E8%BF%87%E7%A8%8B"><span class="toc-number">1.6.</span> <span class="toc-text">1.6 编译过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-6-1-%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%BC%96%E8%AF%91%E5%99%A8%E7%9A%84%E7%BC%96%E8%AF%91%E8%BF%87%E7%A8%8B"><span class="toc-number">1.6.1.</span> <span class="toc-text">1.6.1 客户端编译器的编译过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-6-2-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E7%BC%96%E8%AF%91%E5%99%A8%E7%9A%84%E7%BC%96%E8%AF%91%E8%BF%87%E7%A8%8B"><span class="toc-number">1.6.2.</span> <span class="toc-text">1.6.2 服务端编译器的编译过程</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E6%8F%90%E5%89%8D%E7%BC%96%E8%AF%91%E5%99%A8"><span class="toc-number">2.</span> <span class="toc-text">二、提前编译器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%8F%90%E5%89%8D%E7%BC%96%E8%AF%91%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F"><span class="toc-number">2.1.</span> <span class="toc-text">1.提前编译的两种方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%8F%90%E5%89%8D%E7%BC%96%E8%AF%91%E4%B8%8E%E5%8D%B3%E6%97%B6%E7%BC%96%E8%AF%91%E7%9A%84%E6%AF%94%E8%BE%83"><span class="toc-number">2.2.</span> <span class="toc-text">2.提前编译与即时编译的比较</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%AE%9E%E6%88%98%EF%BC%9AJaotc%E6%8F%90%E5%89%8D%E7%BC%96%E8%AF%91%E5%99%A8"><span class="toc-number">2.3.</span> <span class="toc-text">3.实战：Jaotc提前编译器</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%8D%B3%E6%97%B6%E7%BC%96%E8%AF%91%E5%99%A8%E4%BC%98%E5%8C%96%E6%8A%80%E6%9C%AF"><span class="toc-number">3.</span> <span class="toc-text">三、即时编译器优化技术</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E7%A4%BA%E4%BE%8B"><span class="toc-number">3.1.</span> <span class="toc-text">1.示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%87%8D%E8%A6%81%E7%9A%84%E4%BC%98%E5%8C%96%E6%8A%80%E6%9C%AF"><span class="toc-number">3.2.</span> <span class="toc-text">2. 重要的优化技术</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E6%96%B9%E6%B3%95%E5%86%85%E8%81%94"><span class="toc-number">3.2.1.</span> <span class="toc-text">2.1 方法内联</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E9%80%83%E9%80%B8%E5%88%86%E6%9E%90"><span class="toc-number">3.2.2.</span> <span class="toc-text">2.2 逃逸分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E5%85%AC%E5%85%B1%E5%AD%90%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%B6%88%E9%99%A4"><span class="toc-number">3.2.3.</span> <span class="toc-text">2.3 公共子表达式消除</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-%E6%95%B0%E7%BB%84%E8%BE%B9%E7%95%8C%E6%A3%80%E6%9F%A5%E6%B6%88%E9%99%A4"><span class="toc-number">3.2.4.</span> <span class="toc-text">2.4 数组边界检查消除</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/06/09/hello-world/" title="Hello World"><img src="https://t7.baidu.com/it/u=1732966997,2981886582&amp;fm=193&amp;f=GIF" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Hello World"/></a><div class="content"><a class="title" href="/JeckFS/2022/06/09/hello-world/" title="Hello World">Hello World</a><time datetime="2022-06-09T12:24:23.000Z" title="发表于 2022-06-09 20:24:23">2022-06-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/06/07/leetcode638-%E5%A4%A7%E7%A4%BC%E5%8C%85/" title="leetcode638-大礼包"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="leetcode638-大礼包"/></a><div class="content"><a class="title" href="/JeckFS/2022/06/07/leetcode638-%E5%A4%A7%E7%A4%BC%E5%8C%85/" title="leetcode638-大礼包">leetcode638-大礼包</a><time datetime="2022-06-07T08:52:59.000Z" title="发表于 2022-06-07 16:52:59">2022-06-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/05/28/Skywalking%E6%A2%B3%E7%90%86/" title="Skywalking梳理"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Skywalking梳理"/></a><div class="content"><a class="title" href="/JeckFS/2022/05/28/Skywalking%E6%A2%B3%E7%90%86/" title="Skywalking梳理">Skywalking梳理</a><time datetime="2022-05-28T01:16:03.000Z" title="发表于 2022-05-28 09:16:03">2022-05-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/05/24/MyPro/" title="MyPro"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="MyPro"/></a><div class="content"><a class="title" href="/JeckFS/2022/05/24/MyPro/" title="MyPro">MyPro</a><time datetime="2022-05-24T11:22:06.000Z" title="发表于 2022-05-24 19:22:06">2022-05-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/04/15/Spring-SpEL/" title="Spring-SpEL"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Spring-SpEL"/></a><div class="content"><a class="title" href="/JeckFS/2022/04/15/Spring-SpEL/" title="Spring-SpEL">Spring-SpEL</a><time datetime="2022-04-15T07:22:04.000Z" title="发表于 2022-04-15 15:22:04">2022-04-15</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By YFS</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/JeckFS/js/utils.js"></script><script src="/JeckFS/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

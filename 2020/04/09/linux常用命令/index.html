@@ -1,0 +1,196 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>linux常用命令 | JeckFS</title><meta name="keywords" content="Linux"><meta name="author" content="YFS"><meta name="copyright" content="YFS"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="【补充】date 命令12# 格式化输出日期echo &quot;$(date &amp;#x27;+%Y-%m-%d %H:%M:%S.%s&amp;#x27;)&quot; 1. 交互命令readread：读入来自键盘输入的变量。-p :后面可以接提示字符! 比如输入提示。-t :后面可以接等待的『秒数!』这个比较有趣~不会一直等待使用者啦!从文件中读取： echo2. shell语法2.1 declared">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux常用命令">
+<meta property="og:url" content="http://jeckfs.gitee.io/JeckFS/2020/04/09/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/index.html">
+<meta property="og:site_name" content="JeckFS">
+<meta property="og:description" content="【补充】date 命令12# 格式化输出日期echo &quot;$(date &amp;#x27;+%Y-%m-%d %H:%M:%S.%s&amp;#x27;)&quot; 1. 交互命令readread：读入来自键盘输入的变量。-p :后面可以接提示字符! 比如输入提示。-t :后面可以接等待的『秒数!』这个比较有趣~不会一直等待使用者啦!从文件中读取： echo2. shell语法2.1 declared">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+<meta property="article:published_time" content="2020-04-09T04:21:14.000Z">
+<meta property="article:modified_time" content="2022-06-09T12:50:05.038Z">
+<meta property="article:author" content="YFS">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><link rel="shortcut icon" href="/JeckFS/img/favicon.png"><link rel="canonical" href="http://jeckfs.gitee.io/JeckFS/2020/04/09/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/JeckFS/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/JeckFS/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'linux常用命令',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-06-09 20:50:05'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/JeckFS/archives/"><div class="headline">文章</div><div class="length-num">203</div></a><a href="/JeckFS/tags/"><div class="headline">标签</div><div class="length-num">59</div></a><a href="/JeckFS/categories/"><div class="headline">分类</div><div class="length-num">54</div></a></div><hr/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/JeckFS/">JeckFS</a></span><div id="menus"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">linux常用命令</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-04-09T04:21:14.000Z" title="发表于 2020-04-09 12:21:14">2020-04-09</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-06-09T12:50:05.038Z" title="更新于 2022-06-09 20:50:05">2022-06-09</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/JeckFS/categories/Linux/">Linux</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="linux常用命令"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="【补充】"><a href="#【补充】" class="headerlink" title="【补充】"></a>【补充】</h1><p>date 命令<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">格式化输出日期</span></span><br><span class="line">echo &quot;$(date &#x27;+%Y-%m-%d %H:%M:%S.%s&#x27;)&quot;</span><br></pre></td></tr></table></figure></p>
+<h1 id="1-交互命令"><a href="#1-交互命令" class="headerlink" title="1. 交互命令"></a>1. 交互命令</h1><h2 id="read"><a href="#read" class="headerlink" title="read"></a>read</h2><p><code>read</code>：读入来自键盘输入的变量。<br><code>-p</code> :后面可以接提示字符! 比如输入提示。<br><code>-t</code> :后面可以接等待的『秒数!』这个比较有趣~不会一直等待使用者啦!<br><br>从文件中读取：<br></p>
+<h2 id="echo"><a href="#echo" class="headerlink" title="echo"></a>echo</h2><h1 id="2-shell语法"><a href="#2-shell语法" class="headerlink" title="2. shell语法"></a>2. shell语法</h1><h2 id="2-1-declare"><a href="#2-1-declare" class="headerlink" title="2.1 declare"></a>2.1 declare</h2><p>declare: 声明(某种类型的)变量。若后无参数，则将所有变量都输出，类似set<br><code>-a</code> :将后面名为 variable 的变量定义成为数组 (array) 类型<br><code>-i</code> :将后面名为 variable 的变量定义成为整数数字 (integer) 类型<br><code>-x</code> :用法与 export 一样,就是将后面的 variable 变成环境变量;<br><code>-r</code> :将变量设定成为 readonly 类型,该变量不可被更改内容,也不能 unset<br><code>declare +[ixr] variable</code>: 取消variable的类型<br><code>declare -i sum=100+200</code> 将sum声明为整形并赋值为300</p>
+<h2 id="2-2-数组的使用"><a href="#2-2-数组的使用" class="headerlink" title="2.2 数组的使用"></a>2.2 数组的使用</h2>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">逐个元素赋值</span></span><br><span class="line">a[1]=1</span><br><span class="line">a[2]=2</span><br><span class="line">a[3]=3</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">在一起赋值，注意元素之间以空格作为分割</span></span><br><span class="line">a=(1 2 3)</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">获取数组的元素</span></span><br><span class="line">echo $&#123;a[*]&#125;</span><br><span class="line">echo $&#123;a[@]&#125;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">获取数组的长度</span></span><br><span class="line">echo $&#123;#a[*]&#125;</span><br><span class="line">echo $&#123;#a[@]&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="2-3-变量内容的更改"><a href="#2-3-变量内容的更改" class="headerlink" title="2.3 变量内容的更改"></a>2.3 变量内容的更改</h2><p><a href="">见字符串修改章节</a><br>key word: 变量内容的删除</p>
+<h2 id="2-4-命令别名设定"><a href="#2-4-命令别名设定" class="headerlink" title="2.4 命令别名设定"></a>2.4 命令别名设定</h2><h2 id="alias，-unalias"><a href="#alias，-unalias" class="headerlink" title="alias， unalias"></a>alias， unalias</h2>
+<h2 id="2-5-执行连续命令：-‘-’"><a href="#2-5-执行连续命令：-‘-’" class="headerlink" title="2.5 执行连续命令： ‘;’"></a>2.5 执行连续命令： ‘;’</h2><p>前后指令相互独立。</p>
+<h2 id="2-6-前后指令不独立"><a href="#2-6-前后指令不独立" class="headerlink" title="2.6 前后指令不独立"></a>2.6 前后指令不独立</h2>
+<p>若t.sh中使用exit 0，那么<code>bash t.sh &amp;&amp; echo hello</code>会输出hello，否则不会。<br>Linux中的指令都是由左至右执行，当出现||与&amp;&amp;综合使用的时候，仍然遵循这条规则。<br>① || ② &amp;&amp; ③<br>若① <code>$?=0</code>，则不执行②，①||②返回<code>$?=0</code>，出现<code>$?=0</code> &amp;&amp; ③，故会执行③。<br>先执行①，然后执行① || ②(假设结果为t)，然后执行t &amp;&amp; ③<br>有短路现象<br><br>【<code>$?</code>表示上一个指令的返回值，0表示没有错误，非0表示有错误】</p>
+<h2 id="2-7-参数带环：-xargs"><a href="#2-7-参数带环：-xargs" class="headerlink" title="2.7 参数带环： xargs"></a>2.7 参数带环： xargs</h2><p>xargs 可以读入 stdin 的数据,并且以空格符或断行字符作为分辨,将 stdin 的资料分隔成为 arguments 。<br><code>xargs [-0epn] command</code><br>选项与参数:<br><code>-0</code> : 如果输入的 stdin 含有特殊字符,例如 `, \, 空格键等等字符时,这个 -0 参数可以将他还原成一般字符。这个参数可以用于特殊状态喔!<br><code>-e</code>: 这个是 EOF (end of file) 的意思。后面可以接一个字符串,当 xargs 分析到这个字符串时,<br>就会停止继续工作!<br><code>-p</code> :在执行每个指令的 argument 时,都会询问使用者的意思;<br><code>-n</code> :后面接次数,每次 command 指令执行时,要使用几个参数的意思。<br>当 xargs 后面没有接任何的指令时,默认是以 echo 来进行输出喔!<br></p>
+<h2 id="2-8-数值计算"><a href="#2-8-数值计算" class="headerlink" title="2.8 数值计算"></a>2.8 数值计算</h2><ul>
+<li>使用$((计算式))进行数值运算。注意是(())</li>
+<li>仅支持整数间的数值运算</li>
+<li>运算符：+，-，*，/，%</li>
+<li>shell中的小数运算：利用bc指令
+</li>
+</ul>
+<p>第8行的解释：<br>    4*a(1) 是 bc 主动提供的一个计算 pi 的函数,至于 scale 就是要 bc 计算几个小数点下位数的意思。当 scale 的数值越大, 代表 pi 要被计算的越精确。<br></p>
+<h2 id="2-9-流程控制"><a href="#2-9-流程控制" class="headerlink" title="2.9 流程控制"></a>2.9 流程控制</h2><p><strong>当判断条件是命令时不能加[]</strong></p>
+<ol>
+<li>if…then：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> [ 条件判断式 ]；<span class="keyword">then</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+条件判断式可使用&amp;&amp;，||，也可使用-o，-a</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> [ 条件判断式 ]；<span class="keyword">then</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> [ 条件判断式 ]；<span class="keyword">then</span></span><br><span class="line"><span class="keyword">elif</span> [ 条件判断式 ]；<span class="keyword">then</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+<ol>
+<li>case…esac<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> $变量名称 <span class="keyword">in</span></span><br><span class="line">	<span class="string">&quot;第一个变量内容&quot;</span>)</span><br><span class="line">		程序段</span><br><span class="line">		;;</span><br><span class="line">	<span class="string">&quot;第二个变量内容&quot;</span>)</span><br><span class="line">		程序段</span><br><span class="line">		;;</span><br><span class="line">	*)</span><br><span class="line">		不包含第一个变量内容与第二个变量内容的其他程序执行段</span><br><span class="line">		;;</span><br><span class="line"><span class="keyword">esac</span></span><br></pre></td></tr></table></figure></li>
+<li>function</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">fname</span></span>() &#123;</span><br><span class="line">	程序段</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>函数的定义要在调用的前面定义</li>
+<li>函数参数的引用：$1, $2…（括号内无参数，直接在函数体内用$1引用第一个参数）</li>
+<li>函数的调用：函数名 参数1，参数2，，…</li>
+</ul>
+<ol>
+<li>循环语句</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> [ condition ]</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">	程序段落</span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line">until [ condition ]</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">	程序段落</span><br><span class="line"><span class="keyword">done</span></span><br><span class="line">当 condition 条件成立时,就终止循环, 否则就持续进行循环的程序段。</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> var <span class="keyword">in</span> con1 con2 con3 ...</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">	程序段</span><br><span class="line">	使用<span class="variable">$var</span>引用元素</span><br><span class="line"><span class="keyword">done</span></span><br><span class="line">$(<span class="built_in">seq</span> n1 n2)：产生从n1到n2（包括n1,n2）序列</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (( i=1; i&lt;=<span class="variable">$&#123;nu&#125;</span>; i=i+1 ))</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">	程序段</span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+<h2 id="2-10-脚本获取命令行参数"><a href="#2-10-脚本获取命令行参数" class="headerlink" title="2.10 脚本获取命令行参数"></a>2.10 脚本获取命令行参数</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$</span><span class="language-bash">0  : 程序的名字</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash"><span class="comment">#  : 变量的个数</span></span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">@  : 所有的变量，即 <span class="variable">$1</span> ... $最后一个参数</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">?  : 前一个命令或者是函数的返回状态码，0代表执行成功，非0即失败</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">*  : 以”参数1参数2....“的形式将所有函数通过一个字符串返回</span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">_  : 保存之前执行的命令的最后的一个参数</span></span><br><span class="line">shift n : 将命令右移 n 个参数</span><br><span class="line"></span><br><span class="line">function func()&#123;</span><br><span class="line">	while [ $# != 0] ; do</span><br><span class="line">	  echo &quot;第一个参数是：$1，一共有$#个参数&quot;</span><br><span class="line">	  shift 1</span><br><span class="line">	done</span><br><span class="line">&#125;</span><br><span class="line">func 1 2 3 4 5 6</span><br></pre></td></tr></table></figure>
+<h1 id="3-数据流重定向命令"><a href="#3-数据流重定向命令" class="headerlink" title="3. 数据流重定向命令"></a>3. 数据流重定向命令</h1><ol>
+<li>标准输入 (stdin) :代码为 0 ,使用 &lt; 或 &lt;&lt; ;</li>
+<li>标准输出 (stdout):代码为 1 ,使用 &gt; 或 &gt;&gt; ;</li>
+<li>标准错误输出(stderr):代码为 2 ,使用 2&gt; 或 2&gt;&gt; ;<br>1&gt; :以覆盖的方法将『正确的数据』输出到指定的文件或装置上;<br>1&gt;&gt;:以累加的方法将『正确的数据』输出到指定的文件或装置上;<br>2&gt; :以覆盖的方法将『错误的数据』输出到指定的文件或装置上;<br>2&gt;&gt;:以累加的方法将『错误的数据』输出到指定的文件或装置上;<br>若输出的内容有正确的数据也有错误的数据可以使用两个输出方式，将正确的输入到一个文件中，错误的输出到另一个文件中。<br><code>cat /etc/crontab /etc/tee &gt; right 2&gt; wrong</code><br>/dev/null垃圾桶黑洞装置：吃掉任何导向这个装置的信息，可以用来过滤信息<br><code>cat /etc/crontab /etc/te 2&gt; /dev/null</code><br>将不同数据流输出到同一文件：<br> <code>cat /etc/crontab /etc/tt 2&gt; wrong &gt;&amp;2</code><br><code>cat /etc/crontab /etc/tt &gt; right 2&gt;&amp;1</code><br>2&gt;&amp;1：将2&gt;转化为1输出<br>1&gt;&amp;2：将1转化为2输出<br>重定向输入stdin : &lt;, &lt;&lt;<br> <code>cat &gt; newfile &lt; test</code>（将test内容作为输入，输入到文件newfile中）<br><code>cat &gt; catfile &lt;&lt; &quot;eof&quot;</code> （通过键盘输入内容到文件catfile中，若遇到eof则停止键盘输入）<br>&lt;&lt;控制输入的字符</li>
+</ol>
+<h2 id="tee-双向重导向"><a href="#tee-双向重导向" class="headerlink" title="tee 双向重导向"></a>tee 双向重导向</h2><p>将数据流输送到屏幕一份，输出到文件一份<br><br><code>tee [-a] file</code><br>选项与参数:<br><code>-a</code> :以累加 (append) 的方式,将数据加入 file 当中! 默认会覆盖原文件</p>
+<h1 id="其他命令"><a href="#其他命令" class="headerlink" title="其他命令"></a>其他命令</h1><h2 id="1-history"><a href="#1-history" class="headerlink" title="1. history"></a>1. history</h2><p>显示输入的历史命令。</p>
+<h2 id="2-分区命令-split：将文件分割为小文件。"><a href="#2-分区命令-split：将文件分割为小文件。" class="headerlink" title="2. 分区命令: split：将文件分割为小文件。"></a>2. 分区命令: split：将文件分割为小文件。</h2><p><code>split [-bl] file PREFIX</code><br>选项与参数:<br><code>-b</code> :后面可接欲分区成的文件大小,可加单位,例如 b, k, m 等;<br><code>-l</code> :以行数来进行分区。<br><code>PREFIX</code> :代表前导符的意思,可作为分区文件的前导文字。</p>
+
+<h2 id="3-shift造成的参数变量号码偏移"><a href="#3-shift造成的参数变量号码偏移" class="headerlink" title="3. shift造成的参数变量号码偏移"></a>3. shift造成的参数变量号码偏移</h2><p>shift 后面可以接数字,代表拿掉最前面的几个参数的意思。<br>shift本身就是一个语句。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://jeckfs.gitee.io/JeckFS">YFS</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://jeckfs.gitee.io/JeckFS/2020/04/09/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">http://jeckfs.gitee.io/JeckFS/2020/04/09/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://jeckfs.gitee.io/JeckFS" target="_blank">JeckFS</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/JeckFS/tags/Linux/">Linux</a></div><div class="post_share"><div class="social-share" data-image="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/JeckFS/2020/04/09/linux%E6%93%8D%E4%BD%9C%E5%AD%97%E7%AC%A6%E4%B8%B2/"><img class="prev-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/JeckFS/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">linux操作字符串</div></div></a></div><div class="next-post pull-right"><a href="/JeckFS/2020/04/09/awk/"><img class="next-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/JeckFS/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">awk</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/JeckFS/2020/11/04/Linux%E5%86%85%E6%A0%B8%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86%E5%85%A8%E8%A7%A3%E6%9E%90/" title="Linux内核核心知识全解析"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-11-04</div><div class="title">Linux内核核心知识全解析</div></div></a></div><div><a href="/JeckFS/2020/04/09/awk/" title="awk"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-04-09</div><div class="title">awk</div></div></a></div><div><a href="/JeckFS/2020/04/09/linux%E6%93%8D%E4%BD%9C%E5%AD%97%E7%AC%A6%E4%B8%B2/" title="linux操作字符串"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-04-09</div><div class="title">linux操作字符串</div></div></a></div><div><a href="/JeckFS/2020/10/23/linux%E5%8D%87%E7%BA%A7%E5%86%85%E6%A0%B8/" title="linux升级内核"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-23</div><div class="title">linux升级内核</div></div></a></div><div><a href="/JeckFS/2020/04/09/shell%E8%84%9A%E6%9C%AC%E5%BA%94%E7%94%A8/" title="shell脚本应用"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-04-09</div><div class="title">shell脚本应用</div></div></a></div><div><a href="/JeckFS/2021/11/07/ssh%E9%80%9A%E4%BF%A1%E5%8E%9F%E7%90%86%E5%8F%8A%E7%94%A8%E9%80%94/" title="ssh通信原理及用途"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-11-07</div><div class="title">ssh通信原理及用途</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/JeckFS/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">YFS</div><div class="author-info__description">快乐每一天</div></div><div class="card-info-data site-data is-center"><a href="/JeckFS/archives/"><div class="headline">文章</div><div class="length-num">203</div></a><a href="/JeckFS/tags/"><div class="headline">标签</div><div class="length-num">59</div></a><a href="/JeckFS/categories/"><div class="headline">分类</div><div class="length-num">54</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E3%80%90%E8%A1%A5%E5%85%85%E3%80%91"><span class="toc-number">1.</span> <span class="toc-text">【补充】</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E4%BA%A4%E4%BA%92%E5%91%BD%E4%BB%A4"><span class="toc-number">2.</span> <span class="toc-text">1. 交互命令</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#read"><span class="toc-number">2.1.</span> <span class="toc-text">read</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#echo"><span class="toc-number">2.2.</span> <span class="toc-text">echo</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-shell%E8%AF%AD%E6%B3%95"><span class="toc-number">3.</span> <span class="toc-text">2. shell语法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-declare"><span class="toc-number">3.1.</span> <span class="toc-text">2.1 declare</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-%E6%95%B0%E7%BB%84%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">3.2.</span> <span class="toc-text">2.2 数组的使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3-%E5%8F%98%E9%87%8F%E5%86%85%E5%AE%B9%E7%9A%84%E6%9B%B4%E6%94%B9"><span class="toc-number">3.3.</span> <span class="toc-text">2.3 变量内容的更改</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-4-%E5%91%BD%E4%BB%A4%E5%88%AB%E5%90%8D%E8%AE%BE%E5%AE%9A"><span class="toc-number">3.4.</span> <span class="toc-text">2.4 命令别名设定</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#alias%EF%BC%8C-unalias"><span class="toc-number">3.5.</span> <span class="toc-text">alias， unalias</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-5-%E6%89%A7%E8%A1%8C%E8%BF%9E%E7%BB%AD%E5%91%BD%E4%BB%A4%EF%BC%9A-%E2%80%98-%E2%80%99"><span class="toc-number">3.6.</span> <span class="toc-text">2.5 执行连续命令： ‘;’</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-6-%E5%89%8D%E5%90%8E%E6%8C%87%E4%BB%A4%E4%B8%8D%E7%8B%AC%E7%AB%8B"><span class="toc-number">3.7.</span> <span class="toc-text">2.6 前后指令不独立</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-7-%E5%8F%82%E6%95%B0%E5%B8%A6%E7%8E%AF%EF%BC%9A-xargs"><span class="toc-number">3.8.</span> <span class="toc-text">2.7 参数带环： xargs</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-8-%E6%95%B0%E5%80%BC%E8%AE%A1%E7%AE%97"><span class="toc-number">3.9.</span> <span class="toc-text">2.8 数值计算</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-9-%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6"><span class="toc-number">3.10.</span> <span class="toc-text">2.9 流程控制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-10-%E8%84%9A%E6%9C%AC%E8%8E%B7%E5%8F%96%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0"><span class="toc-number">3.11.</span> <span class="toc-text">2.10 脚本获取命令行参数</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E6%95%B0%E6%8D%AE%E6%B5%81%E9%87%8D%E5%AE%9A%E5%90%91%E5%91%BD%E4%BB%A4"><span class="toc-number">4.</span> <span class="toc-text">3. 数据流重定向命令</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#tee-%E5%8F%8C%E5%90%91%E9%87%8D%E5%AF%BC%E5%90%91"><span class="toc-number">4.1.</span> <span class="toc-text">tee 双向重导向</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B6%E4%BB%96%E5%91%BD%E4%BB%A4"><span class="toc-number">5.</span> <span class="toc-text">其他命令</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-history"><span class="toc-number">5.1.</span> <span class="toc-text">1. history</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%88%86%E5%8C%BA%E5%91%BD%E4%BB%A4-split%EF%BC%9A%E5%B0%86%E6%96%87%E4%BB%B6%E5%88%86%E5%89%B2%E4%B8%BA%E5%B0%8F%E6%96%87%E4%BB%B6%E3%80%82"><span class="toc-number">5.2.</span> <span class="toc-text">2. 分区命令: split：将文件分割为小文件。</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-shift%E9%80%A0%E6%88%90%E7%9A%84%E5%8F%82%E6%95%B0%E5%8F%98%E9%87%8F%E5%8F%B7%E7%A0%81%E5%81%8F%E7%A7%BB"><span class="toc-number">5.3.</span> <span class="toc-text">3. shift造成的参数变量号码偏移</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/06/09/hello-world/" title="Hello World"><img src="https://t7.baidu.com/it/u=1732966997,2981886582&amp;fm=193&amp;f=GIF" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Hello World"/></a><div class="content"><a class="title" href="/JeckFS/2022/06/09/hello-world/" title="Hello World">Hello World</a><time datetime="2022-06-09T12:24:23.000Z" title="发表于 2022-06-09 20:24:23">2022-06-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/06/07/leetcode638-%E5%A4%A7%E7%A4%BC%E5%8C%85/" title="leetcode638-大礼包"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="leetcode638-大礼包"/></a><div class="content"><a class="title" href="/JeckFS/2022/06/07/leetcode638-%E5%A4%A7%E7%A4%BC%E5%8C%85/" title="leetcode638-大礼包">leetcode638-大礼包</a><time datetime="2022-06-07T08:52:59.000Z" title="发表于 2022-06-07 16:52:59">2022-06-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/05/28/Skywalking%E6%A2%B3%E7%90%86/" title="Skywalking梳理"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Skywalking梳理"/></a><div class="content"><a class="title" href="/JeckFS/2022/05/28/Skywalking%E6%A2%B3%E7%90%86/" title="Skywalking梳理">Skywalking梳理</a><time datetime="2022-05-28T01:16:03.000Z" title="发表于 2022-05-28 09:16:03">2022-05-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/05/24/MyPro/" title="MyPro"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="MyPro"/></a><div class="content"><a class="title" href="/JeckFS/2022/05/24/MyPro/" title="MyPro">MyPro</a><time datetime="2022-05-24T11:22:06.000Z" title="发表于 2022-05-24 19:22:06">2022-05-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/04/15/Spring-SpEL/" title="Spring-SpEL"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Spring-SpEL"/></a><div class="content"><a class="title" href="/JeckFS/2022/04/15/Spring-SpEL/" title="Spring-SpEL">Spring-SpEL</a><time datetime="2022-04-15T07:22:04.000Z" title="发表于 2022-04-15 15:22:04">2022-04-15</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By YFS</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/JeckFS/js/utils.js"></script><script src="/JeckFS/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

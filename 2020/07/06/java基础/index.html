@@ -1,0 +1,248 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>java基础 | JeckFS</title><meta name="keywords" content="面经"><meta name="author" content="YFS"><meta name="copyright" content="YFS"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="[Java基础] final关键字 用法 修饰类，类不能被继承 修饰方法，方法不能被重写 修饰变量，变量值不能被改变 变量为引用类型，引用不可变，引用的对象内容可变   final语义靠编译器在编译期保证 考虑到变量作用域，匿名内部类只能引用外部方法的final变量，final关键字可以不加   深拷贝与浅拷贝 浅拷贝 基本数据类型字段独立，引用类型字段不独立   深拷贝 基本数据类型字段和引用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java基础">
+<meta property="og:url" content="http://jeckfs.gitee.io/JeckFS/2020/07/06/java%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:site_name" content="JeckFS">
+<meta property="og:description" content="[Java基础] final关键字 用法 修饰类，类不能被继承 修饰方法，方法不能被重写 修饰变量，变量值不能被改变 变量为引用类型，引用不可变，引用的对象内容可变   final语义靠编译器在编译期保证 考虑到变量作用域，匿名内部类只能引用外部方法的final变量，final关键字可以不加   深拷贝与浅拷贝 浅拷贝 基本数据类型字段独立，引用类型字段不独立   深拷贝 基本数据类型字段和引用">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+<meta property="article:published_time" content="2020-07-06T01:21:47.000Z">
+<meta property="article:modified_time" content="2022-06-09T12:50:04.830Z">
+<meta property="article:author" content="YFS">
+<meta property="article:tag" content="面经">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><link rel="shortcut icon" href="/JeckFS/img/favicon.png"><link rel="canonical" href="http://jeckfs.gitee.io/JeckFS/2020/07/06/java%E5%9F%BA%E7%A1%80/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/JeckFS/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/JeckFS/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'java基础',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-06-09 20:50:04'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/JeckFS/archives/"><div class="headline">文章</div><div class="length-num">203</div></a><a href="/JeckFS/tags/"><div class="headline">标签</div><div class="length-num">59</div></a><a href="/JeckFS/categories/"><div class="headline">分类</div><div class="length-num">54</div></a></div><hr/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/JeckFS/">JeckFS</a></span><div id="menus"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">java基础</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-07-06T01:21:47.000Z" title="发表于 2020-07-06 09:21:47">2020-07-06</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-06-09T12:50:04.830Z" title="更新于 2022-06-09 20:50:04">2022-06-09</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/JeckFS/categories/%E9%9D%A2%E7%BB%8F/">面经</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="java基础"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><blockquote class="pullquote mindmap mindmap-md"><ul>
+<li>[Java基础]<ul>
+<li>final关键字<ul>
+<li>用法<ul>
+<li>修饰类，类不能被继承</li>
+<li>修饰方法，方法不能被重写</li>
+<li>修饰变量，变量值不能被改变</li>
+<li>变量为引用类型，引用不可变，引用的对象内容可变</li>
+</ul>
+</li>
+<li>final语义靠编译器在编译期保证</li>
+<li>考虑到变量作用域，匿名内部类只能引用外部方法的final变量，final关键字可以不加</li>
+</ul>
+</li>
+<li>深拷贝与浅拷贝<ul>
+<li>浅拷贝<ul>
+<li>基本数据类型字段独立，引用类型字段不独立</li>
+</ul>
+</li>
+<li>深拷贝<ul>
+<li>基本数据类型字段和引用类型字段都独立</li>
+</ul>
+</li>
+<li>实现方式</li>
+<li>数组拷贝<ul>
+<li>浅拷贝：Arrays.copyOf(), 默认clone()方法</li>
+</ul>
+</li>
+<li>集合拷贝<ul>
+<li>默认是浅拷贝：通过构造函数、clone()实现</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>重写与重载的异同点</li>
+<li>String、StringBuffer.(线程安全)、StringBuilder(非线程安全)</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<h1 id="final关键字"><a href="#final关键字" class="headerlink" title="final关键字"></a>final关键字</h1><p><a target="_blank" rel="noopener" href="https://www.yuque.com/books/share/c5692525-ea89-4571-82bd-fae4b816039d/pn4oq1#LpI66">参考</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/cciejh/p/final-in-java.html">补充</a></p>
+
+<p><strong>final与匿名内部类：</strong></p>
+<ul>
+<li>内部类中用到的外部方法的局部变量，该局部变量应是final类型。</li>
+<li>内部类的方法参数使用到外部的变量，则形参需要被final修饰。</li>
+</ul>
+<p>示例：</p>
+
+<p>外部方法中变量i虽然可以不用final修饰，但是默认他是final类型的。若发生更改，如i++，匿名内部类中对变量i的引用将报错。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Error:(<span class="number">94</span>, <span class="number">26</span>) java: 从内部类引用的本地变量必须是最终变量或实际上的最终变量</span><br></pre></td></tr></table></figure>
+<p>假设变量i不是final类型的。当main()执行完毕，局部变量i就会消亡，但是匿名内部类中还保持着对变量i的引用，这样导致异常产生。而此时需要使用 final 在类加载的时候进入常量池，即使方法弹栈，常量池的常量还在，也可以继续使用，JVM 会持续维护这个引用在回调方法中的生命周期。</p>
+<p><strong>但是 JDK 1.8 取消了对匿名内部类引用的局部变量 final 修饰的检查</strong></p>
+<p>对此，theonlin专门通过实验做出了总结：其实局部内部类并不是直接调用方法传进来的参数，而是内部类将传进来的参数通过自己的构造器备份到了自己的内部，自己内部的方法调用的实际是自己的属性而不是外部类方法的参数。外部类中的方法中的变量或参数只是方法的局部变量，这些变量或参数的作用域只在这个方法内部有效，所以方法中被 final的变量的仅仅作用是表明这个变量将作为内部类构造器参数，其实final不加也可以，加了可能还会占用内存空间，影响 GC。最后结论就是，需要使用 final 去持续维护这个引用在回调方法中的生命周期这种说法应该是错误的，也没必要。</p>
+<p>对于声明为final类型的变量而言，它的final语义是在Java编译器在编译期来保障的，在编译成字节码文件后，加final与不加final其字节码文件是一样的。如下图：</p>
+
+<h1 id="深拷贝与浅拷贝"><a href="#深拷贝与浅拷贝" class="headerlink" title="深拷贝与浅拷贝"></a>深拷贝与浅拷贝</h1><p><a target="_blank" rel="noopener" href="https://juejin.im/post/5c988a7ef265da6116246d11">参考连接1</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/plokmju/p/7357205.html">参考连接2</a></p>
+<p><strong>对象拷贝</strong>：将一个对象的属性拷贝到另一个有着相同类类型的对象中去。主要是为了在新的上下文环境中复用对象的部分或全部数据。<br>拷贝前后的对象是两个不同的对象。针对一个对象而言，浅拷贝还是深拷贝的主要区别是其对象内部的引用类型的属性是否相等。</p>
+<h2 id="1-浅拷贝"><a href="#1-浅拷贝" class="headerlink" title="1.浅拷贝"></a>1.浅拷贝</h2><p>被拷贝的对象中的基本类型和String类型的字段，拷贝的是值；<br>背拷贝的对象中的引用类型的字段，拷贝的是内存地址；</p>
+
+<p><strong>浅拷贝的实现：</strong><br>实现Cloneable接口，重写clone()，在重写的clone()中直接调用父类的clone()，即super.clone()即可。</p>
+<h2 id="2-深拷贝"><a href="#2-深拷贝" class="headerlink" title="2.深拷贝"></a>2.深拷贝</h2><p>引用类型字段充分配内存。基本类型或者String类型字段以及引用类型字段拷贝前后是两个不同的对象。<br>经过深拷贝后的两个对象是相互独立的。</p>
+
+<p><strong>深拷贝的实现</strong><br>实现Cloneable接口，重写clone()，只不过clone方法是创建的一个新的对象。</p>
+<h2 id="3-数组的拷贝"><a href="#3-数组的拷贝" class="headerlink" title="3.数组的拷贝"></a>3.数组的拷贝</h2><p>数组的拷贝两种方式：</p>
+<ul>
+<li>Arrays.copyOf()</li>
+<li>clone()</li>
+</ul>
+<p>这两种方法都是浅拷贝。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 基本类型数组的浅拷贝</span></span><br><span class="line"><span class="type">int</span>[] i1 = <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">5</span>];</span><br><span class="line">i1[<span class="number">0</span>] = <span class="number">9</span>;</span><br><span class="line"><span class="type">int</span>[] i2 = i1.clone();</span><br><span class="line">i2[<span class="number">0</span>] = <span class="number">4</span>;</span><br><span class="line">System.out.println(<span class="string">&quot;i1[0]:&quot;</span>+i1[<span class="number">0</span>]+<span class="string">&quot;, i2[0]:&quot;</span>+i2[<span class="number">0</span>]);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对象数组的浅拷贝</span></span><br><span class="line">Employee[] a = <span class="keyword">new</span> <span class="title class_">Employee</span>[<span class="number">5</span>];</span><br><span class="line">a[<span class="number">0</span>] = <span class="keyword">new</span> <span class="title class_">Employee</span>(<span class="string">&quot;zhagnsan&quot;</span>, <span class="number">25</span>);</span><br><span class="line">Employee[] b = Arrays.copyOf(a, a.length);</span><br><span class="line">System.out.println(b[<span class="number">0</span>] == a[<span class="number">0</span>]);</span><br><span class="line"></span><br><span class="line">Employee[] c = <span class="keyword">new</span> <span class="title class_">Employee</span>[<span class="number">5</span>];</span><br><span class="line">c[<span class="number">0</span>] = <span class="keyword">new</span> <span class="title class_">Employee</span>(<span class="string">&quot;xiaoming&quot;</span>, <span class="number">26</span>);</span><br><span class="line">Employee[] d = c.clone();</span><br><span class="line">System.out.println(c[<span class="number">0</span>] == d[<span class="number">0</span>]);</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">i1[0]:9, i2[0]:4</span></span><br><span class="line"><span class="comment">true</span></span><br><span class="line"><span class="comment">true</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="4-集合的拷贝"><a href="#4-集合的拷贝" class="headerlink" title="4.集合的拷贝"></a>4.集合的拷贝</h2><p>集合的拷贝默认都是浅拷贝。<br>实现方式：</p>
+<ul>
+<li>构造函数</li>
+<li>clone()</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ArrayList&lt;Employee&gt; a = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">a.add(<span class="keyword">new</span> <span class="title class_">Employee</span>(<span class="string">&quot;zhangsan&quot;</span>, <span class="number">26</span>));</span><br><span class="line">ArrayList&lt;Employee&gt; b = (ArrayList&lt;Employee&gt;) a.clone();</span><br><span class="line">System.out.println(a.get(<span class="number">0</span>) == b.get(<span class="number">0</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 结果：</span></span><br><span class="line"><span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<p>集合的深拷贝：<br>创建新集合，然后深拷贝原集合中的每个元素，并加入到新的集合中。</p>
+<h1 id="重写与重载"><a href="#重写与重载" class="headerlink" title="重写与重载"></a>重写与重载</h1>
+
+
+<h1 id="String-线程安全-、StringBuffer-线程安全-、StringBuilder-非线程安全"><a href="#String-线程安全-、StringBuffer-线程安全-、StringBuilder-非线程安全" class="headerlink" title="String(线程安全)、StringBuffer(线程安全)、StringBuilder(非线程安全)"></a>String(线程安全)、StringBuffer(线程安全)、StringBuilder(非线程安全)</h1><p>String类是典型的不可变类String类被声明为final，所有的属性也被声明为final的。<br>不可变对象的一个特点就是对其做的任何修改操作都会返回一个新的对象。<br><strong>StringBuffer的线程安全是通过把各种各种修改数据的方法都加上synchronized关键字实现的。</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">s</span> <span class="operator">=</span> <span class="string">&quot;abaa&quot;</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">replace</span> <span class="operator">=</span> s.replace(<span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>);</span><br><span class="line">System.out.println(s == replace);</span><br><span class="line">System.out.println(s.intern() == replace.intern());</span><br><span class="line">System.out.println(<span class="string">&quot;acaa&quot;</span>.intern() == replace.intern());</span><br></pre></td></tr></table></figure></p>
+<p><code>String s = new String(&quot;abc&quot;);</code>创建了几个对象？<br>如果常量池中没有”abc”，则在常量池中创建”abc”，然后在堆上创建对该字符串的String类型的引用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// String 构造函数的源码</span></span><br><span class="line"><span class="comment">// 在将一个字符串对象作为另一个字符串对象的构造函数参数时，</span></span><br><span class="line"><span class="comment">// 并不会完全复制 value 数组内容，而是都会指向同一个 value 数组。</span></span><br><span class="line"><span class="keyword">public</span> <span class="title function_">String</span><span class="params">(String original)</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.value = original.value;</span><br><span class="line">    <span class="built_in">this</span>.hash = original.hash;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Scanner</span> <span class="variable">sc</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Scanner</span>(System.in);</span><br><span class="line"><span class="type">String</span> <span class="variable">s</span> <span class="operator">=</span> sc.nextLine();</span><br><span class="line">System.out.println(s.intern() == <span class="string">&quot;aaa&quot;</span>); <span class="comment">// 控制台输入aaa，结果为true</span></span><br></pre></td></tr></table></figure>
+<h1 id="static"><a href="#static" class="headerlink" title="static"></a>static</h1><p><strong>static不能修饰局部变量。</strong></p>
+
+<p><strong>父类静态成员初始化、子类静态成员初始化的顺序如何？</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Animal</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">static</span> <span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">static</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;父类静态成员变量初始化&quot;</span>+i+<span class="string">&quot; 同时执行父类静态代码块&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;父类非静态成员变量初始化&quot;</span>+a+<span class="string">&quot; 同时执行父类非静态代码块&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">public</span> <span class="title function_">Animal</span><span class="params">()</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;父类构造函数&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Dog</span> <span class="keyword">extends</span> <span class="title class_">Animal</span>&#123;</span><br><span class="line">        <span class="keyword">static</span> <span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">2</span>;</span><br><span class="line">        <span class="type">int</span> <span class="variable">b</span> <span class="operator">=</span> <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">static</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;子类静态成员变量初始化&quot;</span>+j+<span class="string">&quot; 同时执行子类静态代码块&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;子类非静态成员变量&quot;</span>+b+<span class="string">&quot; 同时执行子类非静态代码块&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="title function_">Dog</span><span class="params">()</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;子类构造函数&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Dog</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">父类静态成员变量初始化1 同时执行父类静态代码块</span></span><br><span class="line"><span class="comment">子类静态成员变量初始化2 同时执行子类静态代码块</span></span><br><span class="line"><span class="comment">父类非静态成员变量初始化1 同时执行父类非静态代码块</span></span><br><span class="line"><span class="comment">父类构造函数</span></span><br><span class="line"><span class="comment">子类非静态成员变量2 同时执行子类非静态代码块</span></span><br><span class="line"><span class="comment">子类构造函数</span></span><br><span class="line"><span class="comment">    */</span></span><br></pre></td></tr></table></figure>
+<p><strong>注意</strong><br>-&gt;父类静态代码块或静态成员变量初始化-&gt;子类静态代码块子类静态成员变量初始化<br>-&gt;父类实例代码块或非静态成员变量初始化-&gt;父类构造函数<br>-&gt;子类实例代码块或非静态成员变量初始化-&gt;子类够赞函数</p>
+<h1 id="接口默认方法-静态接口方法"><a href="#接口默认方法-静态接口方法" class="headerlink" title="接口默认方法, 静态接口方法"></a>接口默认方法, 静态接口方法</h1><ul>
+<li>接口默认方法<ul>
+<li>可以定义不止一个. </li>
+<li>可以在实现类的实例静态代码块中使用,但不可以在实现类的静态代码块中使用.</li>
+<li>接口方法只能是public的</li>
+</ul>
+</li>
+<li>接口静态方法<ul>
+<li>可以定义不止一个</li>
+<li>可以在实现类的静态代码块中使用.</li>
+<li>只能是public.</li>
+</ul>
+</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://jeckfs.gitee.io/JeckFS">YFS</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://jeckfs.gitee.io/JeckFS/2020/07/06/java%E5%9F%BA%E7%A1%80/">http://jeckfs.gitee.io/JeckFS/2020/07/06/java%E5%9F%BA%E7%A1%80/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://jeckfs.gitee.io/JeckFS" target="_blank">JeckFS</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/JeckFS/tags/%E9%9D%A2%E7%BB%8F/">面经</a></div><div class="post_share"><div class="social-share" data-image="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/JeckFS/2020/07/06/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/"><img class="prev-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/JeckFS/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">杂七杂八</div></div></a></div><div class="next-post pull-right"><a href="/JeckFS/2020/07/05/leetcode12-%E6%95%B4%E6%95%B0%E8%BD%AC%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97/"><img class="next-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/JeckFS/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">leetcode12-整数转罗马数字</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/JeckFS/2020/08/30/BIO-NIO-AIO/" title="BIO-NIO-AIO"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-30</div><div class="title">BIO-NIO-AIO</div></div></a></div><div><a href="/JeckFS/2020/08/29/B%E6%A0%91B-%E6%A0%91%E7%AD%89/" title="B树、B-树、B+树、B*树"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-29</div><div class="title">B树、B-树、B+树、B*树</div></div></a></div><div><a href="/JeckFS/2020/08/08/NIO%E7%AD%89/" title="NIO等"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-08</div><div class="title">NIO等</div></div></a></div><div><a href="/JeckFS/2020/08/14/SpringMVC/" title="SpringMVC"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-14</div><div class="title">SpringMVC</div></div></a></div><div><a href="/JeckFS/2020/08/05/ThreadLocal/" title="ThreadLocal"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-05</div><div class="title">ThreadLocal</div></div></a></div><div><a href="/JeckFS/2020/08/29/TCP%E7%9A%84%E6%8F%A1%E6%89%8B%E4%B8%8E%E6%8C%A5%E6%89%8B/" title="TCP的握手与挥手"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-29</div><div class="title">TCP的握手与挥手</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/JeckFS/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">YFS</div><div class="author-info__description">快乐每一天</div></div><div class="card-info-data site-data is-center"><a href="/JeckFS/archives/"><div class="headline">文章</div><div class="length-num">203</div></a><a href="/JeckFS/tags/"><div class="headline">标签</div><div class="length-num">59</div></a><a href="/JeckFS/categories/"><div class="headline">分类</div><div class="length-num">54</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#final%E5%85%B3%E9%94%AE%E5%AD%97"><span class="toc-number">1.</span> <span class="toc-text">final关键字</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%B7%B1%E6%8B%B7%E8%B4%9D%E4%B8%8E%E6%B5%85%E6%8B%B7%E8%B4%9D"><span class="toc-number">2.</span> <span class="toc-text">深拷贝与浅拷贝</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%B5%85%E6%8B%B7%E8%B4%9D"><span class="toc-number">2.1.</span> <span class="toc-text">1.浅拷贝</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%B7%B1%E6%8B%B7%E8%B4%9D"><span class="toc-number">2.2.</span> <span class="toc-text">2.深拷贝</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%95%B0%E7%BB%84%E7%9A%84%E6%8B%B7%E8%B4%9D"><span class="toc-number">2.3.</span> <span class="toc-text">3.数组的拷贝</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E9%9B%86%E5%90%88%E7%9A%84%E6%8B%B7%E8%B4%9D"><span class="toc-number">2.4.</span> <span class="toc-text">4.集合的拷贝</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%87%8D%E5%86%99%E4%B8%8E%E9%87%8D%E8%BD%BD"><span class="toc-number">3.</span> <span class="toc-text">重写与重载</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#String-%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8-%E3%80%81StringBuffer-%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8-%E3%80%81StringBuilder-%E9%9D%9E%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8"><span class="toc-number">4.</span> <span class="toc-text">String(线程安全)、StringBuffer(线程安全)、StringBuilder(非线程安全)</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#static"><span class="toc-number">5.</span> <span class="toc-text">static</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8E%A5%E5%8F%A3%E9%BB%98%E8%AE%A4%E6%96%B9%E6%B3%95-%E9%9D%99%E6%80%81%E6%8E%A5%E5%8F%A3%E6%96%B9%E6%B3%95"><span class="toc-number">6.</span> <span class="toc-text">接口默认方法, 静态接口方法</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/06/09/hello-world/" title="Hello World"><img src="https://t7.baidu.com/it/u=1732966997,2981886582&amp;fm=193&amp;f=GIF" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Hello World"/></a><div class="content"><a class="title" href="/JeckFS/2022/06/09/hello-world/" title="Hello World">Hello World</a><time datetime="2022-06-09T12:24:23.000Z" title="发表于 2022-06-09 20:24:23">2022-06-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/06/07/leetcode638-%E5%A4%A7%E7%A4%BC%E5%8C%85/" title="leetcode638-大礼包"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="leetcode638-大礼包"/></a><div class="content"><a class="title" href="/JeckFS/2022/06/07/leetcode638-%E5%A4%A7%E7%A4%BC%E5%8C%85/" title="leetcode638-大礼包">leetcode638-大礼包</a><time datetime="2022-06-07T08:52:59.000Z" title="发表于 2022-06-07 16:52:59">2022-06-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/05/28/Skywalking%E6%A2%B3%E7%90%86/" title="Skywalking梳理"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Skywalking梳理"/></a><div class="content"><a class="title" href="/JeckFS/2022/05/28/Skywalking%E6%A2%B3%E7%90%86/" title="Skywalking梳理">Skywalking梳理</a><time datetime="2022-05-28T01:16:03.000Z" title="发表于 2022-05-28 09:16:03">2022-05-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/05/24/MyPro/" title="MyPro"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="MyPro"/></a><div class="content"><a class="title" href="/JeckFS/2022/05/24/MyPro/" title="MyPro">MyPro</a><time datetime="2022-05-24T11:22:06.000Z" title="发表于 2022-05-24 19:22:06">2022-05-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/04/15/Spring-SpEL/" title="Spring-SpEL"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Spring-SpEL"/></a><div class="content"><a class="title" href="/JeckFS/2022/04/15/Spring-SpEL/" title="Spring-SpEL">Spring-SpEL</a><time datetime="2022-04-15T07:22:04.000Z" title="发表于 2022-04-15 15:22:04">2022-04-15</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By YFS</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/JeckFS/js/utils.js"></script><script src="/JeckFS/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

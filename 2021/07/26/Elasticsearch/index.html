@@ -1,0 +1,296 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Elasticsearch | JeckFS</title><meta name="keywords" content="日志分析系统"><meta name="author" content="YFS"><meta name="copyright" content="YFS"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="版本6.2.2教程 版本7.13配置教程 ES的配置三个配置文件：  elasticsearch.yml：elasticsearch的相关配置 jvm.options：elasticsearch运行的jvm相关设置 log4j2.properties elasticsearch日志的配置  配置文件的默认路径： &#x2F;home&#x2F;yfs&#x2F;software&#x2F;elasticsearch-7.13.4&#x2F;con">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Elasticsearch">
+<meta property="og:url" content="http://jeckfs.gitee.io/JeckFS/2021/07/26/Elasticsearch/index.html">
+<meta property="og:site_name" content="JeckFS">
+<meta property="og:description" content="版本6.2.2教程 版本7.13配置教程 ES的配置三个配置文件：  elasticsearch.yml：elasticsearch的相关配置 jvm.options：elasticsearch运行的jvm相关设置 log4j2.properties elasticsearch日志的配置  配置文件的默认路径： &#x2F;home&#x2F;yfs&#x2F;software&#x2F;elasticsearch-7.13.4&#x2F;con">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+<meta property="article:published_time" content="2021-07-26T08:01:30.000Z">
+<meta property="article:modified_time" content="2022-06-09T12:50:04.641Z">
+<meta property="article:author" content="YFS">
+<meta property="article:tag" content="日志分析系统">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><link rel="shortcut icon" href="/JeckFS/img/favicon.png"><link rel="canonical" href="http://jeckfs.gitee.io/JeckFS/2021/07/26/Elasticsearch/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/JeckFS/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/JeckFS/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Elasticsearch',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-06-09 20:50:04'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/JeckFS/archives/"><div class="headline">文章</div><div class="length-num">203</div></a><a href="/JeckFS/tags/"><div class="headline">标签</div><div class="length-num">59</div></a><a href="/JeckFS/categories/"><div class="headline">分类</div><div class="length-num">54</div></a></div><hr/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/JeckFS/">JeckFS</a></span><div id="menus"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Elasticsearch</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-07-26T08:01:30.000Z" title="发表于 2021-07-26 16:01:30">2021-07-26</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-06-09T12:50:04.641Z" title="更新于 2022-06-09 20:50:04">2022-06-09</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/JeckFS/categories/%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90%E7%B3%BB%E7%BB%9F/">日志分析系统</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Elasticsearch"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/54384152">版本6.2.2教程</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/7.13/settings.html">版本7.13配置教程</a></p>
+<h1 id="ES的配置"><a href="#ES的配置" class="headerlink" title="ES的配置"></a>ES的配置</h1><p>三个配置文件：</p>
+<ul>
+<li>elasticsearch.yml：elasticsearch的相关配置</li>
+<li>jvm.options：elasticsearch运行的jvm相关设置</li>
+<li>log4j2.properties elasticsearch日志的配置</li>
+</ul>
+<p>配置文件的默认路径： <code>/home/yfs/software/elasticsearch-7.13.4/config</code></p>
+<p>可通过全局变量<code>ES_PATH_CONF</code>指定其他路径中的配置文件启动elasticsearch。</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ---------------------------------- Cluster -----------------------------------</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Use a descriptive name for your cluster:</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="attr">cluster.name:</span> <span class="string">my-application-yfs</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># ------------------------------------ Node ------------------------------------</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Use a descriptive name for the node:</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="attr">node.name:</span> <span class="string">node-1-yfs</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Add custom attributes to the node:</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#node.attr.rack: r1</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># ----------------------------------- Paths ------------------------------------</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Path to directory where to store the data (separate multiple locations by comma):</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#path.data: /path/to/data</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Path to log files:</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#path.logs: /path/to/logs</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># ----------------------------------- Memory -----------------------------------</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Lock the memory on startup:</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#bootstrap.memory_lock: true</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Make sure that the heap size is set to about half the memory available</span></span><br><span class="line"><span class="comment"># on the system and that the owner of the process is allowed to use this</span></span><br><span class="line"><span class="comment"># limit.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Elasticsearch performs poorly when the system is swapping the memory.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># ---------------------------------- Network -----------------------------------</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># By default Elasticsearch is only accessible on localhost. Set a different</span></span><br><span class="line"><span class="comment"># address here to expose this node on the network:</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#network.host: 192.168.0.1   # 由开发模式转向生产模式时才会使用此配置项。</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># By default Elasticsearch listens for HTTP traffic on the first free port it</span></span><br><span class="line"><span class="comment"># finds starting at 9200. Set a specific HTTP port here:</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#http.port: 9200</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># For more information, consult the network module documentation.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># --------------------------------- Discovery ----------------------------------</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Pass an initial list of hosts to perform discovery when this node is started:</span></span><br><span class="line"><span class="comment"># The default list of hosts is [&quot;127.0.0.1&quot;, &quot;[::1]&quot;]</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#discovery.seed_hosts: [&quot;host1&quot;, &quot;host2&quot;]</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Bootstrap the cluster using an initial set of master-eligible nodes:</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#cluster.initial_master_nodes: [&quot;node-1&quot;, &quot;node-2&quot;]</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># For more information, consult the discovery and cluster formation module documentation.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># ---------------------------------- Various -----------------------------------</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Require explicit names when deleting indices:</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#action.destructive_requires_name: true</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>elasticsearch安全配置：<br><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/7.13/security-minimal-setup.html">教程</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1FK4y1x7Dr?from=search&amp;seid=4992922076605689829">6.8视频教程</a></p>
+<h1 id="Cluster"><a href="#Cluster" class="headerlink" title="Cluster"></a>Cluster</h1><p>启动elasticsearch时重写cluster与node的名字<br><code>[elasticsearch-6.6.1] bin/elasticsearch -Ecluster.name=my_cluster_name_yfs -Enode.name=my_node_name_yfs</code></p>
+<h1 id="REST-API的使用"><a href="#REST-API的使用" class="headerlink" title="REST API的使用"></a>REST API的使用</h1><h2 id="1-Check-your-cluster-node-and-index-health-status-and-statistics"><a href="#1-Check-your-cluster-node-and-index-health-status-and-statistics" class="headerlink" title="1.Check your cluster, node, and index health, status, and statistics"></a>1.Check your cluster, node, and index health, status, and statistics</h2>
+<p>从中可以看到cluster的运行状态为‘green’。</p>
+<ul>
+<li>Green - everything is good (cluster is fully functional)</li>
+<li>Yellow - all data is available but some replicas are not yet allocated (cluster is fully functional)</li>
+<li>Red - some data is not available for whatever reason (cluster is partially functional)</li>
+</ul>
+<p>当cluster为红色时，可用的shards仍可以相应搜索请求。</p>
+<p>列出</p>
+<h2 id="2-Administer-your-cluster-node-and-index-data-and-metadata"><a href="#2-Administer-your-cluster-node-and-index-data-and-metadata" class="headerlink" title="2.Administer your cluster, node, and index data and metadata"></a>2.Administer your cluster, node, and index data and metadata</h2><p>List All Indices:<br></p>
+<p>Create an Index:</p>
+
+
+<p>结果解释：<br>The results of the second command tells us that we now have 1 index named customer and it has 5 primary shards and 1 replica (the defaults) and it contains 0 documents in it.<br>从中可以看出health为yellow，表示replica没有分配到node，这是因为cluster中只有一个node的问题，当有新的node加入到cluster中后，其health状态就会变为green。</p>
+<h2 id="3-Perform-CRUD-Create-Read-Update-and-Delete-and-search-operations-against-your-indexes"><a href="#3-Perform-CRUD-Create-Read-Update-and-Delete-and-search-operations-against-your-indexes" class="headerlink" title="3.Perform CRUD (Create, Read, Update, and Delete) and search operations against your indexes"></a>3.Perform CRUD (Create, Read, Update, and Delete) and search operations against your indexes</h2><p>插入一条数据并查询：</p>
+
+<p>删除index：</p>
+
+<p>使用elasticsearch的一般请求形式：<br><code>&lt;HTTP Verb&gt; /&lt;Index&gt;/&lt;Type&gt;/&lt;ID&gt;</code></p>
+<p>document的修改与替换：</p>
+
+<p>使用POST插入document时可以不用写明id，此时id由系统随机生成。</p>
+
+<p>更新Document：（并不是in-place修改）<br>Whenever we do an update, Elasticsearch deletes the old document and then indexes a new document with the update applied to it in one shot.</p>
+
+<p>In the above example, <code>ctx._source</code> refers to the current source document that is about to be updated.</p>
+<p><strong>批量处理<code>_bulk</code>：</strong></p>
+<p>建立两个document：</p>
+
+<p>更新_id为1的name字段为’John Doe becomes Jane Doe’，然后删除_id=2的document。</p>
+
+<p>Note above that for the delete action, there is no corresponding source document after it since deletes only require the ID of the document to be deleted.</p>
+<p>The Bulk API does not fail due to failures in one of the actions. If a single action fails for whatever reason, it will continue to process the remainder of the actions after it. When the bulk API returns, it will provide a status for each action (in the same order it was sent in) so that you can check if a specific action failed or not.</p>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1022086">批量导入的格式</a></p>
+<h3 id="1-search-API"><a href="#1-search-API" class="headerlink" title="1.search API"></a>1.search API</h3><p>search的两种方式一种是使用<a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/6.6/search-uri-request.html">REST request API</a>，一种使用<a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/6.6/search-request-body.html">REST request body</a></p>
+<h2 id="4-Execute-advanced-search-operations-such-as-paging-sorting-filtering-scripting-aggregations-and-many-others"><a href="#4-Execute-advanced-search-operations-such-as-paging-sorting-filtering-scripting-aggregations-and-many-others" class="headerlink" title="4.Execute advanced search operations such as paging, sorting, filtering, scripting, aggregations, and many others"></a>4.Execute advanced search operations such as paging, sorting, filtering, scripting, aggregations, and many others</h2><h1 id="视频"><a href="#视频" class="headerlink" title="视频"></a>视频</h1>
+
+<p>以下两种方式是等价的：</p>
+
+<hr>
+
+
+
+
+
+
+
+
+
+
+
+<hr>
+
+
+
+
+
+
+
+
+
+<p>mapping用来决定document中字段的类型，如</p>
+
+
+<hr>
+
+
+
+
+
+
+
+
+<hr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<hr>
+<p>分词：</p>
+
+<hr>
+<p>集群：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<hr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1iJ411c7Az?p=48&amp;spm_id_from=pageDriver">https://www.bilibili.com/video/BV1iJ411c7Az?p=48&amp;spm_id_from=pageDriver</a><br><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1iJ411c7Az?p=48&amp;spm_id_from=pageDriver">https://www.bilibili.com/video/BV1iJ411c7Az?p=48&amp;spm_id_from=pageDriver</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://jeckfs.gitee.io/JeckFS">YFS</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://jeckfs.gitee.io/JeckFS/2021/07/26/Elasticsearch/">http://jeckfs.gitee.io/JeckFS/2021/07/26/Elasticsearch/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://jeckfs.gitee.io/JeckFS" target="_blank">JeckFS</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/JeckFS/tags/%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90%E7%B3%BB%E7%BB%9F/">日志分析系统</a></div><div class="post_share"><div class="social-share" data-image="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/JeckFS/2021/07/26/logstash/"><img class="prev-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/JeckFS/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">logstash</div></div></a></div><div class="next-post pull-right"><a href="/JeckFS/2021/07/26/%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA/"><img class="next-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/JeckFS/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">链路追踪</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/JeckFS/2021/07/26/logstash/" title="logstash"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-07-26</div><div class="title">logstash</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/JeckFS/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">YFS</div><div class="author-info__description">快乐每一天</div></div><div class="card-info-data site-data is-center"><a href="/JeckFS/archives/"><div class="headline">文章</div><div class="length-num">203</div></a><a href="/JeckFS/tags/"><div class="headline">标签</div><div class="length-num">59</div></a><a href="/JeckFS/categories/"><div class="headline">分类</div><div class="length-num">54</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#ES%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="toc-number">1.</span> <span class="toc-text">ES的配置</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Cluster"><span class="toc-number">2.</span> <span class="toc-text">Cluster</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#REST-API%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">3.</span> <span class="toc-text">REST API的使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Check-your-cluster-node-and-index-health-status-and-statistics"><span class="toc-number">3.1.</span> <span class="toc-text">1.Check your cluster, node, and index health, status, and statistics</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Administer-your-cluster-node-and-index-data-and-metadata"><span class="toc-number">3.2.</span> <span class="toc-text">2.Administer your cluster, node, and index data and metadata</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Perform-CRUD-Create-Read-Update-and-Delete-and-search-operations-against-your-indexes"><span class="toc-number">3.3.</span> <span class="toc-text">3.Perform CRUD (Create, Read, Update, and Delete) and search operations against your indexes</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-search-API"><span class="toc-number">3.3.1.</span> <span class="toc-text">1.search API</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Execute-advanced-search-operations-such-as-paging-sorting-filtering-scripting-aggregations-and-many-others"><span class="toc-number">3.4.</span> <span class="toc-text">4.Execute advanced search operations such as paging, sorting, filtering, scripting, aggregations, and many others</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%A7%86%E9%A2%91"><span class="toc-number">4.</span> <span class="toc-text">视频</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/06/09/hello-world/" title="Hello World"><img src="https://t7.baidu.com/it/u=1732966997,2981886582&amp;fm=193&amp;f=GIF" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Hello World"/></a><div class="content"><a class="title" href="/JeckFS/2022/06/09/hello-world/" title="Hello World">Hello World</a><time datetime="2022-06-09T12:24:23.000Z" title="发表于 2022-06-09 20:24:23">2022-06-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/06/07/leetcode638-%E5%A4%A7%E7%A4%BC%E5%8C%85/" title="leetcode638-大礼包"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="leetcode638-大礼包"/></a><div class="content"><a class="title" href="/JeckFS/2022/06/07/leetcode638-%E5%A4%A7%E7%A4%BC%E5%8C%85/" title="leetcode638-大礼包">leetcode638-大礼包</a><time datetime="2022-06-07T08:52:59.000Z" title="发表于 2022-06-07 16:52:59">2022-06-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/05/28/Skywalking%E6%A2%B3%E7%90%86/" title="Skywalking梳理"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Skywalking梳理"/></a><div class="content"><a class="title" href="/JeckFS/2022/05/28/Skywalking%E6%A2%B3%E7%90%86/" title="Skywalking梳理">Skywalking梳理</a><time datetime="2022-05-28T01:16:03.000Z" title="发表于 2022-05-28 09:16:03">2022-05-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/05/24/MyPro/" title="MyPro"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="MyPro"/></a><div class="content"><a class="title" href="/JeckFS/2022/05/24/MyPro/" title="MyPro">MyPro</a><time datetime="2022-05-24T11:22:06.000Z" title="发表于 2022-05-24 19:22:06">2022-05-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/04/15/Spring-SpEL/" title="Spring-SpEL"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Spring-SpEL"/></a><div class="content"><a class="title" href="/JeckFS/2022/04/15/Spring-SpEL/" title="Spring-SpEL">Spring-SpEL</a><time datetime="2022-04-15T07:22:04.000Z" title="发表于 2022-04-15 15:22:04">2022-04-15</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By YFS</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/JeckFS/js/utils.js"></script><script src="/JeckFS/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

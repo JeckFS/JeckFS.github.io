@@ -1,0 +1,272 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>linux操作字符串 | JeckFS</title><meta name="keywords" content="Linux"><meta name="author" content="YFS"><meta name="copyright" content="YFS"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="【补充】容易忽视的小问题12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970# 截取字符串t&#x3D;&quot;123456789&quot;echo %&amp;#123;t:3:4&amp;#125;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux操作字符串">
+<meta property="og:url" content="http://jeckfs.gitee.io/JeckFS/2020/04/09/linux%E6%93%8D%E4%BD%9C%E5%AD%97%E7%AC%A6%E4%B8%B2/index.html">
+<meta property="og:site_name" content="JeckFS">
+<meta property="og:description" content="【补充】容易忽视的小问题12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970# 截取字符串t&#x3D;&quot;123456789&quot;echo %&amp;#123;t:3:4&amp;#125;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+<meta property="article:published_time" content="2020-04-09T04:29:14.000Z">
+<meta property="article:modified_time" content="2022-06-09T12:50:05.044Z">
+<meta property="article:author" content="YFS">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><link rel="shortcut icon" href="/JeckFS/img/favicon.png"><link rel="canonical" href="http://jeckfs.gitee.io/JeckFS/2020/04/09/linux%E6%93%8D%E4%BD%9C%E5%AD%97%E7%AC%A6%E4%B8%B2/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/JeckFS/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/JeckFS/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'linux操作字符串',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-06-09 20:50:05'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/JeckFS/archives/"><div class="headline">文章</div><div class="length-num">203</div></a><a href="/JeckFS/tags/"><div class="headline">标签</div><div class="length-num">59</div></a><a href="/JeckFS/categories/"><div class="headline">分类</div><div class="length-num">54</div></a></div><hr/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/JeckFS/">JeckFS</a></span><div id="menus"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">linux操作字符串</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-04-09T04:29:14.000Z" title="发表于 2020-04-09 12:29:14">2020-04-09</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-06-09T12:50:05.044Z" title="更新于 2022-06-09 20:50:05">2022-06-09</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/JeckFS/categories/Linux/">Linux</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="linux操作字符串"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="【补充】容易忽视的小问题"><a href="#【补充】容易忽视的小问题" class="headerlink" title="【补充】容易忽视的小问题"></a>【补充】容易忽视的小问题</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">截取字符串</span></span><br><span class="line">t=&quot;123456789&quot;</span><br><span class="line">echo %&#123;t:3:4&#125;       # 4567</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">使用 <span class="variable">$&#123;#&#125;</span> <span class="variable">$&#123;%&#125;</span> 截取字符串后缀与前缀</span></span><br><span class="line">t=&quot;User:123:321:/home/dir&quot;</span><br><span class="line">echo $&#123;t#*:*:*:&#125;    # /home/dir</span><br><span class="line">echo $&#123;t%:*:*:*&#125;    # User</span><br><span class="line">echo $&#123;t%%:*&#125;       # User</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">IFS 修改默认分隔符([注意]制表符需要加 $ 符号，如$<span class="string">&#x27;\n&#x27;</span>, $<span class="string">&#x27;\t&#x27;</span>)</span></span><br><span class="line">IFS=:</span><br><span class="line">str=&quot;abc:123:mn:456&quot;</span><br><span class="line">for item in $&#123;str&#125; ; do</span><br><span class="line">  echo $item</span><br><span class="line">done</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">输出</span></span><br><span class="line">abc</span><br><span class="line">123</span><br><span class="line">mn</span><br><span class="line">456</span><br><span class="line"></span><br><span class="line">IFS=$&#x27;\n&#x27;</span><br><span class="line">for file in $( ls -alh ) ; do</span><br><span class="line">  echo file=$&#123;file&#125;</span><br><span class="line">done</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">输出</span></span><br><span class="line">file=total 8</span><br><span class="line">file=drwxr-xr-x   6 yaofushang  staff   192B Jan 25 21:26 .</span><br><span class="line">file=drwxr-x---+ 43 yaofushang  staff   1.3K Jan 25 21:26 ..</span><br><span class="line">file=drwx------   8 yaofushang  staff   256B Jan 10 19:51 .gradle</span><br><span class="line">file=-rw-r--r--   1 yaofushang  staff     0B Jan 25 21:02 1.txt</span><br><span class="line">file=-rw-r--r--   1 yaofushang  staff     0B Jan 25 21:02 2.txt</span><br><span class="line">file=-rw-r--r--   1 yaofushang  staff    78B Jan 25 21:25 test.sh</span><br><span class="line"></span><br><span class="line">IFS=$&#x27;\n&#x27;</span><br><span class="line">str=&quot;abc\n123\nyyy&quot;</span><br><span class="line">for file in $( echo -e $str ) ; do</span><br><span class="line">  echo file=$&#123;file&#125;</span><br><span class="line">done</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">输出</span></span><br><span class="line">file=abc</span><br><span class="line">file=123</span><br><span class="line">file=yyy</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="variable">$&#123;t:-5&#125;</span> 与 <span class="variable">$&#123;t: -5&#125;</span> 的区别</span></span><br><span class="line">t=&quot;123456789&quot;</span><br><span class="line">echo $&#123;t:-5&#125;        # 123456789 ,若 t 没有赋值，则值赋为 5 </span><br><span class="line">echo $&#123;t: -5&#125;       # 56789 输出最后 5 个字符</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">变量内容替换</span></span><br><span class="line">t=&quot;123456789&quot;</span><br><span class="line">echo $&#123;t//345/***&#125;  # 12***6789</span><br><span class="line">t=&quot;123:abc:456&quot;</span><br><span class="line">echo $&#123;t//[0-9]/**&#125; # ******:abc:******</span><br><span class="line">t=&quot; 1    2    3  &quot;</span><br><span class="line">echo $&#123;t// /&#125;       # 123</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">输出升序序列</span></span><br><span class="line">echo &#123;1..10&#125;        # 输出 1 2 3 ... 10</span><br><span class="line">echo &#123;1..10..3&#125;     # 输出 0 3 6 9 (能被3整除的)</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">检查字符串是否以abc开头</span></span><br><span class="line">t=&quot;abc12333&quot;</span><br><span class="line">[[ $t == abc* ]] &amp;&amp; echo &quot;变量t以abc开头&quot;</span><br></pre></td></tr></table></figure>
+<h2 id="shell-中的特殊字符"><a href="#shell-中的特殊字符" class="headerlink" title="shell 中的特殊字符"></a>shell 中的特殊字符</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="string">&#x27;:&#x27;</span> 空命令，相当于执行NOP,总是返回成功，与bash的内建命令<span class="literal">true</span>相同，:是一个bash的内建命令，退出码(<span class="built_in">exit</span> status)是<span class="literal">true</span>（0）</span></span><br><span class="line">:</span><br><span class="line">echo $?     # 0</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">每隔1秒输出一个字符串OK</span></span><br><span class="line">while : ; do echo &quot;OK&quot;; sleep 1; done</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="string">&#x27;:&#x27;</span> 充当 <span class="keyword">if</span>/then 的占位符</span></span><br><span class="line">if condition</span><br><span class="line">then : 什么都不做，引出分支</span><br><span class="line">else </span><br><span class="line">	tack-some-action</span><br><span class="line">fi</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">‘:’在元命令中提供一个占位符</span></span><br><span class="line">: $&#123;username=`whoami`&#125;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="variable">$&#123;username=`whoami`&#125;</span> 如果没有开头的 <span class="string">&quot;:&quot;</span>的话，将会给出一个错误，除非<span class="string">&quot;username&quot;</span>是一个命令或者内建命令</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">创建空文件</span></span><br><span class="line">: &gt; test.txt # 文件test.txt如果存在现在就被清空了，如果不存在就会被创建</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">这个命令与<span class="built_in">cat</span> /dev/null &gt; test.txt效果是一样的，但是实现过程不一样，应为后者需要创建一个进程来实现文件的创建或者清空，但是前者是bash的内建命令。</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">以上操作的文件只使用于正规的文件，而不适用于管道，符号连接，和某些特殊文件。</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="string">&#x27;?&#x27;</span> 操作符</span></span><br><span class="line">测试操作符。在一个特定的表达式中，?用来测试一个条件的结果</span><br><span class="line">在一个双括号结构中，?就是C语言的三元操作符。</span><br><span class="line">在参数替换表达式中，?用来测试一个变量是否被set了</span><br><span class="line">通配符，?在通配中，用来做匹配的单个字符的&quot;通配符&quot;，在正则表达式中也是用来表示一个字符</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="string">&#x27;()&#x27;</span> 命令组，在括号中的命令列表，将会作为一个子shell来运行。在括号中的变量，由于是在子shell中，所以对于脚本上下的部分是不可用的</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">&#123;xxx,yyy,zzz,...&#125; 大括号扩展</span></span><br><span class="line">cat &#123;file1,file2,file3&#125; &gt; combined_file</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">把file1, file2, file3连接在一起, 并且重定向到combined_file中.</span></span><br><span class="line">cp file22.&#123;txt,backup&#125;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">拷贝<span class="string">&quot;file22.txt&quot;</span>到<span class="string">&quot;file22.backup&quot;</span>中</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">注意:在大括号中, 不允许有空白, 除非这个空白被引用或转义</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">[] 条件测试，条件测试表达式放在[]中，该命令是shell内建命令的一部分</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">[[]] 条件测试，</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">(()) 整数扩展</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="built_in">cd</span> - 返回上个目录，可以在两个目录间来回切换</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="字符串引用"><a href="#字符串引用" class="headerlink" title="字符串引用"></a>字符串引用</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$</span><span class="language-bash">arr[i]    <span class="comment"># 引用字符串arr的第i个字符</span></span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">&#123;<span class="comment">#arr&#125;    # 获取字符串arr的长度</span></span></span><br><span class="line"><span class="meta prompt_">$</span><span class="language-bash">&#123;arr: -1&#125; <span class="comment"># 获取字符串arr的倒数第一个字符.(冒号与-1之间的空格不要丢掉，并且arr与冒号之间无其他字符)</span></span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>单引号内全部都是字符串，双引号内可以引用变量。</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/chengmo/archive/2010/10/02/1841355.html">对字符串变量进行操作</a></p>
+<h1 id="变量内容的删除"><a href="#变量内容的删除" class="headerlink" title="变量内容的删除"></a>变量内容的删除</h1><p><code>#</code>：从最前面往后删除（删除内容一定是内容的前缀） <code>%</code>：从最后面往前删除(删除内容的后缀一定是内容的后缀)  <code>%</code>，<code>%%</code>与<code>#</code>，<code>##</code>类似<br><code>#</code> :符合取代文字的『最短的』那一个;<br><code>##</code>:符合取代文字的『最长的』那一个</p>
+<p>用法：<br><code>$&#123;variable#delete_part&#125;</code>：variable是变量，从头部删除delete_part部分<br>【注意<code>*</code>号可以代表0到无穷多个任意字符】<br><code>$&#123;variable%delete_part&#125;</code>：从尾部删除delete_part部分<br></p>
+<h1 id="变量内容的取代"><a href="#变量内容的取代" class="headerlink" title="变量内容的取代"></a>变量内容的取代</h1><p><code>$&#123;variable/old/new&#125;</code>：将变量variable中的从左至右第一个old子串替换为new子串<br><code>$&#123;variable//old/new&#125;</code>：将变量variable中的<strong>所有</strong>old子串替换为new子串<br></p>
+<h1 id="变量的测试与内容替换"><a href="#变量的测试与内容替换" class="headerlink" title="变量的测试与内容替换"></a>变量的测试与内容替换</h1><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">符号</th>
+<th style="text-align:left">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">:</td>
+<td style="text-align:left">主要用在旧变量为空字符串的时候，新变量或旧变量直接使用expr的值</td>
+</tr>
+<tr>
+<td style="text-align:center">-</td>
+<td style="text-align:left">用于在旧变量没有定义的情况下，新变量使用expr值</td>
+</tr>
+<tr>
+<td style="text-align:center">+</td>
+<td style="text-align:left">将空字符串视为旧变量未定义</td>
+</tr>
+<tr>
+<td style="text-align:center">?</td>
+<td style="text-align:left">输出至stderr</td>
+</tr>
+<tr>
+<td style="text-align:center">=</td>
+<td style="text-align:left">为旧变量赋值为expr</td>
+</tr>
+<tr>
+<td style="text-align:center">备注</td>
+<td style="text-align:left">当旧变量有值时，新变量将使用旧变量的值</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<h1 id="管线命令"><a href="#管线命令" class="headerlink" title="管线命令"></a>管线命令</h1><ol>
+<li>管线作用<br>将前一个命令传来的standard output信息作为输入传递给下一个命令（这个指令必须要能够接受 standard input 的数据，称为管线命令）进行进一步处理。</li>
+<li>管线命令使用standard error信息<br>对于standard error信息可以重导向到standard output即可。</li>
+<li>撷取命令: <strong>cut, grep</strong><br>就是将一段数据经过分析后,取出我们所想要的。或者是经由分析关键词,取得我们所想要的那一行!  撷取讯息通常是针对『一行一行』来分析的。<br><strong>cut：主要用于在同一行里面的数据进行分解（以行为单位切分）</strong>。<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cut</span> -d <span class="string">&#x27;分隔字符&#x27;</span> -f fields  <span class="comment">## 用于将原字符串以分隔字符切分，取出第几段；-d指明分隔字符，-f指定取出第几段(序号从1开始，可以取出多段，中间用逗号分隔)。</span></span><br><span class="line"><span class="built_in">cut</span> -c 字符区间  <span class="comment">## 以字符 (characters) 的单位取出固定字符区间; 适用于格式固定的内容。</span></span><br><span class="line"><span class="built_in">cut</span> -c 3-取出从第三个字符开始到最后一个字符的字符串</span><br></pre></td></tr></table></figure>
+
+cut的缺点：处理多空格数据吃力。可用awk命令代替。</li>
+</ol>
+<p><strong>grep：以行为单位，取出该行中所需要的信息。</strong><br><code>grep [-acinv] [--color=auto] &#39;搜寻字符串&#39; filename</code><br>选项与参数:<br><code>-a</code> :将 binary 文件以 text 文件的方式搜寻数据<br><code>-c</code> :计算找到 ‘搜寻字符串’ 的次数<br><code>-i</code> :忽略大小写的不同,所以大小写视为相同<br><code>-n</code> :顺便输出行号<br><code>-v</code> :反向选择,亦即显示出没有 ‘搜寻字符串’ 内容的那一行!<br><code>--color=auto</code> :可以将找到的关键词部分加上颜色的显示喔!</p>
+<ol>
+<li>排序命令：<strong>sort，wc，uniq</strong><br>sort：<br><code>sort [-fbMnrtuk] [file or stdin]</code><br>选项与参数:<br><code>-f</code> :忽略大小写的差异,例如 A 与 a 视为编码相同;<br><code>-b</code> :忽略最前面的空格符部分;<br><code>-M</code> :以月份的名字来排序,例如 JAN, DEC 等等的排序方法;<br><code>-n</code> :使用『纯数字』进行排序(默认是以文字型态来排序的);<br><code>-r</code> :反向排序;<br><code>-u</code> :就是 uniq ,相同的数据中,仅出现一行代表;<br><code>-t</code> :分隔符,预设是用 [tab] 键来分隔;<br><code>-k</code> :以那个区间 (field) 来进行排序的意思
+</li>
+</ol>
+<p><strong>uniq</strong>：将重复的行仅列出一个（在与sort结合时，不管他按哪一段排序，uniq始终时按整行是否相同来排序的）<br><code>-i</code> :忽略大小写字符的不同;<br><code>-c</code> :进行计数<br><strong>wc</strong>：列出数据中有多少字，多少行，多少字符<br><code>-l</code> :仅列出行;<br><code>-w</code> :仅列出多少字(英文单字);<br><code>-m</code> :多少字符</p>
+<h1 id="字符转换命令"><a href="#字符转换命令" class="headerlink" title="字符转换命令"></a>字符转换命令</h1><h2 id="1-tr：删除数据中的字符串。可接正则表达式"><a href="#1-tr：删除数据中的字符串。可接正则表达式" class="headerlink" title="1. tr：删除数据中的字符串。可接正则表达式"></a>1. tr：删除数据中的字符串。可接正则表达式</h2><p><code>tr [-ds] SET1 ...</code><br>选项与参数:<br><code>-d</code> :删除讯息当中的 SET1 这个字符;<br><code>-s</code> :删除连续出现的SET1字符，只保留一个<br><br>SET可以是：<br><br></p>
+<h2 id="2-Col-将tab键转化为对等的空格键"><a href="#2-Col-将tab键转化为对等的空格键" class="headerlink" title="2. Col:将tab键转化为对等的空格键"></a>2. Col:将tab键转化为对等的空格键</h2><p>选项与参数:<br><code>-x</code>: 将 tab 键转换成对等的空格键</p>
+<h2 id="3-join：两个文件中，有相同数据段的那个一行，才将他们链接在一起。"><a href="#3-join：两个文件中，有相同数据段的那个一行，才将他们链接在一起。" class="headerlink" title="3. join：两个文件中，有相同数据段的那个一行，才将他们链接在一起。"></a>3. join：两个文件中，有相同数据段的那个一行，才将他们链接在一起。</h2><p><code>join [-ti12] file1 file2</code><br>选项与参数:<br><code>-t</code>: join 默认以空格符分隔数据,并且比对『第一个字段』的数据,  如果两个文件相同,则将两笔数据联成一行,且第一个字段放在第一个!<br><code>-i</code> :忽略大小写的差异;<br><code>-1</code> :这个是数字的 1 ,代表『第一个文件要用那个字段来分析』的意思;<br><code>-2</code> :代表『第二个文件要用那个字段来分析』的意思。<br></p>
+<p>在使用 join 之前,你所需要处理的文件应该要事先经过排序 (sort) 处理!  否则有些比对的项目会被略过。<br>数据未排序：</p>
+<ul>
+<li>有些行会被忽略。</li>
+<li>产生数据未排序的错误。
+</li>
+</ul>
+<p>sort与join的结合使用：<br></p>
+<h2 id="4-paste：直接『将两行贴在一起-且中间以-tab-键隔开』"><a href="#4-paste：直接『将两行贴在一起-且中间以-tab-键隔开』" class="headerlink" title="4. paste：直接『将两行贴在一起,且中间以 [tab] 键隔开』"></a>4. paste：直接『将两行贴在一起,且中间以 [tab] 键隔开』</h2><p><code>paste [-d] file1 file2</code><br>选项与参数:<br><code>-d</code> :后面可以接分隔字符。预设是以 [tab] 来分隔的!<br><code>-</code> :如果 file 部分写成 - ,表示来自 standard input 的资料的意思。<br></p>
+<h2 id="5-expand：将tab转化为空格"><a href="#5-expand：将tab转化为空格" class="headerlink" title="5. expand：将tab转化为空格"></a>5. expand：将tab转化为空格</h2><p><code>expand [-t] file</code><br>选项与参数:<br><code>-t</code> :  后面可以接数字，表示将tab转化为多少个空格。一般来说,一个 tab 按键可以用 8 个空格键取代。</p>
+<h1 id="正则表达式"><a href="#正则表达式" class="headerlink" title="正则表达式"></a>正则表达式</h1><ol>
+<li>注意事项<br> a) 以行为单位处理字符串<br> b) 使用正则，需要使用支持正则的工具程序，如vi，sed，awk，grep等</li>
+<li>基础正则表示法：<br> a) 不同语系会有不同的正则结果<br> b) 特殊正则符号<br><code>[:alnum:]</code> 代表英文大小写字符及数字,亦即 0-9, A-Z, a-z<br><code>[:alpha:]</code> 代表任何英文大小写字符,亦即 A-Z, a-z<br><code>[:blank:]</code> 代表空格键与 [Tab] 按键两者<br><code>[:cntrl:]</code> 代表键盘上面的控制按键,亦即包括 CR, LF, Tab, Del.. 等等<br><code>[:digit:]</code> 代表数字而已,亦即 0-9<br><code>[:graph:]</code> 除了空格符 (空格键与 [Tab] 按键) 外的其他所有按键<br><code>[:lower:]</code> 代表小写字符,亦即 a-z<br><code>[:print:]</code> 代表任何可以被打印出来的字符<br><code>[:punct:]</code> 代表标点符号 (punctuation symbol),亦即:<code>&quot; &#39; ? ! ; : # $...</code><br><code>[:upper:]</code> 代表大写字符,亦即 A-Z<br><code>[:space:]</code> 任何会产生空白的字符,包括空格键, [Tab], CR 等等<br><code>[:xdigit:]</code> 代表 16 进位的数字类型,因此包括: 0-9, A-F, a-f 的数字与字符<br> c) grep进阶<br><code>grep [-A] [-B] [--color=auto] &#39;搜寻字符串&#39; filename</code><br>选项与参数:<br><code>-A</code> :后面可加数字,为 after 的意思,除了列出该行外,后续的 n 行也列出来;<br><code>-B</code> :后面可加数字,为 befer 的意思,除了列出该行外,前面的 n 行也列出来;<br><code>--color=auto</code> 可将正确的那个撷取数据列出颜色
+</li>
+</ol>
+<p><code>^$</code>表示空行：<br><br><strong>使用{}时要转义</strong><br></p>
+<h1 id="延伸正则表示法：egrep"><a href="#延伸正则表示法：egrep" class="headerlink" title="延伸正则表示法：egrep"></a>延伸正则表示法：egrep</h1><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">符号</th>
+<th style="text-align:left">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">+</td>
+<td style="text-align:left">重复『一个或一个以上』的前一个 RE 字符</td>
+</tr>
+<tr>
+<td style="text-align:center">?</td>
+<td style="text-align:left">『零个或一个』的前一个 RE 字符</td>
+</tr>
+<tr>
+<td style="text-align:center">\</td>
+<td style="text-align:left"></td>
+<td>用或( or )的方式找出数个字符串</td>
+</tr>
+<tr>
+<td style="text-align:center">()</td>
+<td style="text-align:left">找出『群组』字符串</td>
+</tr>
+<tr>
+<td style="text-align:center">()+</td>
+<td style="text-align:left">多个重复群组的判别</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>【注意】()的使用需要加入转义字符如<code>\(\)</code></p>
+<h1 id="条件判断式"><a href="#条件判断式" class="headerlink" title="条件判断式"></a>条件判断式</h1><h2 id="1-test"><a href="#1-test" class="headerlink" title="1. test"></a>1. test</h2>
+
+
+
+
+<h2 id="2-利用判断符号"><a href="#2-利用判断符号" class="headerlink" title="2. 利用判断符号[]"></a>2. 利用判断符号[]</h2><ul>
+<li>注意空格： 
+</li>
+</ul>
+<ul>
+<li>在中括号 [] 内的每个组件都需要有空格键来分隔;<pre><code>  在中括号内的变量,最好都以双引号括号起来;
+  在中括号内的常量,最好都以单或双引号括号起来。
+</code></pre></li>
+<li>[]内不能用||，&amp;&amp;，只能用-o，-a来代替</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://jeckfs.gitee.io/JeckFS">YFS</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://jeckfs.gitee.io/JeckFS/2020/04/09/linux%E6%93%8D%E4%BD%9C%E5%AD%97%E7%AC%A6%E4%B8%B2/">http://jeckfs.gitee.io/JeckFS/2020/04/09/linux%E6%93%8D%E4%BD%9C%E5%AD%97%E7%AC%A6%E4%B8%B2/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://jeckfs.gitee.io/JeckFS" target="_blank">JeckFS</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/JeckFS/tags/Linux/">Linux</a></div><div class="post_share"><div class="social-share" data-image="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/JeckFS/2020/04/09/shell%E8%84%9A%E6%9C%AC%E5%BA%94%E7%94%A8/"><img class="prev-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/JeckFS/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">shell脚本应用</div></div></a></div><div class="next-post pull-right"><a href="/JeckFS/2020/04/09/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/"><img class="next-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/JeckFS/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">linux常用命令</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/JeckFS/2020/11/04/Linux%E5%86%85%E6%A0%B8%E6%A0%B8%E5%BF%83%E7%9F%A5%E8%AF%86%E5%85%A8%E8%A7%A3%E6%9E%90/" title="Linux内核核心知识全解析"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-11-04</div><div class="title">Linux内核核心知识全解析</div></div></a></div><div><a href="/JeckFS/2020/04/09/awk/" title="awk"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-04-09</div><div class="title">awk</div></div></a></div><div><a href="/JeckFS/2020/04/09/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" title="linux常用命令"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-04-09</div><div class="title">linux常用命令</div></div></a></div><div><a href="/JeckFS/2020/10/23/linux%E5%8D%87%E7%BA%A7%E5%86%85%E6%A0%B8/" title="linux升级内核"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-23</div><div class="title">linux升级内核</div></div></a></div><div><a href="/JeckFS/2020/04/09/shell%E8%84%9A%E6%9C%AC%E5%BA%94%E7%94%A8/" title="shell脚本应用"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-04-09</div><div class="title">shell脚本应用</div></div></a></div><div><a href="/JeckFS/2021/11/07/ssh%E9%80%9A%E4%BF%A1%E5%8E%9F%E7%90%86%E5%8F%8A%E7%94%A8%E9%80%94/" title="ssh通信原理及用途"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-11-07</div><div class="title">ssh通信原理及用途</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/JeckFS/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">YFS</div><div class="author-info__description">快乐每一天</div></div><div class="card-info-data site-data is-center"><a href="/JeckFS/archives/"><div class="headline">文章</div><div class="length-num">203</div></a><a href="/JeckFS/tags/"><div class="headline">标签</div><div class="length-num">59</div></a><a href="/JeckFS/categories/"><div class="headline">分类</div><div class="length-num">54</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E3%80%90%E8%A1%A5%E5%85%85%E3%80%91%E5%AE%B9%E6%98%93%E5%BF%BD%E8%A7%86%E7%9A%84%E5%B0%8F%E9%97%AE%E9%A2%98"><span class="toc-number">1.</span> <span class="toc-text">【补充】容易忽视的小问题</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#shell-%E4%B8%AD%E7%9A%84%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6"><span class="toc-number">1.1.</span> <span class="toc-text">shell 中的特殊字符</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%BC%95%E7%94%A8"><span class="toc-number">2.</span> <span class="toc-text">字符串引用</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%98%E9%87%8F%E5%86%85%E5%AE%B9%E7%9A%84%E5%88%A0%E9%99%A4"><span class="toc-number">3.</span> <span class="toc-text">变量内容的删除</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%98%E9%87%8F%E5%86%85%E5%AE%B9%E7%9A%84%E5%8F%96%E4%BB%A3"><span class="toc-number">4.</span> <span class="toc-text">变量内容的取代</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%98%E9%87%8F%E7%9A%84%E6%B5%8B%E8%AF%95%E4%B8%8E%E5%86%85%E5%AE%B9%E6%9B%BF%E6%8D%A2"><span class="toc-number">5.</span> <span class="toc-text">变量的测试与内容替换</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AE%A1%E7%BA%BF%E5%91%BD%E4%BB%A4"><span class="toc-number">6.</span> <span class="toc-text">管线命令</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E8%BD%AC%E6%8D%A2%E5%91%BD%E4%BB%A4"><span class="toc-number">7.</span> <span class="toc-text">字符转换命令</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-tr%EF%BC%9A%E5%88%A0%E9%99%A4%E6%95%B0%E6%8D%AE%E4%B8%AD%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2%E3%80%82%E5%8F%AF%E6%8E%A5%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">7.1.</span> <span class="toc-text">1. tr：删除数据中的字符串。可接正则表达式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Col-%E5%B0%86tab%E9%94%AE%E8%BD%AC%E5%8C%96%E4%B8%BA%E5%AF%B9%E7%AD%89%E7%9A%84%E7%A9%BA%E6%A0%BC%E9%94%AE"><span class="toc-number">7.2.</span> <span class="toc-text">2. Col:将tab键转化为对等的空格键</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-join%EF%BC%9A%E4%B8%A4%E4%B8%AA%E6%96%87%E4%BB%B6%E4%B8%AD%EF%BC%8C%E6%9C%89%E7%9B%B8%E5%90%8C%E6%95%B0%E6%8D%AE%E6%AE%B5%E7%9A%84%E9%82%A3%E4%B8%AA%E4%B8%80%E8%A1%8C%EF%BC%8C%E6%89%8D%E5%B0%86%E4%BB%96%E4%BB%AC%E9%93%BE%E6%8E%A5%E5%9C%A8%E4%B8%80%E8%B5%B7%E3%80%82"><span class="toc-number">7.3.</span> <span class="toc-text">3. join：两个文件中，有相同数据段的那个一行，才将他们链接在一起。</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-paste%EF%BC%9A%E7%9B%B4%E6%8E%A5%E3%80%8E%E5%B0%86%E4%B8%A4%E8%A1%8C%E8%B4%B4%E5%9C%A8%E4%B8%80%E8%B5%B7-%E4%B8%94%E4%B8%AD%E9%97%B4%E4%BB%A5-tab-%E9%94%AE%E9%9A%94%E5%BC%80%E3%80%8F"><span class="toc-number">7.4.</span> <span class="toc-text">4. paste：直接『将两行贴在一起,且中间以 [tab] 键隔开』</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-expand%EF%BC%9A%E5%B0%86tab%E8%BD%AC%E5%8C%96%E4%B8%BA%E7%A9%BA%E6%A0%BC"><span class="toc-number">7.5.</span> <span class="toc-text">5. expand：将tab转化为空格</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="toc-number">8.</span> <span class="toc-text">正则表达式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BB%B6%E4%BC%B8%E6%AD%A3%E5%88%99%E8%A1%A8%E7%A4%BA%E6%B3%95%EF%BC%9Aegrep"><span class="toc-number">9.</span> <span class="toc-text">延伸正则表示法：egrep</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%AD%E5%BC%8F"><span class="toc-number">10.</span> <span class="toc-text">条件判断式</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-test"><span class="toc-number">10.1.</span> <span class="toc-text">1. test</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%88%A9%E7%94%A8%E5%88%A4%E6%96%AD%E7%AC%A6%E5%8F%B7"><span class="toc-number">10.2.</span> <span class="toc-text">2. 利用判断符号[]</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/06/09/hello-world/" title="Hello World"><img src="https://t7.baidu.com/it/u=1732966997,2981886582&amp;fm=193&amp;f=GIF" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Hello World"/></a><div class="content"><a class="title" href="/JeckFS/2022/06/09/hello-world/" title="Hello World">Hello World</a><time datetime="2022-06-09T12:24:23.000Z" title="发表于 2022-06-09 20:24:23">2022-06-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/06/07/leetcode638-%E5%A4%A7%E7%A4%BC%E5%8C%85/" title="leetcode638-大礼包"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="leetcode638-大礼包"/></a><div class="content"><a class="title" href="/JeckFS/2022/06/07/leetcode638-%E5%A4%A7%E7%A4%BC%E5%8C%85/" title="leetcode638-大礼包">leetcode638-大礼包</a><time datetime="2022-06-07T08:52:59.000Z" title="发表于 2022-06-07 16:52:59">2022-06-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/05/28/Skywalking%E6%A2%B3%E7%90%86/" title="Skywalking梳理"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Skywalking梳理"/></a><div class="content"><a class="title" href="/JeckFS/2022/05/28/Skywalking%E6%A2%B3%E7%90%86/" title="Skywalking梳理">Skywalking梳理</a><time datetime="2022-05-28T01:16:03.000Z" title="发表于 2022-05-28 09:16:03">2022-05-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/05/24/MyPro/" title="MyPro"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="MyPro"/></a><div class="content"><a class="title" href="/JeckFS/2022/05/24/MyPro/" title="MyPro">MyPro</a><time datetime="2022-05-24T11:22:06.000Z" title="发表于 2022-05-24 19:22:06">2022-05-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/04/15/Spring-SpEL/" title="Spring-SpEL"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Spring-SpEL"/></a><div class="content"><a class="title" href="/JeckFS/2022/04/15/Spring-SpEL/" title="Spring-SpEL">Spring-SpEL</a><time datetime="2022-04-15T07:22:04.000Z" title="发表于 2022-04-15 15:22:04">2022-04-15</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By YFS</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/JeckFS/js/utils.js"></script><script src="/JeckFS/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

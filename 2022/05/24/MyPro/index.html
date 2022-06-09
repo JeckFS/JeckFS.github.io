@@ -1,0 +1,307 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>MyPro | JeckFS</title><meta name="keywords" content="项目"><meta name="author" content="YFS"><meta name="copyright" content="YFS"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="1. Spring 解决循环依赖参考教程 出现循环依赖的前提条件：  Bean 是单例的 相互依赖的 Bean 都是使用构造器注入的方式  Spring 能够解决的循环依赖类型：  Spring 解决循环依赖时的调用图：  黑色为调用走向，绿色为递归返回走向。  Spring 是通过递归的方式获取目标 bean 及其所依赖的 bean 的； Spring 实例化一个 bean 的时候，是分两步进行">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MyPro">
+<meta property="og:url" content="http://jeckfs.gitee.io/JeckFS/2022/05/24/MyPro/index.html">
+<meta property="og:site_name" content="JeckFS">
+<meta property="og:description" content="1. Spring 解决循环依赖参考教程 出现循环依赖的前提条件：  Bean 是单例的 相互依赖的 Bean 都是使用构造器注入的方式  Spring 能够解决的循环依赖类型：  Spring 解决循环依赖时的调用图：  黑色为调用走向，绿色为递归返回走向。  Spring 是通过递归的方式获取目标 bean 及其所依赖的 bean 的； Spring 实例化一个 bean 的时候，是分两步进行">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+<meta property="article:published_time" content="2022-05-24T11:22:06.000Z">
+<meta property="article:modified_time" content="2022-06-09T12:50:04.676Z">
+<meta property="article:author" content="YFS">
+<meta property="article:tag" content="项目">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><link rel="shortcut icon" href="/JeckFS/img/favicon.png"><link rel="canonical" href="http://jeckfs.gitee.io/JeckFS/2022/05/24/MyPro/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/JeckFS/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/JeckFS/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'MyPro',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-06-09 20:50:04'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/JeckFS/archives/"><div class="headline">文章</div><div class="length-num">203</div></a><a href="/JeckFS/tags/"><div class="headline">标签</div><div class="length-num">59</div></a><a href="/JeckFS/categories/"><div class="headline">分类</div><div class="length-num">54</div></a></div><hr/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/JeckFS/">JeckFS</a></span><div id="menus"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">MyPro</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-05-24T11:22:06.000Z" title="发表于 2022-05-24 19:22:06">2022-05-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-06-09T12:50:04.676Z" title="更新于 2022-06-09 20:50:04">2022-06-09</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="MyPro"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="1-Spring-解决循环依赖"><a href="#1-Spring-解决循环依赖" class="headerlink" title="1. Spring 解决循环依赖"></a>1. Spring 解决循环依赖</h1><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/A_Java_Dog/article/details/117192587#:~:text=答：Spring,tories）%E3%80%82">参考教程</a></p>
+<p>出现循环依赖的前提条件：</p>
+<ul>
+<li>Bean 是单例的</li>
+<li>相互依赖的 Bean 都是使用构造器注入的方式</li>
+</ul>
+<p>Spring 能够解决的循环依赖类型：</p>
+
+<p>Spring 解决循环依赖时的调用图：</p>
+
+<p>黑色为调用走向，绿色为递归返回走向。</p>
+<ul>
+<li>Spring 是通过递归的方式获取目标 bean 及其所依赖的 bean 的；</li>
+<li>Spring 实例化一个 bean 的时候，是分两步进行的，首先实例化目标 bean ，然后为其注入属性。</li>
+</ul>
+<p>Spring 中的 “三级缓存”：</p>
+<ul>
+<li><code>singletonObjects</code>:一级缓存 存储的是所有创建好了的单例Bean</li>
+<li><code>earlySingletonObjects</code> ：完成实例化，但是还未进行属性注入及初始化的对象</li>
+<li><code>singletonFactories</code> : 提前暴露的一个单例工厂，二级缓存中存储的就是从这个工厂中获取到的对象</li>
+</ul>
+<p>A 依赖于 B ， B 依赖于 A 的循环依赖解决（没有 AOP 增强的循环依赖）：</p>
+
+<p>带 AOP 的循环依赖：<br>带AOP的跟不带AOP的其实几乎一样，只是在三级缓存中存放的是<strong>函数式接口</strong>，在需要调用时直接<strong>返回代理对象</strong>。<br>三级缓存存在的意义：</p>
+<ul>
+<li>只有真正发生循环依赖的时候，才去提前生成代理对象；</li>
+<li>对于没有发生循环依赖时，只会创建一个工厂并将其放入到三级缓存中，但是不会去通过这个工厂去真正创建对象；</li>
+</ul>
+<p>带 AOP 的循环依赖与不带AOP 的区别是：通过三级缓存的函数式接口获取对象 A 时，是实例化后的对象 A 还是代理对象 A 。</p>
+
+<p><strong>getBean(A) 时先实例化对象 A 然后将 A 的函数式接口放入三级缓存中，通过调用函数式接口得到代理对象 A。然后为~代理~对象 A 属性注入，在注入依赖对象 B 时，B 中的依赖对象 A 是从三级缓存中获取到的代理对象 A，这时 B 对象可以顺利完成初始化，A 也可以顺利完成初始化。</strong><br>重点是 A 实例化后会将用于创建代理对象 A 的函数式接口放入三级缓存中，在 B 对象进行属性注入时，是从三级缓存中获取到 A 的代理对象。<br>当对象 B 完成属性注入后，考虑到 A 是单例的原因，会将三级缓存的代理工厂删除，并将代理<code>?</code>对象 A 放入二级缓存中，等属性注入完成并初始化（执行 Aware 接口中的方法、初始化方法，完成 AOP 代理）成功后，会放入一级缓存。</p>
+<p>为什么必须用三级缓存：<br>考虑到 AOP 的特性，必须以代理对象的方式实现增强。使用三级缓存时，A 对象的创建会放入三级缓存中。在 B 对象初始化完成后，就可以注入对象 A 的所有属性。这也就符合 Spring 的设计原则：对初始化后的 Bean 进行 AOP 代理；如果不使用三级缓存，就需要直接创建 A 的代理对象，这样对象 A 无法完成初始化就要进行 AOP 代理，违背 Spring 设计原则。</p>
+<h1 id="2-Apollo"><a href="#2-Apollo" class="headerlink" title="2. Apollo"></a>2. Apollo</h1><h2 id="2-1-特性"><a href="#2-1-特性" class="headerlink" title="2.1 特性"></a>2.1 特性</h2><ul>
+<li>支持不同环境（env），不同集群（cluster），不同命名空间（namespaces）的配置</li>
+<li>支持热发布</li>
+<li>支持配置回滚</li>
+<li>支持灰度发布，可以对部分实例生效，没问题了再推广到全部的实例</li>
+<li>支持配置信息监控（哪些实例在使用）</li>
+<li>除了 Portal 管理配置，也可以通过程序管理自己的配置（需在 Portal 中授权获取 Token）。支持 Java 、 Shell 、 .Net core 三种方式管理配置</li>
+<li>支持 Skywalking </li>
+<li>支持 prometheus</li>
+<li>支持 Docker 部署，分布式部署</li>
+</ul>
+<h2 id="2-2-相关配置"><a href="#2-2-相关配置" class="headerlink" title="2.2 相关配置"></a>2.2 相关配置</h2><p>必选配置：</p>
+<ul>
+<li><code>appId</code> : 表示应用的唯一身份</li>
+<li><code>appllo.meta</code> ： 用于提供给Apollo客户端当前环境的 Apollo Meta Server 信息。</li>
+<li>本地缓存路径：默认是 <code>/opt/data</code> ，缓存配置命名： <code>&#123;appId&#125;+&#123;cluster&#125;+&#123;namespace&#125;.properties</code></li>
+<li>自定义缓存路径： <code>-Dapollo.cache-dir=/opt/data/some-cache-dir</code> 或者 <code>apollo.cacheDir=/opt/data/some-cache-dir</code></li>
+</ul>
+<p>可选配置：</p>
+<ul>
+<li>Environment : <code>-Denv=YOUR-ENVIRONMENT</code></li>
+<li>cluster : <code>apollo.cluster=&#39;SomeCluster&#39;</code> ， 首先获取 <code>apollo.cluster</code> 指定的配置，若不存在则查找<em>数据中心</em>?的cluster，若还不存在则使用默认的集群配置（default）</li>
+<li>访问密钥 ： <code>apollo.access-key.secret</code> 只有经过身份验证的客户端才能访问敏感配置</li>
+<li>自定义 server.properties 路径： <code>apollo.path.server.properties</code></li>
+<li>开启propertyNames缓存： <code>apollo.property.names.cache.enable</code> 通过开启该配置可以显著提升启动速度，当配置发生变化时缓存会自动清理，默认为 false</li>
+<li>ApolloLabel ： <code>-Dapollo.label=YOUR-APOLLO-LABEL</code> ApolloLabel 是应用的标签信息，是从服务端获取配置的一个重要信息，用于灰度规则的配置。</li>
+</ul>
+<h2 id="2-3-客户端用法"><a href="#2-3-客户端用法" class="headerlink" title="2.3 客户端用法"></a>2.3 客户端用法</h2><ul>
+<li>通过 API 直接使用，不依赖于 Spring 框架。通过 API 可以获取具体某个 namespaces 的配置某一项的配置、也可以监听配置的变更。</li>
+<li>与 Spring 整合：<ul>
+<li>支持配置到 bean xml 的配置中；</li>
+<li>支持在 Java 代码中配置： <code>@Configuration @EnableApolloConfig</code></li>
+<li>Springboot 集成：</li>
+<li>支持 Spring PlaceHolder ： <ul>
+<li>Bean XML 中： <code>$&#123;key:defaultValue&#125;</code></li>
+<li><code>@Value(&quot;&#123;key:defaultValue&#125;&quot;)</code></li>
+<li>通过 <code>@Configuration @EnableApolloConfig</code> 配置 Bean 的配置类， <code>@Bean</code> 修饰的方法可以直接在 new Bean() 的时候注入属性。</li>
+<li><code>@ConfigurationProperties(prefix = &quot;redis.cache&quot;)</code> 将配置注入到普通对象到属性中。</li>
+</ul>
+</li>
+<li>通过注解注入<ul>
+<li><code>@ApolloConfig</code> ： 用来自动注入Config对象</li>
+<li><code>@ApolloConfigChangeListener</code> ： 用来自动注册ConfigChangeListener</li>
+<li><code>@ApolloJsonValue</code> ： 用来把配置的json字符串自动注入为对象</li>
+<li><code>@Configuration @EnableApolloConfig</code> ： 注入 Configure 类中的 Bean 属性</li>
+<li><code>@Value</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-4-Apollo-客户端设计原理："><a href="#2-4-Apollo-客户端设计原理：" class="headerlink" title="2.4 Apollo 客户端设计原理："></a>2.4 Apollo 客户端设计原理：</h2>
+
+<p>配置更新<strong>推送</strong>实现：</p>
+<ul>
+<li>客户端向服务端发起 HTTP 请求，并建立一个长链接（60s）</li>
+<li>如果在 60s 内有配置更新，被保持住的客户端请求会立即返回，并告知客户端有变化的 namespaces ，客户端据此拉取有变更的 namespaces 。</li>
+<li>如果 60s 内无配置更新，会返回 304 - Not Modified 给客户端。</li>
+<li>客户端收到服务端请求后会重新发起长链接。</li>
+</ul>
+<h2 id="2-5-总体设计"><a href="#2-5-总体设计" class="headerlink" title="2.5 总体设计"></a>2.5 总体设计</h2>
+
+<h2 id="2-6-为什么-Apollo-选用-Eureka"><a href="#2-6-为什么-Apollo-选用-Eureka" class="headerlink" title="2.6 为什么 Apollo 选用 Eureka"></a>2.6 为什么 Apollo 选用 Eureka</h2><ul>
+<li>为了提高配置中心的可用性和降低部署复杂度，我们需要尽可能地减少外部依赖。</li>
+<li>它提供了完整的 Service Registry 和 Service Discovery 实现，并经受住了考验</li>
+<li>开源，方便问题排查</li>
+</ul>
+<h2 id="2-7-各模块介绍"><a href="#2-7-各模块介绍" class="headerlink" title="2.7 各模块介绍"></a>2.7 各模块介绍</h2><ul>
+<li>Config Service：<ul>
+<li>提供配置更新推送接口（基于Http long polling）<ul>
+<li>服务端使用Spring DeferredResult实现异步化，从而大大增加长连接数量</li>
+<li>目前使用的tomcat embed默认配置是最多10000个连接（可以调整），使用了4C8G的虚拟机实测可以支撑10000个连接，所以满足需求（一个应用实例只会发起一个长连接）。</li>
+</ul>
+</li>
+<li>接口服务对象为Apollo客户端</li>
+</ul>
+</li>
+<li>Admin Service<ul>
+<li>提供配置管理接口</li>
+<li>提供配置修改、发布等接口</li>
+<li>接口服务对象为Portal</li>
+</ul>
+</li>
+<li>Meta server<ul>
+<li>Portal通过域名访问Meta Server获取Admin Service服务列表（IP+Port）</li>
+<li>Client通过域名访问Meta Server获取Config Service服务列表（IP+Port）</li>
+<li>Meta Server从Eureka获取Config Service和Admin Service的服务信息，相当于是一个Eureka Client</li>
+<li>增设一个Meta Server的角色主要是为了封装服务发现的细节，对Portal和Client而言，永远通过一个Http接口获取Admin Service和Config Service的服务信息，而不需要关心背后实际的服务注册和发现组件</li>
+<li>Meta Server只是一个逻辑角色，在部署时和Config Service是在一个JVM进程中的，所以IP、端口和Config Service一致</li>
+</ul>
+</li>
+<li>Eureka<ul>
+<li>基于Eureka和Spring Cloud Netflix提供服务注册和发现</li>
+<li>Config Service和Admin Service会向Eureka注册服务，并保持心跳</li>
+<li>为了简单起见，目前Eureka在部署时和Config Service是在一个JVM进程中的（通过Spring Cloud Netflix）</li>
+</ul>
+</li>
+<li>Portal<ul>
+<li>提供Web界面供用户管理配置</li>
+<li>通过Meta Server获取Admin Service服务列表（IP+Port），通过IP+Port访问服务</li>
+<li>在Portal侧做load balance、错误重试</li>
+</ul>
+</li>
+<li>Client<ul>
+<li>Apollo提供的客户端程序，为应用提供配置获取、实时更新等功能</li>
+<li>通过Meta Server获取Config Service服务列表（IP+Port），通过IP+Port访问服务</li>
+<li>在Client侧做load balance、错误重试</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-8-配置发布后的实时推送设计"><a href="#2-8-配置发布后的实时推送设计" class="headerlink" title="2.8 配置发布后的实时推送设计"></a>2.8 配置发布后的实时推送设计</h2>
+<p>发送ReleaseMessage的实现方式：</p>
+
+
+<p><a target="_blank" rel="noopener" href="https://www.apolloconfig.com/#/zh/design/apollo-design?id=_212-config-service通知客户端的实现方式">Config Service通知客户端的实现方式</a>：<br></p>
+<p><a target="_blank" rel="noopener" href="https://www.apolloconfig.com/#/zh/design/apollo-design?id=_31-和spring集成的原理">和 Spring 集成的原理:</a></p>
+<p>Spring 中的 ApplicationContext 中会关联 ConfugurableEnvironment 对象，该对象提供了获取多个 PropertySource 的方法。而每个 PropertySource 中包含了多个 key-Value 的配置项。Spring 会顺序读取 PropertySource 中的配置（排在前面的优先级高于后面的）。 Apollo 在运行时会将配置以 PropertySource 的形式插入到 PropertySource 列表的第一个。</p>
+
+<h2 id="2-9-Namespaces"><a href="#2-9-Namespaces" class="headerlink" title="2.9 Namespaces"></a>2.9 Namespaces</h2><p>Namespaces 获取权限（针对于 Apollo 客户端）分类：</p>
+<ul>
+<li>private （私有的，只能被所属应用获取）</li>
+<li>public （公共的，所有应用都可以获取）</li>
+</ul>
+<p>Namespaces 的类型：</p>
+<ul>
+<li>私有类型（具有 private 权限）</li>
+<li>公共类型（具有 public 权限）</li>
+<li>继承类型（具有 private 权限，集成自公共类型的 Namespaces，用于覆盖公共配置中的某些配置）</li>
+</ul>
+<h1 id="3-Skywalking"><a href="#3-Skywalking" class="headerlink" title="3. Skywalking"></a>3. Skywalking</h1><p><a href="https://jeckfs.gitee.io/2021/09/04/APM-skywalking/">Skywalking 视频教程</a><br><a href="https://jeckfs.gitee.io/2021/09/15/APM-skywalking-书籍目录笔记/">Skywalking 部分笔记</a><br><a href="https://jeckfs.gitee.io/2021/09/14/skywalking-其他主机接入skywalking日志/">其他主机接入skywalking日志</a><br><a href="https://jeckfs.gitee.io/2021/07/26/链路追踪/">其他介绍</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://jeckfs.gitee.io/JeckFS">YFS</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://jeckfs.gitee.io/JeckFS/2022/05/24/MyPro/">http://jeckfs.gitee.io/JeckFS/2022/05/24/MyPro/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://jeckfs.gitee.io/JeckFS" target="_blank">JeckFS</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/JeckFS/tags/%E9%A1%B9%E7%9B%AE/">项目</a></div><div class="post_share"><div class="social-share" data-image="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/JeckFS/2022/05/28/Skywalking%E6%A2%B3%E7%90%86/"><img class="prev-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/JeckFS/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Skywalking梳理</div></div></a></div><div class="next-post pull-right"><a href="/JeckFS/2022/04/15/Spring-SpEL/"><img class="next-cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="onerror=null;src='/JeckFS/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Spring-SpEL</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/JeckFS/2020/08/10/WebSocket/" title="WebSocket"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-10</div><div class="title">WebSocket</div></div></a></div><div><a href="/JeckFS/2020/07/08/java%E5%95%86%E5%9F%8E%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/" title="java商城秒杀系统设计与实现"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-07-08</div><div class="title">java商城秒杀系统设计与实现</div></div></a></div><div><a href="/JeckFS/2022/03/11/miaosha/" title="miaosha"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-03-11</div><div class="title">miaosha</div></div></a></div><div><a href="/JeckFS/2020/08/04/%E5%BE%AE%E4%BA%BA%E4%BA%8B/" title="微人事"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-08-04</div><div class="title">微人事</div></div></a></div><div><a href="/JeckFS/2020/07/09/java%E7%A7%92%E6%9D%80/" title="java秒杀"><img class="cover" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-07-09</div><div class="title">java秒杀</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/JeckFS/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">YFS</div><div class="author-info__description">快乐每一天</div></div><div class="card-info-data site-data is-center"><a href="/JeckFS/archives/"><div class="headline">文章</div><div class="length-num">203</div></a><a href="/JeckFS/tags/"><div class="headline">标签</div><div class="length-num">59</div></a><a href="/JeckFS/categories/"><div class="headline">分类</div><div class="length-num">54</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-Spring-%E8%A7%A3%E5%86%B3%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96"><span class="toc-number">1.</span> <span class="toc-text">1. Spring 解决循环依赖</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-Apollo"><span class="toc-number">2.</span> <span class="toc-text">2. Apollo</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-%E7%89%B9%E6%80%A7"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 特性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-%E7%9B%B8%E5%85%B3%E9%85%8D%E7%BD%AE"><span class="toc-number">2.2.</span> <span class="toc-text">2.2 相关配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3-%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%94%A8%E6%B3%95"><span class="toc-number">2.3.</span> <span class="toc-text">2.3 客户端用法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-4-Apollo-%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%AE%BE%E8%AE%A1%E5%8E%9F%E7%90%86%EF%BC%9A"><span class="toc-number">2.4.</span> <span class="toc-text">2.4 Apollo 客户端设计原理：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-5-%E6%80%BB%E4%BD%93%E8%AE%BE%E8%AE%A1"><span class="toc-number">2.5.</span> <span class="toc-text">2.5 总体设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-6-%E4%B8%BA%E4%BB%80%E4%B9%88-Apollo-%E9%80%89%E7%94%A8-Eureka"><span class="toc-number">2.6.</span> <span class="toc-text">2.6 为什么 Apollo 选用 Eureka</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-7-%E5%90%84%E6%A8%A1%E5%9D%97%E4%BB%8B%E7%BB%8D"><span class="toc-number">2.7.</span> <span class="toc-text">2.7 各模块介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-8-%E9%85%8D%E7%BD%AE%E5%8F%91%E5%B8%83%E5%90%8E%E7%9A%84%E5%AE%9E%E6%97%B6%E6%8E%A8%E9%80%81%E8%AE%BE%E8%AE%A1"><span class="toc-number">2.8.</span> <span class="toc-text">2.8 配置发布后的实时推送设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-9-Namespaces"><span class="toc-number">2.9.</span> <span class="toc-text">2.9 Namespaces</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-Skywalking"><span class="toc-number">3.</span> <span class="toc-text">3. Skywalking</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/06/09/hello-world/" title="Hello World"><img src="https://t7.baidu.com/it/u=1732966997,2981886582&amp;fm=193&amp;f=GIF" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Hello World"/></a><div class="content"><a class="title" href="/JeckFS/2022/06/09/hello-world/" title="Hello World">Hello World</a><time datetime="2022-06-09T12:24:23.000Z" title="发表于 2022-06-09 20:24:23">2022-06-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/06/07/leetcode638-%E5%A4%A7%E7%A4%BC%E5%8C%85/" title="leetcode638-大礼包"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="leetcode638-大礼包"/></a><div class="content"><a class="title" href="/JeckFS/2022/06/07/leetcode638-%E5%A4%A7%E7%A4%BC%E5%8C%85/" title="leetcode638-大礼包">leetcode638-大礼包</a><time datetime="2022-06-07T08:52:59.000Z" title="发表于 2022-06-07 16:52:59">2022-06-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/05/28/Skywalking%E6%A2%B3%E7%90%86/" title="Skywalking梳理"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Skywalking梳理"/></a><div class="content"><a class="title" href="/JeckFS/2022/05/28/Skywalking%E6%A2%B3%E7%90%86/" title="Skywalking梳理">Skywalking梳理</a><time datetime="2022-05-28T01:16:03.000Z" title="发表于 2022-05-28 09:16:03">2022-05-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/05/24/MyPro/" title="MyPro"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="MyPro"/></a><div class="content"><a class="title" href="/JeckFS/2022/05/24/MyPro/" title="MyPro">MyPro</a><time datetime="2022-05-24T11:22:06.000Z" title="发表于 2022-05-24 19:22:06">2022-05-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/04/15/Spring-SpEL/" title="Spring-SpEL"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Spring-SpEL"/></a><div class="content"><a class="title" href="/JeckFS/2022/04/15/Spring-SpEL/" title="Spring-SpEL">Spring-SpEL</a><time datetime="2022-04-15T07:22:04.000Z" title="发表于 2022-04-15 15:22:04">2022-04-15</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By YFS</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/JeckFS/js/utils.js"></script><script src="/JeckFS/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
