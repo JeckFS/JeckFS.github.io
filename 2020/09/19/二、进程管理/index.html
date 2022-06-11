@@ -5,13 +5,13 @@
 <meta property="og:site_name" content="JeckFS">
 <meta property="og:description" content="进程与线程1.进程的概念与特征概念：  进程是程序的一次执行过程。 进程是一个程序及其数据在处理机上顺序执行时所发生的活动。 进程是具有独立功能的程序在一个数据集合上运行的过程，它是系统进行资源分配和调度的独立单位。  特征：  动态性 并发性 独立性 异步性 结构性：程序段、数据段、PCB  2.进程的状态与转换运行状态就绪状态：获得了除处理机之外一切的所需资源，一旦得到处理机即可运行。阻塞状">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://img2.baidu.com/it/u=48958987,1702342987&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=281">
+<meta property="og:image" content="https://img1.baidu.com/it/u=2322041376,2548191196&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500">
 <meta property="article:published_time" content="2020-09-19T07:25:51.000Z">
 <meta property="article:modified_time" content="2022-06-09T12:50:05.506Z">
 <meta property="article:author" content="YFS">
 <meta property="article:tag" content="王道操作系统">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://img2.baidu.com/it/u=48958987,1702342987&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=281"><link rel="shortcut icon" href="/JeckFS/img/favicon.png"><link rel="canonical" href="http://jeckfs.gitee.io/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/JeckFS/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+<meta name="twitter:image" content="https://img1.baidu.com/it/u=2322041376,2548191196&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500"><link rel="shortcut icon" href="/JeckFS/img/favicon.png"><link rel="canonical" href="http://jeckfs.gitee.io/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/JeckFS/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
   root: '/JeckFS/',
   algolia: undefined,
   localSearch: undefined,
@@ -142,7 +142,7 @@
       }
     }
     detectApple()
-    })(window)</script><meta name="generator" content="Hexo 6.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/JeckFS/archives/"><div class="headline">文章</div><div class="length-num">204</div></a><a href="/JeckFS/tags/"><div class="headline">标签</div><div class="length-num">59</div></a><a href="/JeckFS/categories/"><div class="headline">分类</div><div class="length-num">54</div></a></div><hr/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://img2.baidu.com/it/u=48958987,1702342987&amp;fm=253&amp;fmt=auto&amp;app=138&amp;f=JPEG?w=500&amp;h=281')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/JeckFS/">JeckFS</a></span><div id="menus"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">二、进程管理</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-09-19T07:25:51.000Z" title="发表于 2020-09-19 15:25:51">2020-09-19</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-06-09T12:50:05.506Z" title="更新于 2022-06-09 20:50:05">2022-06-09</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/JeckFS/categories/%E7%8E%8B%E9%81%93%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">王道操作系统</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="二、进程管理"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container">
+    })(window)</script><meta name="generator" content="Hexo 6.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/JeckFS/archives/"><div class="headline">文章</div><div class="length-num">205</div></a><a href="/JeckFS/tags/"><div class="headline">标签</div><div class="length-num">59</div></a><a href="/JeckFS/categories/"><div class="headline">分类</div><div class="length-num">54</div></a></div><hr/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://img1.baidu.com/it/u=2322041376,2548191196&amp;fm=253&amp;fmt=auto&amp;app=138&amp;f=JPEG?w=889&amp;h=500')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/JeckFS/">JeckFS</a></span><div id="menus"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">二、进程管理</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-09-19T07:25:51.000Z" title="发表于 2020-09-19 15:25:51">2020-09-19</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-06-09T12:50:05.506Z" title="更新于 2022-06-09 20:50:05">2022-06-09</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/JeckFS/categories/%E7%8E%8B%E9%81%93%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">王道操作系统</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="二、进程管理"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/1.png" class="" title="This is 1-th image.">
 <h1 id="进程与线程"><a href="#进程与线程" class="headerlink" title="进程与线程"></a>进程与线程</h1><h2 id="1-进程的概念与特征"><a href="#1-进程的概念与特征" class="headerlink" title="1.进程的概念与特征"></a>1.进程的概念与特征</h2><p>概念：</p>
 <ul>
 <li>进程是程序的一次执行过程。</li>
@@ -159,7 +159,7 @@
 </ul>
 <h2 id="2-进程的状态与转换"><a href="#2-进程的状态与转换" class="headerlink" title="2.进程的状态与转换"></a>2.进程的状态与转换</h2><p><strong>运行状态</strong><br><strong>就绪状态</strong>：获得了除处理机之外一切的所需资源，一旦得到处理机即可运行。<br><strong>阻塞状态/等待状态</strong>：等待某事件发生，或等待某资源可用，或等待输入/输出完成。<br><strong>创建状态</strong>：申请空白PCB，并向PCB填写一些控制和管理进程的信息；然后由系统为该进程分配运行时所需的资源；最后把该进程转入到就绪状态。<br><strong>结束状态</strong></p>
 <p>由于进程得到处理机的时间很短且非常频繁，所以进程在运行过程中实际上是频繁地转换到就绪状态。相对而言，其他资源（如外设）的使用和分配，或某一事件的发生（如IO操作的完成）对应的时间相对来说很长，进程转换到等待状态的次数也相对较少。</p>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/2.png" class="" title="This is 2-th image.">
 <p>运行状态到阻塞状态，用户程序会由用户态进入到内核态。</p>
 <h2 id="3-进程的控制"><a href="#3-进程的控制" class="headerlink" title="3.进程的控制"></a>3.进程的控制</h2><p>进程控制用的程序段都是原语。</p>
 <p>作业调度、系统提供服务、用户程序的应用请求都会创建进程。</p>
@@ -195,8 +195,8 @@
 </ul>
 <p><strong>进程切换与处理模式切换：</strong><br>模式切换时，处理机逻辑上可能还在同一进程中运行。如果进程因中断或异常进入到内核态运行，执行完后又回到用户态刚被中断的程序中运行，则操作系统只需恢复进入内核时所保存的CPU现场，无需改变当前进程的环境信息。但若要切换进程，当前运行进程改变了，则当前进程的环境信息也需要改变。</p>
 <h2 id="4-进程的组织"><a href="#4-进程的组织" class="headerlink" title="4.进程的组织"></a>4.进程的组织</h2><p><strong>1.PCB</strong><br>PCB常驻内存，它是进程实体的一部分，是进程存在的唯一标识。</p>
-
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/3.png" class="" title="This is 3-th image.">
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/4.png" class="" title="This is 4-th image.">
 <p>PCB的组织方式：</p>
 <ul>
 <li>链接方式：同一状态的PCB链接成一个队列，不同状态对应不同的队列。也可以根据阻塞原因的不同，排成多个阻塞队列。</li>
@@ -208,7 +208,7 @@
 <p>PV操作是低级通信方式，它是基于数据结构的共享；<br>高级通信方式是指以较高效率传输大量数据的通信方式，它是基于存储区的共享。</p>
 </blockquote>
 <p><strong>方式1：共享存储</strong></p>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/5.png" class="" title="This is 5-th image.">
 <p>操作系统只负责为通信进程提供可共享使用的存储空间和同步互斥工具（如P操作、V操作），数据交换则由用户自己安排读写指令完成。</p>
 <p><strong>方式2：消息传递</strong></p>
 <p>消息传递系统中，进程间数据交换是以<strong>格式化消息</strong>为单位的。交换的操作需要借助系统提供的发送消息和接收消息两个原语。</p>
@@ -216,7 +216,7 @@
 <p>间接通信方式：发送进程把消息发送到某个中间实体（信箱）中，接收进程从中间实体中获取消息。</p>
 <p><strong>方式3：管道通信</strong></p>
 <p>管道应提供三种协调能力：互斥、同步、确定对方存在。</p>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/6.png" class="" title="This is 6-th image.">
 <p><strong>管道是什么：</strong><br>  管道是用于连接一个读进程和一个写进程，以实现他们之间通信的一个<strong>共享文件</strong>（pipe文件）。</p>
 <p><strong>管道特性：</strong></p>
 <ul>
@@ -262,16 +262,16 @@
 <li>在一个多道系统中，若就绪队列不空，就绪的进程数目越多，处理器的效率不变。</li>
 </ul>
 <p>为什么进程间的通信必须借助操作系统的内核功能？简要说明通信的几种主要方式。</p>
-
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/61.png" class="" title="This is 61-th image.">
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/62.png" class="" title="This is 62-th image.">
 <h1 id="处理机调度"><a href="#处理机调度" class="headerlink" title="处理机调度"></a>处理机调度</h1><p>作业调度是；中级调度是将作业从内存调到外存。</p>
 <h1 id="1-调度层次"><a href="#1-调度层次" class="headerlink" title="1.调度层次"></a>1.调度层次</h1><ul>
 <li>作业调度：将作业调度至内存，并建立相应的进程，使它们获得竞争处理机的权利。每个作业只调入一次，调出一次。</li>
 <li>中级调度：又成为内存调度。<strong>为了提高内存利用率和系统吞吐量</strong>。对于那些暂时不能运行的进程，调至外存等待，此时进程状态称为挂起状态。等外存上那些具备运行条件的就绪进程再重新调入内存，并放入就绪队列中。 \</li>
 <li>进程调度：又成为低级调度。主要任务是按照某种方法和策略从就绪队列中选取一个进程，将处理机分配给它。</li>
 </ul>
-<h1 id="2-三级调度的关系"><a href="#2-三级调度的关系" class="headerlink" title="2.三级调度的关系"></a>2.三级调度的关系</h1>
-
+<h1 id="2-三级调度的关系"><a href="#2-三级调度的关系" class="headerlink" title="2.三级调度的关系"></a>2.三级调度的关系</h1><img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/7.png" class="" title="This is 7-th image.">
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/8.png" class="" title="This is 8-th image.">
 <h1 id="3-调度的时机、切换与过程"><a href="#3-调度的时机、切换与过程" class="headerlink" title="3.调度的时机、切换与过程"></a>3.调度的时机、切换与过程</h1><p>现代操作系统中，不能进行进程的调度和切换的情况：</p>
 <ul>
 <li>在处理中断的过程中的进程不能被切换。</li>
@@ -282,7 +282,7 @@
 <li>当发生引起调度条件，且当前进程无法继续运行下去时，可以马上进行调度和切换。（非剥夺调度）</li>
 <li>当中断处理结束或自陷处理结束后，返回被中断进程的用户态程序执行现场前，若置上请求调度标志，即可马上进行进程调度与切换。（剥夺调度）</li>
 </ul>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/9.png" class="" title="This is 9-th image.">
 <h1 id="4-进程的调度方式"><a href="#4-进程的调度方式" class="headerlink" title="4.进程的调度方式"></a>4.进程的调度方式</h1><ul>
 <li>非剥夺调度方式（非抢占方式）：获得CPU的进程会保持CPU直到终止或转换到等待状态。好处是实现简单、系统开销小，适用于大多数的批处理系统，但不能用于分时系统和大多数实时系统。</li>
 <li>剥夺调度方式（抢占方式）：获取CPU的进程会让出CPU给更重要或紧迫的的进程。</li>
@@ -293,7 +293,7 @@
 <li>系统吞吐量：即单位时间内CPU完成作业的数量。</li>
 <li>周转时间：</li>
 </ul>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/10.png" class="" title="This is 10-th image.">
 <ul>
 <li>等待时间：指的是作业在就绪队列中等待所花的时间。处理机调度算法实际上并不影响作业执行或输入/输出操作的时间。</li>
 <li>响应时间：用户提交请求到系统首次产生响应所用的时间。</li>
@@ -307,7 +307,7 @@
 </ul>
 </li>
 </ul>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/11.png" class="" title="This is 11-th image.">
 <ul>
 <li><p>短作业优先（SJF）调度算法（适用于短作业和进程的优先调度）<br>SJF指的是从后备队列中选择一个或若干个估计运行时间最短的作业或进程，将他们调入内存。</p>
 <p>缺点：</p>
@@ -322,7 +322,7 @@
 </ul>
 </li>
 </ul>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/12.png" class="" title="This is 12-th image.">
 <ul>
 <li><p>优先级调度算法（作业调度、进程调度）<br>分类：</p>
 <p>按照高优先级进程能否抢占正在执行的进程：</p>
@@ -340,13 +340,13 @@
 <ul>
 <li>高响应比优先调度算法（作业调度）<br>对FCFS和SJF的一种综合平衡，同时考虑每个作业的等待时间和估计运行时间。</li>
 </ul>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/13.png" class="" title="This is 13-th image.">
 <ul>
 <li>时间片轮转调度算法<br>用于分时系统。就绪进程按照先后次序排成一个队列，每个出队进程占用一个时间片，用完之后，重新进入队列排队。<br>时间片根据系统的响应时间、就绪队列中的进程数目和系统的处理能力来确定。时间片太长导致所有进程都能在一个时间片内执行完毕，该算法就退化位FCFS算法；时间片太小，进程之间的切换将会很频繁，使处理机开销增大，真正用于运行用户进程的时间减少。<br>时间片的大小可以略大于一次典型的交互所需的时间，这样可以使大多数进程在一个时间片内完成。</li>
 </ul>
 <ul>
 <li><p>多级反馈队列调度算法（集合了时间片轮转、优先级调度算法的优点）</p>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/14.png" class="" title="This is 14-th image.">
 <ul>
 <li>在一个时间片中不能完成的进程会被挪到下一级队列中，直到能够在一个时间片内完成。</li>
 <li>最后一级队列采用时间片轮转的方式运行。</li>
@@ -355,38 +355,38 @@
 <p>优点：</p>
 </li>
 </ul>
-
-<h2 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h2>
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/15.png" class="" title="This is 15-th image.">
+<h2 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h2><img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/16.png" class="" title="This is 16-th image.">
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/l294265421/article/details/46450125">参考1</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/lightmare/p/10398871.html">参考2</a></p>
 <h1 id="进程同步"><a href="#进程同步" class="headerlink" title="进程同步"></a>进程同步</h1><h2 id="1-进程同步的基本概念"><a href="#1-进程同步的基本概念" class="headerlink" title="1.进程同步的基本概念"></a>1.进程同步的基本概念</h2><p><strong>临界资源</strong><br>一次只允许一个进程使用的资源成为临界资源。</p>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/17.png" class="" title="This is 17-th image.">
 <p><strong>同步机制遵循的规则</strong></p>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/18.png" class="" title="This is 18-th image.">
 <h2 id="2-实现临界区互斥的基本方法"><a href="#2-实现临界区互斥的基本方法" class="headerlink" title="2.实现临界区互斥的基本方法"></a>2.实现临界区互斥的基本方法</h2><p><strong>1.软件实现方法</strong></p>
 <ul>
 <li>单标志法<br>公用整型变量turn表示允许进入临界区的进程编号。如turn=0表示允许P0进程进入临界区。该算法可保证每次只允许一个进程进入临界区。当某个进程不再进入临界区了，那么另一个进程也将无法进入临界区，违背了<strong>空闲让进</strong>。这种情况只能适合进程<strong>交替执行</strong>的情况。</li>
 </ul>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/19.png" class="" title="This is 19-th image.">
 <ul>
 <li>双标志法先检查<br>先检查是否被其他线程正在访问，若正被访问，则等待。否则，才进入自己的临界区。<br><code>flag[i]=false</code>表示Pi进程未进入临界区。<br><code>flag[i]=true</code>表示Pi进程计入临界区。</li>
 </ul>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/20.png" class="" title="This is 20-th image.">
 <p>  优点：不用交替进入，可连续使用；<br>  缺点：Pi与Pj可能同事进入临界区；违背“忙则等待”。如按照①②③④的顺序进入时。</p>
 <ul>
 <li>双标志法后检查</li>
 </ul>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/21.png" class="" title="This is 21-th image.">
 <p>  问题是：会产生死锁。</p>
 <ul>
 <li>Peterson’s Algorithm<br>本算法是第一个算法和第三个算法的结合。</li>
 </ul>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/22.png" class="" title="This is 22-th image.">
 <p>对于<code>flag[i]=true; turn=j; flag[j]=true; turn=i;</code>，假设给他编号为1,2,3,4，则其可能的执行序列为：<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[1, 2, 3, 4]</span><br><span class="line">[1, 3, 2, 4]</span><br><span class="line">[1, 3, 4, 2]</span><br><span class="line">[3, 1, 2, 4]</span><br><span class="line">[3, 1, 4, 2]</span><br><span class="line">[3, 4, 1, 2]</span><br></pre></td></tr></table></figure><br>思考这些排列方式是否会引发线程安全问题即可。</p>
 <p><strong>2.硬件实现方法</strong></p>
 <ul>
 <li>中断屏蔽方法<br>使用关中断会防止进程切换，这样进入临界区的进程就能顺利执行完，然后开中断。</li>
 </ul>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/23.png" class="" title="This is 23-th image.">
 <p>  缺点：</p>
 <ul>
 <li>限制了处理机交替执行程序的能力，因此执行效率会明显降低。</li>
@@ -395,13 +395,13 @@
 <ul>
 <li>硬件指令方法<br><code>TestAndSet指令</code>：该指令是原子操作，功能是读出指定标志后把该标志设置为真。其功能描述如下：</li>
 </ul>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/24.png" class="" title="This is 24-th image.">
 <p>  实现临界区互斥访问的方法是：给每个临界资源设置一个共享不二变量lock，lock=true表示正被占用，初值为false。其算法描述为：</p>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/25.png" class="" title="This is 25-th image.">
 <p>  <code>Swap指令</code>：功能是交换两个字(字节)的内容。功能描述如下：</p>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/26.png" class="" title="This is 26-th image.">
 <p>  每个临界资源设置一个共享布尔变量lock，初始值为false，表示临界资源没有被其他进程访问。有进程在临界区时，重复交换和煎炒过程，直到进程退出。</p>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/27.png" class="" title="This is 27-th image.">
 <blockquote>
 <p>TestAndSet与Swap指令并非软件实现，事实上他们是由硬件逻辑直接实现的，不会被中断。<br>硬件方法的优点：</p>
 <ul>
@@ -415,23 +415,23 @@
 <h2 id="3-信号量"><a href="#3-信号量" class="headerlink" title="3.信号量"></a>3.信号量</h2><ul>
 <li>整型信号量<br>整型信号量被定义为一个用于表示资源数目的整型量S。</li>
 </ul>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/28.png" class="" title="This is 28-th image.">
 <p>  缺点是不能遵循“让权等待”。</p>
 <ul>
 <li>记录型信号量<br>不存在“忙等”现象。value表示资源数目，进程链表L表示所有等待该资源的进程。</li>
 </ul>
-
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/29.png" class="" title="This is 29-th image.">
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/30.png" class="" title="This is 30-th image.">
 <p><strong>1.利用信号量实现进程同步</strong></p>
 <p>只有当语句x执行完成后，语句y才能执行：</p>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/31.png" class="" title="This is 31-th image.">
 <p><strong>2.利用信号量实现进程互斥</strong></p>
 <p>假设S为实现P1，P2互斥的信号量，由于每次只允许一个进程进入临界区，所以S的初值应为1。只需要把临界区置于P(S)与V(S)之间即可实现两进程的互斥访问。</p>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/32.png" class="" title="This is 32-th image.">
 <p><strong>3.利用信号量实现前驱关系</strong></p>
 <p>为保证S1→S2，S1→S3的前驱关系，应分别设置信号量a1，a2.为了保证S2→S4，S2→S5，S3→S6，S4→S6，S5→S6，应设置信号量b1，b2，c，d，e。</p>
-
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/33.png" class="" title="This is 33-th image.">
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/34.png" class="" title="This is 34-th image.">
 <h2 id="4-管程"><a href="#4-管程" class="headerlink" title="4.管程"></a>4.管程</h2><p>管程是由一组数据以及定义在这组数据之上的对这组数据的操作组成的软件模块，这组操作能初始化病改变管程中的数据和同步进程。</p>
 <p>管程的组成：</p>
 <ul>
@@ -451,42 +451,42 @@
 <li>关系分析：生产者与消费者对缓冲区是互斥关系；生产者与消费者是一个协作关系，只有生产者生产后，消费者才能消费，他们也是同步关系。</li>
 <li>信号量设置：mutex作为互斥信号量，用于控制互斥访问缓冲池，互斥限号两初值为1；信号量full表示当前缓冲池中“满”的缓冲区数，初值为0；信号量empty表示缓冲池中“空”的缓冲区数，初值为n。</li>
 </ul>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/35.png" class="" title="This is 35-th image.">
 <p><strong>注意：</strong></p>
 <ul>
 <li>生产者先执行P(mutex)然后执行P(empty)，消费者先执行P(mutex)然后执行P(full)，在生产者获得互斥量mutex后，发现并没有空的缓冲区(empty为0)，这时候就会产生死锁，即生产者线程等待缓冲区释放，却保持着对线程池的访问，而消费者则无法获取到缓冲池的访问权，更无法释放缓冲区，便发生了死锁。</li>
 </ul>
-<h3 id="5-2-复杂生产者-消费者问题"><a href="#5-2-复杂生产者-消费者问题" class="headerlink" title="5.2 复杂生产者-消费者问题"></a>5.2 复杂生产者-消费者问题</h3>
+<h3 id="5-2-复杂生产者-消费者问题"><a href="#5-2-复杂生产者-消费者问题" class="headerlink" title="5.2 复杂生产者-消费者问题"></a>5.2 复杂生产者-消费者问题</h3><img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/36.png" class="" title="This is 36-th image.">
 <ul>
 <li>关系分析：爸爸和妈妈是互斥关系，爸爸和女儿、妈妈和儿子是同步关系，儿子和女儿没有互斥和同步关系。</li>
 </ul>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/37.png" class="" title="This is 37-th image.">
 <ul>
 <li>信号量设置：<code>plate</code>为互斥信号量，表示是否允许向盘子放入水果，初值为1(允许放入)；<code>apple</code>表示盘子中是否有苹果，初值为0(表示盘子为空)；<code>orgnge</code>表示盘子中是否有橘子，初值为0(表示盘子为空)。</li>
 </ul>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/38.png" class="" title="This is 38-th image.">
 <p>女儿拿走苹果后，或儿子拿走橘子后才能释放盘子，即V(plate)。</p>
 <h3 id="5-3-读者-写者问题"><a href="#5-3-读者-写者问题" class="headerlink" title="5.3 读者-写者问题"></a>5.3 读者-写者问题</h3><ul>
 <li>关系分析：读者与写者是互斥的、写者与写者互斥，读者与读者不存在互斥问题。</li>
 <li>信号量设置：count计数器用来记录当前读者数量，初值为0；互斥信号量mutex为保护更新count变量时的互斥；互斥信号量rw用于保证读者和写者的互斥访问。</li>
 </ul>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/39.png" class="" title="This is 39-th image.">
 <p>若希望写进程优先，即当有读进程正在读共享文件时，有写进程请求访问，这时应禁止后续读进程的请求，等待到已在共享文件的读进程执行完毕则立即让写进程执行，只有在无写进程执行的情况下才允许读进程再次运行。<br>实现方法是：在write()、reader()中各加入一对PV操作，即互斥信号量w表示有无写进程进行。</p>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/40.png" class="" title="This is 40-th image.">
 <p>上述算法并不是真正意义上的写优先，而是读写是一样的优先级。当一个写进程访问文件时，如果<strong>先有</strong>一些读进程要求访问文件，而<strong>再有</strong>另一个写进程要求访问文件，那么当当前访问文件的进程结束对文件的写操作时，会是一个读进程占用文件而不是写进程（在信号量w的阻塞队列上，因为读进程先来，而排在阻塞队列队首，而V操作唤醒进程时唤醒的是队首进程），所以这里的写优先是相对的。</p>
 <blockquote>
 <p>技巧：互斥访问计数器count</p>
 </blockquote>
-<h3 id="5-4-哲学家进餐问题"><a href="#5-4-哲学家进餐问题" class="headerlink" title="5.4 哲学家进餐问题"></a>5.4 哲学家进餐问题</h3>
+<h3 id="5-4-哲学家进餐问题"><a href="#5-4-哲学家进餐问题" class="headerlink" title="5.4 哲学家进餐问题"></a>5.4 哲学家进餐问题</h3><img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/41.png" class="" title="This is 41-th image.">
 <p>关系分析：5名哲学家与左右邻居对其中间筷子的访问是互斥关系。<br>解决方式1：只有当一个哲学家左右两边的筷子都可用时，才允许抓起筷子。</p>
-
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/42.png" class="" title="This is 42-th image.">
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/43.png" class="" title="This is 43-th image.">
 <h3 id="5-5-吸烟者问题"><a href="#5-5-吸烟者问题" class="headerlink" title="5.5 吸烟者问题"></a>5.5 吸烟者问题</h3><p>一个供应者三个抽烟者，供应者提供烟草、纸、胶水三种中的其中两种，抽烟者需要三种材料才能完成抽烟，且桌上只能同时放两种材料。完成三个抽烟者轮流抽烟的动作。</p>
 <p>关系分析：供应者与三个抽烟者分别是同步关系；三个抽烟者对抽烟这个动作互斥（或有三个抽烟者轮流抽烟得知）<br>信号量设置：信号量offer1，offer2，offer3表示烟草和纸的资源组合、烟草和胶水的资源组合、纸和胶水的资源组合。</p>
-
-
-
-<h1 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h1><h2 id="1-死锁处理策略"><a href="#1-死锁处理策略" class="headerlink" title="1.死锁处理策略"></a>1.死锁处理策略</h2>
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/44.png" class="" title="This is 44-th image.">
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/45.png" class="" title="This is 45-th image.">
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/46.png" class="" title="This is 46-th image.">
+<h1 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h1><h2 id="1-死锁处理策略"><a href="#1-死锁处理策略" class="headerlink" title="1.死锁处理策略"></a>1.死锁处理策略</h2><img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/47.png" class="" title="This is 47-th image.">
 <h2 id="2-死锁预防"><a href="#2-死锁预防" class="headerlink" title="2.死锁预防"></a>2.死锁预防</h2><ul>
 <li>破坏互斥条件<br>可行性小。有的场合需要保护这种互斥性。</li>
 <li>破坏不剥夺条件<br>当请求新的资源得不到满足时，必须释放已经保持的资源。<br>缺点是：实现复杂，释放已获得的资源可能造成前一阶段工作的失效，反复申请和释放资源会增加系统开销，降低系统吞吐量。<br>优点是：对于状态易于保存和恢复的资源，如CPU的寄存器和内存资源。一般不能用于打印机之类的资源。</li>
@@ -496,21 +496,21 @@
 <h2 id="3-银行家算法"><a href="#3-银行家算法" class="headerlink" title="3.银行家算法"></a>3.银行家算法</h2><p><strong>可利用资源矢量Available</strong>：<code>Available[j]=K</code>表示系统中先有Rj类资源K个。<br><strong>最大需求矩阵Max</strong>：<code>Max[i][j]=K</code>表示进程i需要Rj类资源的最大数目为K。<br><strong>分配矩阵Allocation</strong>：<code>Allocaltion[i][j]=K</code>表示进程i当前已经分得Rj类思源的数目为K。<br><strong>需求矩阵Need</strong>：<code>Need[i][j]=K</code>表示进程i还需要Rj类资源的数目为K。</p>
 <p>上述矩阵满足<code>Need=Max-Allocation</code></p>
 <p>算法描述：</p>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/48.png" class="" title="This is 48-th image.">
 <p>安全性算法（构造安全序列）：</p>
-
-
-
-<h1 id="4-死锁的检测和解除"><a href="#4-死锁的检测和解除" class="headerlink" title="4.死锁的检测和解除"></a>4.死锁的检测和解除</h1><h2 id="4-1-资源分配图"><a href="#4-1-资源分配图" class="headerlink" title="4.1 资源分配图"></a>4.1 资源分配图</h2>
-
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/49.png" class="" title="This is 49-th image.">
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/50.png" class="" title="This is 50-th image.">
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/51.png" class="" title="This is 51-th image.">
+<h1 id="4-死锁的检测和解除"><a href="#4-死锁的检测和解除" class="headerlink" title="4.死锁的检测和解除"></a>4.死锁的检测和解除</h1><h2 id="4-1-资源分配图"><a href="#4-1-资源分配图" class="headerlink" title="4.1 资源分配图"></a>4.1 资源分配图</h2><img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/52.png" class="" title="This is 52-th image.">
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/53.png" class="" title="This is 53-th image.">
 <p>对于进程来说，入度表示已经获取的资源，出度表示需要请求的资源。</p>
 <h2 id="4-2-死锁定理（用于检测系统状态S是否为死锁状态）"><a href="#4-2-死锁定理（用于检测系统状态S是否为死锁状态）" class="headerlink" title="4.2 死锁定理（用于检测系统状态S是否为死锁状态）"></a>4.2 死锁定理（用于检测系统状态S是否为死锁状态）</h2><p>资源分配图状态简化：</p>
-
-
-<h2 id="4-3-死锁解除"><a href="#4-3-死锁解除" class="headerlink" title="4.3 死锁解除"></a>4.3 死锁解除</h2>
-
-<h1 id="总结：-1"><a href="#总结：-1" class="headerlink" title="总结："></a>总结：</h1>
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/54.png" class="" title="This is 54-th image.">
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/55.png" class="" title="This is 55-th image.">
+<h2 id="4-3-死锁解除"><a href="#4-3-死锁解除" class="headerlink" title="4.3 死锁解除"></a>4.3 死锁解除</h2><img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/56.png" class="" title="This is 56-th image.">
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/57.png" class="" title="This is 57-th image.">
+<h1 id="总结：-1"><a href="#总结：-1" class="headerlink" title="总结："></a>总结：</h1><img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/58.png" class="" title="This is 58-th image.">
 <p><strong>作业和进程的关系：</strong></p>
-
-
-</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://jeckfs.gitee.io/JeckFS">YFS</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://jeckfs.gitee.io/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/">http://jeckfs.gitee.io/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://jeckfs.gitee.io/JeckFS" target="_blank">JeckFS</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/JeckFS/tags/%E7%8E%8B%E9%81%93%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">王道操作系统</a></div><div class="post_share"><div class="social-share" data-image="https://img2.baidu.com/it/u=48958987,1702342987&amp;fm=253&amp;fmt=auto&amp;app=138&amp;f=JPEG?w=500&amp;h=281" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/JeckFS/2020/09/30/%E4%B8%89%E3%80%81%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/"><img class="prev-cover" src="https://img2.baidu.com/it/u=2566230917,2808117782&amp;fm=253&amp;fmt=auto&amp;app=120&amp;f=JPEG?w=889&amp;h=500" onerror="onerror=null;src='/JeckFS/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">三、内存管理</div></div></a></div><div class="next-post pull-right"><a href="/JeckFS/2020/09/19/%E7%8E%8B%E9%81%93%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"><img class="next-cover" src="https://img2.baidu.com/it/u=3747114911,414713113&amp;fm=253&amp;fmt=auto&amp;app=138&amp;f=JPEG?w=882&amp;h=500" onerror="onerror=null;src='/JeckFS/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">一、操作系统概述</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/JeckFS/2020/10/20/Temp/" title="Temp"><img class="cover" src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-20</div><div class="title">Temp</div></div></a></div><div><a href="/JeckFS/2020/09/30/%E4%B8%89%E3%80%81%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" title="三、内存管理"><img class="cover" src="https://img2.baidu.com/it/u=2566230917,2808117782&fm=253&fmt=auto&app=120&f=JPEG?w=889&h=500" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-09-30</div><div class="title">三、内存管理</div></div></a></div><div><a href="/JeckFS/2020/09/19/%E7%8E%8B%E9%81%93%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" title="一、操作系统概述"><img class="cover" src="https://img2.baidu.com/it/u=3747114911,414713113&fm=253&fmt=auto&app=138&f=JPEG?w=882&h=500" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-09-19</div><div class="title">一、操作系统概述</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/JeckFS/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">YFS</div><div class="author-info__description">快乐每一天</div></div><div class="card-info-data site-data is-center"><a href="/JeckFS/archives/"><div class="headline">文章</div><div class="length-num">204</div></a><a href="/JeckFS/tags/"><div class="headline">标签</div><div class="length-num">59</div></a><a href="/JeckFS/categories/"><div class="headline">分类</div><div class="length-num">54</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B"><span class="toc-number">1.</span> <span class="toc-text">进程与线程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%A6%82%E5%BF%B5%E4%B8%8E%E7%89%B9%E5%BE%81"><span class="toc-number">1.1.</span> <span class="toc-text">1.进程的概念与特征</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E8%BF%9B%E7%A8%8B%E7%9A%84%E7%8A%B6%E6%80%81%E4%B8%8E%E8%BD%AC%E6%8D%A2"><span class="toc-number">1.2.</span> <span class="toc-text">2.进程的状态与转换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%8E%A7%E5%88%B6"><span class="toc-number">1.3.</span> <span class="toc-text">3.进程的控制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E8%BF%9B%E7%A8%8B%E7%9A%84%E7%BB%84%E7%BB%87"><span class="toc-number">1.4.</span> <span class="toc-text">4.进程的组织</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E8%BF%9B%E7%A8%8B%E7%9A%84%E9%80%9A%E4%BF%A1"><span class="toc-number">1.5.</span> <span class="toc-text">5.进程的通信</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E7%BA%BF%E7%A8%8B%E7%9A%84%E6%A6%82%E5%BF%B5%E5%92%8C%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.6.</span> <span class="toc-text">6.线程的概念和多线程模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%A0%E9%A2%98"><span class="toc-number">1.7.</span> <span class="toc-text">习题</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E6%9C%BA%E8%B0%83%E5%BA%A6"><span class="toc-number">2.</span> <span class="toc-text">处理机调度</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E8%B0%83%E5%BA%A6%E5%B1%82%E6%AC%A1"><span class="toc-number">3.</span> <span class="toc-text">1.调度层次</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E4%B8%89%E7%BA%A7%E8%B0%83%E5%BA%A6%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number">4.</span> <span class="toc-text">2.三级调度的关系</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E8%B0%83%E5%BA%A6%E7%9A%84%E6%97%B6%E6%9C%BA%E3%80%81%E5%88%87%E6%8D%A2%E4%B8%8E%E8%BF%87%E7%A8%8B"><span class="toc-number">5.</span> <span class="toc-text">3.调度的时机、切换与过程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-%E8%BF%9B%E7%A8%8B%E7%9A%84%E8%B0%83%E5%BA%A6%E6%96%B9%E5%BC%8F"><span class="toc-number">6.</span> <span class="toc-text">4.进程的调度方式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-%E8%B0%83%E5%BA%A6%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8E%9F%E5%88%99"><span class="toc-number">7.</span> <span class="toc-text">5.调度的基本原则</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#6-%E5%85%B8%E5%9E%8B%E7%9A%84%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95"><span class="toc-number">8.</span> <span class="toc-text">6.典型的调度算法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A"><span class="toc-number">8.1.</span> <span class="toc-text">总结：</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E5%90%8C%E6%AD%A5"><span class="toc-number">9.</span> <span class="toc-text">进程同步</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%BF%9B%E7%A8%8B%E5%90%8C%E6%AD%A5%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-number">9.1.</span> <span class="toc-text">1.进程同步的基本概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%AE%9E%E7%8E%B0%E4%B8%B4%E7%95%8C%E5%8C%BA%E4%BA%92%E6%96%A5%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%96%B9%E6%B3%95"><span class="toc-number">9.2.</span> <span class="toc-text">2.实现临界区互斥的基本方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="toc-number">9.3.</span> <span class="toc-text">3.信号量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E7%AE%A1%E7%A8%8B"><span class="toc-number">9.4.</span> <span class="toc-text">4.管程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E7%BB%8F%E5%85%B8%E5%90%8C%E6%AD%A5%E9%97%AE%E9%A2%98"><span class="toc-number">9.5.</span> <span class="toc-text">5.经典同步问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E7%94%9F%E4%BA%A7%E8%80%85-%E6%B6%88%E8%B4%B9%E8%80%85%E9%97%AE%E9%A2%98"><span class="toc-number">9.5.1.</span> <span class="toc-text">5.1 生产者-消费者问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E5%A4%8D%E6%9D%82%E7%94%9F%E4%BA%A7%E8%80%85-%E6%B6%88%E8%B4%B9%E8%80%85%E9%97%AE%E9%A2%98"><span class="toc-number">9.5.2.</span> <span class="toc-text">5.2 复杂生产者-消费者问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-%E8%AF%BB%E8%80%85-%E5%86%99%E8%80%85%E9%97%AE%E9%A2%98"><span class="toc-number">9.5.3.</span> <span class="toc-text">5.3 读者-写者问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4-%E5%93%B2%E5%AD%A6%E5%AE%B6%E8%BF%9B%E9%A4%90%E9%97%AE%E9%A2%98"><span class="toc-number">9.5.4.</span> <span class="toc-text">5.4 哲学家进餐问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-5-%E5%90%B8%E7%83%9F%E8%80%85%E9%97%AE%E9%A2%98"><span class="toc-number">9.5.5.</span> <span class="toc-text">5.5 吸烟者问题</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%AD%BB%E9%94%81"><span class="toc-number">10.</span> <span class="toc-text">死锁</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%AD%BB%E9%94%81%E5%A4%84%E7%90%86%E7%AD%96%E7%95%A5"><span class="toc-number">10.1.</span> <span class="toc-text">1.死锁处理策略</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%AD%BB%E9%94%81%E9%A2%84%E9%98%B2"><span class="toc-number">10.2.</span> <span class="toc-text">2.死锁预防</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E9%93%B6%E8%A1%8C%E5%AE%B6%E7%AE%97%E6%B3%95"><span class="toc-number">10.3.</span> <span class="toc-text">3.银行家算法</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-%E6%AD%BB%E9%94%81%E7%9A%84%E6%A3%80%E6%B5%8B%E5%92%8C%E8%A7%A3%E9%99%A4"><span class="toc-number">11.</span> <span class="toc-text">4.死锁的检测和解除</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#4-1-%E8%B5%84%E6%BA%90%E5%88%86%E9%85%8D%E5%9B%BE"><span class="toc-number">11.1.</span> <span class="toc-text">4.1 资源分配图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-2-%E6%AD%BB%E9%94%81%E5%AE%9A%E7%90%86%EF%BC%88%E7%94%A8%E4%BA%8E%E6%A3%80%E6%B5%8B%E7%B3%BB%E7%BB%9F%E7%8A%B6%E6%80%81S%E6%98%AF%E5%90%A6%E4%B8%BA%E6%AD%BB%E9%94%81%E7%8A%B6%E6%80%81%EF%BC%89"><span class="toc-number">11.2.</span> <span class="toc-text">4.2 死锁定理（用于检测系统状态S是否为死锁状态）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-3-%E6%AD%BB%E9%94%81%E8%A7%A3%E9%99%A4"><span class="toc-number">11.3.</span> <span class="toc-text">4.3 死锁解除</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A-1"><span class="toc-number">12.</span> <span class="toc-text">总结：</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/06/09/Hello-World-0/" title="Hello_World"><img src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Hello_World"/></a><div class="content"><a class="title" href="/JeckFS/2022/06/09/Hello-World-0/" title="Hello_World">Hello_World</a><time datetime="2022-06-09T13:10:36.000Z" title="发表于 2022-06-09 21:10:36">2022-06-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/06/09/hello-world/" title="Hello World"><img src="https://t7.baidu.com/it/u=1732966997,2981886582&amp;fm=193&amp;f=GIF" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Hello World"/></a><div class="content"><a class="title" href="/JeckFS/2022/06/09/hello-world/" title="Hello World">Hello World</a><time datetime="2022-06-09T12:24:23.000Z" title="发表于 2022-06-09 20:24:23">2022-06-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/06/07/leetcode638-%E5%A4%A7%E7%A4%BC%E5%8C%85/" title="leetcode638-大礼包"><img src="https://img2.baidu.com/it/u=3747114911,414713113&amp;fm=253&amp;fmt=auto&amp;app=138&amp;f=JPEG?w=882&amp;h=500" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="leetcode638-大礼包"/></a><div class="content"><a class="title" href="/JeckFS/2022/06/07/leetcode638-%E5%A4%A7%E7%A4%BC%E5%8C%85/" title="leetcode638-大礼包">leetcode638-大礼包</a><time datetime="2022-06-07T08:52:59.000Z" title="发表于 2022-06-07 16:52:59">2022-06-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/05/28/Skywalking%E6%A2%B3%E7%90%86/" title="Skywalking梳理"><img src="https://img1.baidu.com/it/u=2709423071,2700494803&amp;fm=253&amp;fmt=auto&amp;app=120&amp;f=JPEG?w=500&amp;h=281" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Skywalking梳理"/></a><div class="content"><a class="title" href="/JeckFS/2022/05/28/Skywalking%E6%A2%B3%E7%90%86/" title="Skywalking梳理">Skywalking梳理</a><time datetime="2022-05-28T01:16:03.000Z" title="发表于 2022-05-28 09:16:03">2022-05-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/05/24/MyPro/" title="MyPro"><img src="https://img1.baidu.com/it/u=283250001,79199516&amp;fm=253&amp;fmt=auto&amp;app=120&amp;f=JPEG?w=1200&amp;h=674" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="MyPro"/></a><div class="content"><a class="title" href="/JeckFS/2022/05/24/MyPro/" title="MyPro">MyPro</a><time datetime="2022-05-24T11:22:06.000Z" title="发表于 2022-05-24 19:22:06">2022-05-24</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By YFS</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/JeckFS/js/utils.js"></script><script src="/JeckFS/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/59.png" class="" title="This is 59-th image.">
+<img src="/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/60.png" class="" title="This is 60-th image.">
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://jeckfs.gitee.io/JeckFS">YFS</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://jeckfs.gitee.io/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/">http://jeckfs.gitee.io/JeckFS/2020/09/19/%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B%E7%AE%A1%E7%90%86/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://jeckfs.gitee.io/JeckFS" target="_blank">JeckFS</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/JeckFS/tags/%E7%8E%8B%E9%81%93%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">王道操作系统</a></div><div class="post_share"><div class="social-share" data-image="https://img1.baidu.com/it/u=2322041376,2548191196&amp;fm=253&amp;fmt=auto&amp;app=138&amp;f=JPEG?w=889&amp;h=500" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/JeckFS/2020/09/30/%E4%B8%89%E3%80%81%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/"><img class="prev-cover" src="https://img1.baidu.com/it/u=283250001,79199516&amp;fm=253&amp;fmt=auto&amp;app=120&amp;f=JPEG?w=1200&amp;h=674" onerror="onerror=null;src='/JeckFS/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">三、内存管理</div></div></a></div><div class="next-post pull-right"><a href="/JeckFS/2020/09/19/%E7%8E%8B%E9%81%93%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/"><img class="next-cover" src="https://img0.baidu.com/it/u=297071526,3870034878&amp;fm=253&amp;fmt=auto&amp;app=138&amp;f=JPEG?w=499&amp;h=332" onerror="onerror=null;src='/JeckFS/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">一、操作系统概述</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/JeckFS/2020/10/20/Temp/" title="Temp"><img class="cover" src="https://img2.baidu.com/it/u=48958987,1702342987&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=281" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-10-20</div><div class="title">Temp</div></div></a></div><div><a href="/JeckFS/2020/09/30/%E4%B8%89%E3%80%81%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" title="三、内存管理"><img class="cover" src="https://img1.baidu.com/it/u=283250001,79199516&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=674" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-09-30</div><div class="title">三、内存管理</div></div></a></div><div><a href="/JeckFS/2020/09/19/%E7%8E%8B%E9%81%93%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" title="一、操作系统概述"><img class="cover" src="https://img0.baidu.com/it/u=297071526,3870034878&fm=253&fmt=auto&app=138&f=JPEG?w=499&h=332" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2020-09-19</div><div class="title">一、操作系统概述</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/JeckFS/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">YFS</div><div class="author-info__description">快乐每一天</div></div><div class="card-info-data site-data is-center"><a href="/JeckFS/archives/"><div class="headline">文章</div><div class="length-num">205</div></a><a href="/JeckFS/tags/"><div class="headline">标签</div><div class="length-num">59</div></a><a href="/JeckFS/categories/"><div class="headline">分类</div><div class="length-num">54</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B"><span class="toc-number">1.</span> <span class="toc-text">进程与线程</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%A6%82%E5%BF%B5%E4%B8%8E%E7%89%B9%E5%BE%81"><span class="toc-number">1.1.</span> <span class="toc-text">1.进程的概念与特征</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E8%BF%9B%E7%A8%8B%E7%9A%84%E7%8A%B6%E6%80%81%E4%B8%8E%E8%BD%AC%E6%8D%A2"><span class="toc-number">1.2.</span> <span class="toc-text">2.进程的状态与转换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%8E%A7%E5%88%B6"><span class="toc-number">1.3.</span> <span class="toc-text">3.进程的控制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E8%BF%9B%E7%A8%8B%E7%9A%84%E7%BB%84%E7%BB%87"><span class="toc-number">1.4.</span> <span class="toc-text">4.进程的组织</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E8%BF%9B%E7%A8%8B%E7%9A%84%E9%80%9A%E4%BF%A1"><span class="toc-number">1.5.</span> <span class="toc-text">5.进程的通信</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E7%BA%BF%E7%A8%8B%E7%9A%84%E6%A6%82%E5%BF%B5%E5%92%8C%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.6.</span> <span class="toc-text">6.线程的概念和多线程模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%A0%E9%A2%98"><span class="toc-number">1.7.</span> <span class="toc-text">习题</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A4%84%E7%90%86%E6%9C%BA%E8%B0%83%E5%BA%A6"><span class="toc-number">2.</span> <span class="toc-text">处理机调度</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E8%B0%83%E5%BA%A6%E5%B1%82%E6%AC%A1"><span class="toc-number">3.</span> <span class="toc-text">1.调度层次</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E4%B8%89%E7%BA%A7%E8%B0%83%E5%BA%A6%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number">4.</span> <span class="toc-text">2.三级调度的关系</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E8%B0%83%E5%BA%A6%E7%9A%84%E6%97%B6%E6%9C%BA%E3%80%81%E5%88%87%E6%8D%A2%E4%B8%8E%E8%BF%87%E7%A8%8B"><span class="toc-number">5.</span> <span class="toc-text">3.调度的时机、切换与过程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-%E8%BF%9B%E7%A8%8B%E7%9A%84%E8%B0%83%E5%BA%A6%E6%96%B9%E5%BC%8F"><span class="toc-number">6.</span> <span class="toc-text">4.进程的调度方式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-%E8%B0%83%E5%BA%A6%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8E%9F%E5%88%99"><span class="toc-number">7.</span> <span class="toc-text">5.调度的基本原则</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#6-%E5%85%B8%E5%9E%8B%E7%9A%84%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95"><span class="toc-number">8.</span> <span class="toc-text">6.典型的调度算法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A"><span class="toc-number">8.1.</span> <span class="toc-text">总结：</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E5%90%8C%E6%AD%A5"><span class="toc-number">9.</span> <span class="toc-text">进程同步</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%BF%9B%E7%A8%8B%E5%90%8C%E6%AD%A5%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-number">9.1.</span> <span class="toc-text">1.进程同步的基本概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%AE%9E%E7%8E%B0%E4%B8%B4%E7%95%8C%E5%8C%BA%E4%BA%92%E6%96%A5%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%96%B9%E6%B3%95"><span class="toc-number">9.2.</span> <span class="toc-text">2.实现临界区互斥的基本方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="toc-number">9.3.</span> <span class="toc-text">3.信号量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E7%AE%A1%E7%A8%8B"><span class="toc-number">9.4.</span> <span class="toc-text">4.管程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E7%BB%8F%E5%85%B8%E5%90%8C%E6%AD%A5%E9%97%AE%E9%A2%98"><span class="toc-number">9.5.</span> <span class="toc-text">5.经典同步问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E7%94%9F%E4%BA%A7%E8%80%85-%E6%B6%88%E8%B4%B9%E8%80%85%E9%97%AE%E9%A2%98"><span class="toc-number">9.5.1.</span> <span class="toc-text">5.1 生产者-消费者问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E5%A4%8D%E6%9D%82%E7%94%9F%E4%BA%A7%E8%80%85-%E6%B6%88%E8%B4%B9%E8%80%85%E9%97%AE%E9%A2%98"><span class="toc-number">9.5.2.</span> <span class="toc-text">5.2 复杂生产者-消费者问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-%E8%AF%BB%E8%80%85-%E5%86%99%E8%80%85%E9%97%AE%E9%A2%98"><span class="toc-number">9.5.3.</span> <span class="toc-text">5.3 读者-写者问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4-%E5%93%B2%E5%AD%A6%E5%AE%B6%E8%BF%9B%E9%A4%90%E9%97%AE%E9%A2%98"><span class="toc-number">9.5.4.</span> <span class="toc-text">5.4 哲学家进餐问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-5-%E5%90%B8%E7%83%9F%E8%80%85%E9%97%AE%E9%A2%98"><span class="toc-number">9.5.5.</span> <span class="toc-text">5.5 吸烟者问题</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%AD%BB%E9%94%81"><span class="toc-number">10.</span> <span class="toc-text">死锁</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%AD%BB%E9%94%81%E5%A4%84%E7%90%86%E7%AD%96%E7%95%A5"><span class="toc-number">10.1.</span> <span class="toc-text">1.死锁处理策略</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%AD%BB%E9%94%81%E9%A2%84%E9%98%B2"><span class="toc-number">10.2.</span> <span class="toc-text">2.死锁预防</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E9%93%B6%E8%A1%8C%E5%AE%B6%E7%AE%97%E6%B3%95"><span class="toc-number">10.3.</span> <span class="toc-text">3.银行家算法</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-%E6%AD%BB%E9%94%81%E7%9A%84%E6%A3%80%E6%B5%8B%E5%92%8C%E8%A7%A3%E9%99%A4"><span class="toc-number">11.</span> <span class="toc-text">4.死锁的检测和解除</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#4-1-%E8%B5%84%E6%BA%90%E5%88%86%E9%85%8D%E5%9B%BE"><span class="toc-number">11.1.</span> <span class="toc-text">4.1 资源分配图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-2-%E6%AD%BB%E9%94%81%E5%AE%9A%E7%90%86%EF%BC%88%E7%94%A8%E4%BA%8E%E6%A3%80%E6%B5%8B%E7%B3%BB%E7%BB%9F%E7%8A%B6%E6%80%81S%E6%98%AF%E5%90%A6%E4%B8%BA%E6%AD%BB%E9%94%81%E7%8A%B6%E6%80%81%EF%BC%89"><span class="toc-number">11.2.</span> <span class="toc-text">4.2 死锁定理（用于检测系统状态S是否为死锁状态）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-3-%E6%AD%BB%E9%94%81%E8%A7%A3%E9%99%A4"><span class="toc-number">11.3.</span> <span class="toc-text">4.3 死锁解除</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A-1"><span class="toc-number">12.</span> <span class="toc-text">总结：</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/06/10/Hello-Test/" title="Hello_Test"><img src="https://img0.baidu.com/it/u=1955391644,3428991101&amp;fm=253&amp;fmt=auto&amp;app=138&amp;f=JPEG?w=700&amp;h=466" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Hello_Test"/></a><div class="content"><a class="title" href="/JeckFS/2022/06/10/Hello-Test/" title="Hello_Test">Hello_Test</a><time datetime="2022-06-10T01:53:56.000Z" title="发表于 2022-06-10 09:53:56">2022-06-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/06/09/Hello-World-0/" title="Hello_World"><img src="https://img2.baidu.com/it/u=3747114911,414713113&amp;fm=253&amp;fmt=auto&amp;app=138&amp;f=JPEG?w=882&amp;h=500" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Hello_World"/></a><div class="content"><a class="title" href="/JeckFS/2022/06/09/Hello-World-0/" title="Hello_World">Hello_World</a><time datetime="2022-06-09T13:10:36.000Z" title="发表于 2022-06-09 21:10:36">2022-06-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/06/09/hello-world/" title="Hello World"><img src="https://t7.baidu.com/it/u=1732966997,2981886582&amp;fm=193&amp;f=GIF" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Hello World"/></a><div class="content"><a class="title" href="/JeckFS/2022/06/09/hello-world/" title="Hello World">Hello World</a><time datetime="2022-06-09T12:24:23.000Z" title="发表于 2022-06-09 20:24:23">2022-06-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/06/07/leetcode638-%E5%A4%A7%E7%A4%BC%E5%8C%85/" title="leetcode638-大礼包"><img src="https://img1.baidu.com/it/u=2598981474,2305186611&amp;fm=253&amp;fmt=auto&amp;app=138&amp;f=JPEG?w=800&amp;h=500" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="leetcode638-大礼包"/></a><div class="content"><a class="title" href="/JeckFS/2022/06/07/leetcode638-%E5%A4%A7%E7%A4%BC%E5%8C%85/" title="leetcode638-大礼包">leetcode638-大礼包</a><time datetime="2022-06-07T08:52:59.000Z" title="发表于 2022-06-07 16:52:59">2022-06-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/05/28/Skywalking%E6%A2%B3%E7%90%86/" title="Skywalking梳理"><img src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Skywalking梳理"/></a><div class="content"><a class="title" href="/JeckFS/2022/05/28/Skywalking%E6%A2%B3%E7%90%86/" title="Skywalking梳理">Skywalking梳理</a><time datetime="2022-05-28T01:16:03.000Z" title="发表于 2022-05-28 09:16:03">2022-05-28</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By YFS</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/JeckFS/js/utils.js"></script><script src="/JeckFS/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
