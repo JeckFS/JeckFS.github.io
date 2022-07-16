@@ -1,0 +1,234 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>JK-Redis-切片集群 | JeckFS</title><meta name="keywords" content="Redis"><meta name="author" content="YFS"><meta name="copyright" content="YFS"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="需求：要用 Redis 保存 5000 万个键值对，每个键值对大约是 512B。如何进行部署。 方案一：键值对所占的内存空间大约是 25GB（5000 万 *512B）。所以，选择一台 32GB 内存的云主机来部署 Redis。因为 32GB 的内存能保存所有数据，而且还留有 7GB，可以保证系统的正常运行。同时，还可以采用 RDB 对数据做持久化，以确保 Redis 实例故障后，还能从 RDB">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JK-Redis-切片集群">
+<meta property="og:url" content="http://jeckfs.gitee.io/JeckFS/2022/07/14/JK-Redis-%E5%88%87%E7%89%87%E9%9B%86%E7%BE%A4/index.html">
+<meta property="og:site_name" content="JeckFS">
+<meta property="og:description" content="需求：要用 Redis 保存 5000 万个键值对，每个键值对大约是 512B。如何进行部署。 方案一：键值对所占的内存空间大约是 25GB（5000 万 *512B）。所以，选择一台 32GB 内存的云主机来部署 Redis。因为 32GB 的内存能保存所有数据，而且还留有 7GB，可以保证系统的正常运行。同时，还可以采用 RDB 对数据做持久化，以确保 Redis 实例故障后，还能从 RDB">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img1.baidu.com/it/u=2656997690,163773951&fm=253&fmt=auto&app=120&f=JPEG?w=889&h=500">
+<meta property="article:published_time" content="2022-07-14T12:26:26.000Z">
+<meta property="article:modified_time" content="2022-07-16T14:09:55.239Z">
+<meta property="article:author" content="YFS">
+<meta property="article:tag" content="Redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img1.baidu.com/it/u=2656997690,163773951&fm=253&fmt=auto&app=120&f=JPEG?w=889&h=500"><link rel="shortcut icon" href="/JeckFS/img/favicon.png"><link rel="canonical" href="http://jeckfs.gitee.io/JeckFS/2022/07/14/JK-Redis-%E5%88%87%E7%89%87%E9%9B%86%E7%BE%A4/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/JeckFS/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/JeckFS/',
+  algolia: undefined,
+  localSearch: {"path":"/JeckFS/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'JK-Redis-切片集群',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-07-16 22:09:55'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/JeckFS/archives/"><div class="headline">文章</div><div class="length-num">221</div></a><a href="/JeckFS/tags/"><div class="headline">标签</div><div class="length-num">62</div></a><a href="/JeckFS/categories/"><div class="headline">分类</div><div class="length-num">57</div></a></div><hr/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://img1.baidu.com/it/u=2656997690,163773951&amp;fm=253&amp;fmt=auto&amp;app=120&amp;f=JPEG?w=889&amp;h=500')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/JeckFS/">JeckFS</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">JK-Redis-切片集群</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-07-14T12:26:26.000Z" title="发表于 2022-07-14 20:26:26">2022-07-14</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-07-16T14:09:55.239Z" title="更新于 2022-07-16 22:09:55">2022-07-16</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/JeckFS/categories/Redis/">Redis</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="JK-Redis-切片集群"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><div class="note info modern"><p>需求：要用 Redis 保存 5000 万个键值对，每个键值对大约是 512B。如何进行部署。</p>
+<p>方案一：<br>键值对所占的内存空间大约是 25GB（5000 万 *512B）。所以，选择一台 32GB 内存的云主机来部署 Redis。因为 32GB 的内存能保存所有数据，而且还留有 7GB，可以保证系统的正常运行。同时，还可以采用 RDB 对数据做持久化，以确保 Redis 实例故障后，还能从 RDB 恢复数据。</p>
+<p>方案一的问题：<br>Redis 的响应有时会非常慢。使用 INFO 命令查看 Redis 的 latest_fork_usec 指标值（表示最近一次 fork 的耗时），结果显示这个指标值特别高，快到秒级别了。<br>这跟 Redis 的持久化机制有关系。在使用 RDB 进行持久化时，Redis 会 fork 子进程来完成，fork 操作的用时和 Redis 的数据量是正相关的，而 fork 在执行时会阻塞主线程。数据量越大，fork 操作造成的主线程阻塞的时间越长。所以，在使用 RDB 对 25GB 的数据进行持久化时，数据量较大，后台运行的子进程在 fork 创建时阻塞了主线程，于是就导致 Redis 响应变慢了。</p>
+<p>方案二：切片集群</p>
+</div>
+<p>切片集群，也叫分片集群，就是指启动多个 Redis 实例组成一个集群，然后按照一定的规则，把收到的数据划分成多份，每一份用一个实例来保存。</p>
+<img src="/JeckFS/2022/07/14/JK-Redis-%E5%88%87%E7%89%87%E9%9B%86%E7%BE%A4/Snipaste_2022-07-14_20-33-10.png" class="" title="This is 2-th image.">
+<h1 id="如何保存更多数据？"><a href="#如何保存更多数据？" class="headerlink" title="如何保存更多数据？"></a>如何保存更多数据？</h1><ul>
+<li>纵向扩展。好处是实施起来简单直接。缺点是当使用 RDB 对数据进行持久化时，如果数据量增加，需要的内存也会增加，在持久化时主线程 fork 子进程时就可能会阻塞。如果没有数据持久化，可以考虑使用纵向扩展的方式；另外一个缺点是纵向扩展会受到硬件和成本的限制</li>
+<li>横向分布。好处是不受硬件和成本的限制，在面向百万、千万级别的用户规模时，横向扩展的 Redis 切片集群会是一个非常好的选择。缺点是：需要解决两大问题，1. 数据切片后，在多个实例之间如何分布？ 2. 客户端怎么确定想要访问的数据在哪个实例上？</li>
+</ul>
+<h1 id="数据切片和实例的对应分布关系"><a href="#数据切片和实例的对应分布关系" class="headerlink" title="数据切片和实例的对应分布关系"></a>数据切片和实例的对应分布关系</h1><p>Redis 3.0 之后提供了 Redis cluster 的方案实现切片集群。具体如下：<br>Redis Cluster 方案采用哈希槽（Hash Slot，接下来我会直接称之为 Slot），来处理数据和实例之间的映射关系。在 Redis Cluster 方案中，一个切片集群共有 16384 个哈希槽，这些哈希槽类似于数据分区，每个键值对都会根据它的 key，被映射到一个哈希槽中。<br>具体的映射过程分为两大步：首先根据键值对的 key，按照 CRC16 算法计算一个 16 bit 的值；然后，再用这个 16bit 值对 16384 取模，得到 0~16383 范围内的模数，每个模数代表一个相应编号的哈希槽。<br>在创建集群时，Redis 会自动把这些槽平均分布在集群实例上。例如，如果集群中有 N 个实例，那么，每个实例上的槽个数为 16384/N 个。也可以使用 cluster addslots 命令，指定每个实例上的哈希槽个数。这在实例内存资源不同时显得很有意义。</p>
+<img src="/JeckFS/2022/07/14/JK-Redis-%E5%88%87%E7%89%87%E9%9B%86%E7%BE%A4/Snipaste_2022-07-14_21-01-02.png" class="" title="This is 2-th image.">
+<p>上图手动分配的命令如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">redis-cli -h 172.16.19.3 –p 6379 cluster addslots 0,1</span><br><span class="line">redis-cli -h 172.16.19.4 –p 6379 cluster addslots 2,3</span><br><span class="line">redis-cli -h 172.16.19.5 –p 6379 cluster addslots 4</span><br></pre></td></tr></table></figure>
+<div class="note danger modern"><p>在手动分配哈希槽时，需要把 16384 个槽都分配完，否则 Redis 集群无法正常工作。</p>
+</div>
+<h1 id="客户端如何定位数据？"><a href="#客户端如何定位数据？" class="headerlink" title="客户端如何定位数据？"></a>客户端如何定位数据？</h1><p>在集群创建成功后，每个实例会将自己的哈希槽信息发给相连的其他实例。当客户端与集群建立连接后，实例会将所有的哈希槽信息发送给客户端。客户端收到哈希槽信息后，会缓存在本地。当客户端请求键值对时，会先计算键所对应的哈希槽，然后就可以给相应的实例发送请求了。</p>
+<p>在集群中，实例和哈希槽的对应关系并不是一成不变的，最常见的变化有两个：</p>
+<ul>
+<li>在集群中，实例有新增或删除，Redis 需要重新分配哈希槽；</li>
+<li>为了负载均衡，Redis 需要把哈希槽在所有实例上重新分布一遍。<br>这会带来一个问题：客户端掌握的哈希槽信息与实际的不一致。这时，Redis Cluster 方案提供了一种<strong>重定向机制</strong>，所谓的“重定向”，就是指，当客户端给一个实例发送数据读写操作时，这个实例上并没有相应的数据，此时实例就会发送 MOVED 命令，让客户端去请求新的实例。</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GET hello:key</span><br><span class="line">(error) MOVED 13320 172.16.19.5:6379</span><br></pre></td></tr></table></figure>
+<p>其中，MOVED 命令表示，客户端请求的键值对所在的哈希槽 13320，实际是在 172.16.19.5 这个实例上。</p>
+<p>在移动哈希槽数据时有一个问题就是，客户端在哈希槽数据移动过程中请求了该哈希槽的数据。这时实例就会返回 ASK 命令给客户端。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GET hello:key</span><br><span class="line">(error) ASK 13320 172.16.19.5:6379</span><br></pre></td></tr></table></figure>
+<p>这个结果中的 ASK 命令就表示，客户端请求的键值对所在的哈希槽 13320，在 172.16.19.5 这个实例上，但是这个哈希槽正在迁移。此时，客户端需要先给 172.16.19.5 这个实例发送一个 ASKING 命令。这个命令的意思是，让这个实例允许执行客户端接下来发送的命令。然后，客户端再向这个实例发送 GET 命令，以读取数据。</p>
+<div class="note info modern"><p>和 MOVED 命令不同，ASK 命令并不会更新客户端缓存的哈希槽分配信息。 ASK 命令的作用只是让客户端能给新实例发送一次请求，而不像 MOVED 命令那样，会更改本地缓存，让后续所有命令都发往新实例。也就是说，当客户端再次请求 hello:key 时，也是请求的原来的实例。</p>
+</div>
+<div class="note info modern"><p>Redis Cluster 方案通过哈希槽的方式把键值对分配到不同的实例上，这个过程需要对键值对的 key 做 CRC 计算，然后再和哈希槽做映射，这样做有什么好处吗？如果用一个表直接把键值对和实例的对应关系记录下来（例如键值对 1 在实例 2 上，键值对 2 在实例 1 上），这样就不用计算 key 和哈希槽的对应关系了，只用查表就行了，Redis 为什么不这么做呢？</p>
+<p>Redis Cluster不采用把key直接映射到实例的方式，而采用哈希槽的方式原因：</p>
+<p>1、整个集群存储key的数量是无法预估的，key的数量非常多时，直接记录每个key对应的实例映射关系，这个映射表会非常庞大，这个映射表无论是存储在服务端还是客户端都占用了非常大的内存空间。</p>
+<p>2、Redis Cluster采用无中心化的模式（无proxy，客户端与服务端直连），客户端在某个节点访问一个key，如果这个key不在这个节点上，这个节点需要有纠正客户端路由到正确节点的能力（MOVED响应），这就需要节点之间互相交换路由表，每个节点拥有整个集群完整的路由关系。如果存储的都是key与实例的对应关系，节点之间交换信息也会变得非常庞大，消耗过多的网络资源，而且就算交换完成，相当于每个节点都需要额外存储其他节点的路由表，内存占用过大造成资源浪费。</p>
+<p>3、当集群在扩容、缩容、数据均衡时，节点之间会发生数据迁移，迁移时需要修改每个key的映射关系，维护成本高。</p>
+<p>4、而在中间增加一层哈希槽，可以把数据和节点解耦，key通过Hash计算，只需要关心映射到了哪个哈希槽，然后再通过哈希槽和节点的映射表找到节点，相当于消耗了很少的CPU资源，不但让数据分布更均匀，还可以让这个映射表变得很小，利于客户端和服务端保存，节点之间交换信息时也变得轻量。</p>
+<p>5、当集群在扩容、缩容、数据均衡时，节点之间的操作例如数据迁移，都以哈希槽为基本单位进行操作，简化了节点扩容、缩容的难度，便于集群的维护和管理。</p>
+</div>
+<div class="note info modern"><p>现代的分布式数据库实现分片基本都是Range-based的，能够实现分片的动态调度，适合互联网的场景。那为什么Redis依旧要用Hash-based的设计方式呢？是为了更高并发的写入性能吗？</p>
+<p>如果是根据某个字段的取值范围进行range-based分片，有可能的一个问题是：某个range内的记录数量很多，这就会导致相应的数据分片比较大，一般也叫做数据倾斜。对这个数据分片的访问量也可能大，导致负载不均衡。<br>基于记录key进行哈希后再取模，好处是能把数据打得比较散，不太容易引起数据倾斜，还是为了访问时请求负载能在不同数据分片分布地均衡些，提高访问性能。</p>
+</div>
+<div class="note info modern"><p>集群中的每个切片都是主从配置的吗？</p>
+<p>切片集群中每个切片可以配置从库，也可以不配置。不过一般生产环境中还是建议对每个切片做主从配置。<br>可以使用cluster replicate命令进行配置。</p>
+</div>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://jeckfs.gitee.io/JeckFS">YFS</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://jeckfs.gitee.io/JeckFS/2022/07/14/JK-Redis-%E5%88%87%E7%89%87%E9%9B%86%E7%BE%A4/">http://jeckfs.gitee.io/JeckFS/2022/07/14/JK-Redis-%E5%88%87%E7%89%87%E9%9B%86%E7%BE%A4/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://jeckfs.gitee.io/JeckFS" target="_blank">JeckFS</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/JeckFS/tags/Redis/">Redis</a></div><div class="post_share"><div class="social-share" data-image="https://img1.baidu.com/it/u=2656997690,163773951&amp;fm=253&amp;fmt=auto&amp;app=120&amp;f=JPEG?w=889&amp;h=500" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/JeckFS/2022/07/14/JK-Redis-%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B62/"><img class="next-cover" src="https://img2.baidu.com/it/u=1787475710,2159333383&amp;fm=253&amp;fmt=auto&amp;app=120&amp;f=JPEG?w=1280&amp;h=800" onerror="onerror=null;src='/JeckFS/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">JK-Redis-哨兵机制2</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/JeckFS/2022/07/09/JK-Redis-AOF%E6%97%A5%E5%BF%97/" title="JK-Redis-AOF日志"><img class="cover" src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-07-09</div><div class="title">JK-Redis-AOF日志</div></div></a></div><div><a href="/JeckFS/2022/07/10/JK-Redis-%E4%B8%BB%E4%BB%8E%E5%BA%93%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5/" title="JK-Redis-主从库数据同步"><img class="cover" src="https://img1.baidu.com/it/u=283250001,79199516&fm=253&fmt=auto&app=120&f=JPEG?w=1200&h=674" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-07-10</div><div class="title">JK-Redis-主从库数据同步</div></div></a></div><div><a href="/JeckFS/2022/07/10/JK-Redis-%E5%86%85%E5%AD%98%E5%BF%AB%E7%85%A7/" title="JK-Redis-内存快照"><img class="cover" src="https://img2.baidu.com/it/u=2566230917,2808117782&fm=253&fmt=auto&app=120&f=JPEG?w=889&h=500" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-07-10</div><div class="title">JK-Redis-内存快照</div></div></a></div><div><a href="/JeckFS/2022/07/13/JK-Redis-%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6/" title="JK-Redis-哨兵机制"><img class="cover" src="https://img1.baidu.com/it/u=4132836557,2626223199&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=281" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-07-13</div><div class="title">JK-Redis-哨兵机制</div></div></a></div><div><a href="/JeckFS/2022/07/14/JK-Redis-%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B62/" title="JK-Redis-哨兵机制2"><img class="cover" src="https://img2.baidu.com/it/u=1787475710,2159333383&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-07-14</div><div class="title">JK-Redis-哨兵机制2</div></div></a></div><div><a href="/JeckFS/2022/06/25/JK-Redis-%E9%AB%98%E6%80%A7%E8%83%BDIO%E6%A8%A1%E5%9E%8B/" title="JK-Redis-高性能IO模型"><img class="cover" src="https://img1.baidu.com/it/u=2860717797,2343059675&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-06-25</div><div class="title">JK-Redis-高性能IO模型</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/JeckFS/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">YFS</div><div class="author-info__description">快乐每一天</div></div><div class="card-info-data site-data is-center"><a href="/JeckFS/archives/"><div class="headline">文章</div><div class="length-num">221</div></a><a href="/JeckFS/tags/"><div class="headline">标签</div><div class="length-num">62</div></a><a href="/JeckFS/categories/"><div class="headline">分类</div><div class="length-num">57</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%BF%9D%E5%AD%98%E6%9B%B4%E5%A4%9A%E6%95%B0%E6%8D%AE%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">如何保存更多数据？</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%88%87%E7%89%87%E5%92%8C%E5%AE%9E%E4%BE%8B%E7%9A%84%E5%AF%B9%E5%BA%94%E5%88%86%E5%B8%83%E5%85%B3%E7%B3%BB"><span class="toc-number">2.</span> <span class="toc-text">数据切片和实例的对应分布关系</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%A6%82%E4%BD%95%E5%AE%9A%E4%BD%8D%E6%95%B0%E6%8D%AE%EF%BC%9F"><span class="toc-number">3.</span> <span class="toc-text">客户端如何定位数据？</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/07/14/JK-Redis-%E5%88%87%E7%89%87%E9%9B%86%E7%BE%A4/" title="JK-Redis-切片集群"><img src="https://img1.baidu.com/it/u=2656997690,163773951&amp;fm=253&amp;fmt=auto&amp;app=120&amp;f=JPEG?w=889&amp;h=500" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="JK-Redis-切片集群"/></a><div class="content"><a class="title" href="/JeckFS/2022/07/14/JK-Redis-%E5%88%87%E7%89%87%E9%9B%86%E7%BE%A4/" title="JK-Redis-切片集群">JK-Redis-切片集群</a><time datetime="2022-07-14T12:26:26.000Z" title="发表于 2022-07-14 20:26:26">2022-07-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/07/14/JK-Redis-%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B62/" title="JK-Redis-哨兵机制2"><img src="https://img2.baidu.com/it/u=1787475710,2159333383&amp;fm=253&amp;fmt=auto&amp;app=120&amp;f=JPEG?w=1280&amp;h=800" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="JK-Redis-哨兵机制2"/></a><div class="content"><a class="title" href="/JeckFS/2022/07/14/JK-Redis-%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B62/" title="JK-Redis-哨兵机制2">JK-Redis-哨兵机制2</a><time datetime="2022-07-14T07:53:11.000Z" title="发表于 2022-07-14 15:53:11">2022-07-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/07/13/JK-Redis-%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6/" title="JK-Redis-哨兵机制"><img src="https://img1.baidu.com/it/u=4132836557,2626223199&amp;fm=253&amp;fmt=auto&amp;app=138&amp;f=JPEG?w=500&amp;h=281" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="JK-Redis-哨兵机制"/></a><div class="content"><a class="title" href="/JeckFS/2022/07/13/JK-Redis-%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6/" title="JK-Redis-哨兵机制">JK-Redis-哨兵机制</a><time datetime="2022-07-13T07:12:35.000Z" title="发表于 2022-07-13 15:12:35">2022-07-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/07/12/DNS%E8%AF%A6%E8%A7%A3/" title="DNS详解"><img src="https://img2.baidu.com/it/u=341242123,757592285&amp;fm=253&amp;fmt=auto&amp;app=120&amp;f=JPEG?w=1280&amp;h=800" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="DNS详解"/></a><div class="content"><a class="title" href="/JeckFS/2022/07/12/DNS%E8%AF%A6%E8%A7%A3/" title="DNS详解">DNS详解</a><time datetime="2022-07-12T07:24:20.000Z" title="发表于 2022-07-12 15:24:20">2022-07-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/07/10/JK-Redis-%E4%B8%BB%E4%BB%8E%E5%BA%93%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5/" title="JK-Redis-主从库数据同步"><img src="https://img1.baidu.com/it/u=283250001,79199516&amp;fm=253&amp;fmt=auto&amp;app=120&amp;f=JPEG?w=1200&amp;h=674" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="JK-Redis-主从库数据同步"/></a><div class="content"><a class="title" href="/JeckFS/2022/07/10/JK-Redis-%E4%B8%BB%E4%BB%8E%E5%BA%93%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5/" title="JK-Redis-主从库数据同步">JK-Redis-主从库数据同步</a><time datetime="2022-07-10T09:02:33.000Z" title="发表于 2022-07-10 17:02:33">2022-07-10</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By YFS</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/JeckFS/js/utils.js"></script><script src="/JeckFS/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/JeckFS/js/search/local-search.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

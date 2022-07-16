@@ -4,6 +4,81 @@
   
     
     <entry>
+      <title>JK-Redis-切片集群</title>
+      <link href="/JeckFS/2022/07/14/JK-Redis-%E5%88%87%E7%89%87%E9%9B%86%E7%BE%A4/"/>
+      <url>/JeckFS/2022/07/14/JK-Redis-%E5%88%87%E7%89%87%E9%9B%86%E7%BE%A4/</url>
+      
+        <content type="html"><![CDATA[<div class="note info modern"><p>需求：要用 Redis 保存 5000 万个键值对，每个键值对大约是 512B。如何进行部署。</p><p>方案一：<br>键值对所占的内存空间大约是 25GB（5000 万 *512B）。所以，选择一台 32GB 内存的云主机来部署 Redis。因为 32GB 的内存能保存所有数据，而且还留有 7GB，可以保证系统的正常运行。同时，还可以采用 RDB 对数据做持久化，以确保 Redis 实例故障后，还能从 RDB 恢复数据。</p><p>方案一的问题：<br>Redis 的响应有时会非常慢。使用 INFO 命令查看 Redis 的 latest_fork_usec 指标值（表示最近一次 fork 的耗时），结果显示这个指标值特别高，快到秒级别了。<br>这跟 Redis 的持久化机制有关系。在使用 RDB 进行持久化时，Redis 会 fork 子进程来完成，fork 操作的用时和 Redis 的数据量是正相关的，而 fork 在执行时会阻塞主线程。数据量越大，fork 操作造成的主线程阻塞的时间越长。所以，在使用 RDB 对 25GB 的数据进行持久化时，数据量较大，后台运行的子进程在 fork 创建时阻塞了主线程，于是就导致 Redis 响应变慢了。</p><p>方案二：切片集群</p></div><p>切片集群，也叫分片集群，就是指启动多个 Redis 实例组成一个集群，然后按照一定的规则，把收到的数据划分成多份，每一份用一个实例来保存。</p><img src="/JeckFS/2022/07/14/JK-Redis-%E5%88%87%E7%89%87%E9%9B%86%E7%BE%A4/Snipaste_2022-07-14_20-33-10.png" class="" title="This is 2-th image."><h1 id="如何保存更多数据？"><a href="#如何保存更多数据？" class="headerlink" title="如何保存更多数据？"></a>如何保存更多数据？</h1><ul><li>纵向扩展。好处是实施起来简单直接。缺点是当使用 RDB 对数据进行持久化时，如果数据量增加，需要的内存也会增加，在持久化时主线程 fork 子进程时就可能会阻塞。如果没有数据持久化，可以考虑使用纵向扩展的方式；另外一个缺点是纵向扩展会受到硬件和成本的限制</li><li>横向分布。好处是不受硬件和成本的限制，在面向百万、千万级别的用户规模时，横向扩展的 Redis 切片集群会是一个非常好的选择。缺点是：需要解决两大问题，1. 数据切片后，在多个实例之间如何分布？ 2. 客户端怎么确定想要访问的数据在哪个实例上？</li></ul><h1 id="数据切片和实例的对应分布关系"><a href="#数据切片和实例的对应分布关系" class="headerlink" title="数据切片和实例的对应分布关系"></a>数据切片和实例的对应分布关系</h1><p>Redis 3.0 之后提供了 Redis cluster 的方案实现切片集群。具体如下：<br>Redis Cluster 方案采用哈希槽（Hash Slot，接下来我会直接称之为 Slot），来处理数据和实例之间的映射关系。在 Redis Cluster 方案中，一个切片集群共有 16384 个哈希槽，这些哈希槽类似于数据分区，每个键值对都会根据它的 key，被映射到一个哈希槽中。<br>具体的映射过程分为两大步：首先根据键值对的 key，按照 CRC16 算法计算一个 16 bit 的值；然后，再用这个 16bit 值对 16384 取模，得到 0~16383 范围内的模数，每个模数代表一个相应编号的哈希槽。<br>在创建集群时，Redis 会自动把这些槽平均分布在集群实例上。例如，如果集群中有 N 个实例，那么，每个实例上的槽个数为 16384/N 个。也可以使用 cluster addslots 命令，指定每个实例上的哈希槽个数。这在实例内存资源不同时显得很有意义。</p><img src="/JeckFS/2022/07/14/JK-Redis-%E5%88%87%E7%89%87%E9%9B%86%E7%BE%A4/Snipaste_2022-07-14_21-01-02.png" class="" title="This is 2-th image."><p>上图手动分配的命令如下：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">redis-cli -h 172.16.19.3 –p 6379 cluster addslots 0,1</span><br><span class="line">redis-cli -h 172.16.19.4 –p 6379 cluster addslots 2,3</span><br><span class="line">redis-cli -h 172.16.19.5 –p 6379 cluster addslots 4</span><br></pre></td></tr></table></figure><div class="note danger modern"><p>在手动分配哈希槽时，需要把 16384 个槽都分配完，否则 Redis 集群无法正常工作。</p></div><h1 id="客户端如何定位数据？"><a href="#客户端如何定位数据？" class="headerlink" title="客户端如何定位数据？"></a>客户端如何定位数据？</h1><p>在集群创建成功后，每个实例会将自己的哈希槽信息发给相连的其他实例。当客户端与集群建立连接后，实例会将所有的哈希槽信息发送给客户端。客户端收到哈希槽信息后，会缓存在本地。当客户端请求键值对时，会先计算键所对应的哈希槽，然后就可以给相应的实例发送请求了。</p><p>在集群中，实例和哈希槽的对应关系并不是一成不变的，最常见的变化有两个：</p><ul><li>在集群中，实例有新增或删除，Redis 需要重新分配哈希槽；</li><li>为了负载均衡，Redis 需要把哈希槽在所有实例上重新分布一遍。<br>这会带来一个问题：客户端掌握的哈希槽信息与实际的不一致。这时，Redis Cluster 方案提供了一种<strong>重定向机制</strong>，所谓的“重定向”，就是指，当客户端给一个实例发送数据读写操作时，这个实例上并没有相应的数据，此时实例就会发送 MOVED 命令，让客户端去请求新的实例。</li></ul><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GET hello:key</span><br><span class="line">(error) MOVED 13320 172.16.19.5:6379</span><br></pre></td></tr></table></figure><p>其中，MOVED 命令表示，客户端请求的键值对所在的哈希槽 13320，实际是在 172.16.19.5 这个实例上。</p><p>在移动哈希槽数据时有一个问题就是，客户端在哈希槽数据移动过程中请求了该哈希槽的数据。这时实例就会返回 ASK 命令给客户端。</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GET hello:key</span><br><span class="line">(error) ASK 13320 172.16.19.5:6379</span><br></pre></td></tr></table></figure><p>这个结果中的 ASK 命令就表示，客户端请求的键值对所在的哈希槽 13320，在 172.16.19.5 这个实例上，但是这个哈希槽正在迁移。此时，客户端需要先给 172.16.19.5 这个实例发送一个 ASKING 命令。这个命令的意思是，让这个实例允许执行客户端接下来发送的命令。然后，客户端再向这个实例发送 GET 命令，以读取数据。</p><div class="note info modern"><p>和 MOVED 命令不同，ASK 命令并不会更新客户端缓存的哈希槽分配信息。 ASK 命令的作用只是让客户端能给新实例发送一次请求，而不像 MOVED 命令那样，会更改本地缓存，让后续所有命令都发往新实例。也就是说，当客户端再次请求 hello:key 时，也是请求的原来的实例。</p></div><div class="note info modern"><p>Redis Cluster 方案通过哈希槽的方式把键值对分配到不同的实例上，这个过程需要对键值对的 key 做 CRC 计算，然后再和哈希槽做映射，这样做有什么好处吗？如果用一个表直接把键值对和实例的对应关系记录下来（例如键值对 1 在实例 2 上，键值对 2 在实例 1 上），这样就不用计算 key 和哈希槽的对应关系了，只用查表就行了，Redis 为什么不这么做呢？</p><p>Redis Cluster不采用把key直接映射到实例的方式，而采用哈希槽的方式原因：</p><p>1、整个集群存储key的数量是无法预估的，key的数量非常多时，直接记录每个key对应的实例映射关系，这个映射表会非常庞大，这个映射表无论是存储在服务端还是客户端都占用了非常大的内存空间。</p><p>2、Redis Cluster采用无中心化的模式（无proxy，客户端与服务端直连），客户端在某个节点访问一个key，如果这个key不在这个节点上，这个节点需要有纠正客户端路由到正确节点的能力（MOVED响应），这就需要节点之间互相交换路由表，每个节点拥有整个集群完整的路由关系。如果存储的都是key与实例的对应关系，节点之间交换信息也会变得非常庞大，消耗过多的网络资源，而且就算交换完成，相当于每个节点都需要额外存储其他节点的路由表，内存占用过大造成资源浪费。</p><p>3、当集群在扩容、缩容、数据均衡时，节点之间会发生数据迁移，迁移时需要修改每个key的映射关系，维护成本高。</p><p>4、而在中间增加一层哈希槽，可以把数据和节点解耦，key通过Hash计算，只需要关心映射到了哪个哈希槽，然后再通过哈希槽和节点的映射表找到节点，相当于消耗了很少的CPU资源，不但让数据分布更均匀，还可以让这个映射表变得很小，利于客户端和服务端保存，节点之间交换信息时也变得轻量。</p><p>5、当集群在扩容、缩容、数据均衡时，节点之间的操作例如数据迁移，都以哈希槽为基本单位进行操作，简化了节点扩容、缩容的难度，便于集群的维护和管理。</p></div><div class="note info modern"><p>现代的分布式数据库实现分片基本都是Range-based的，能够实现分片的动态调度，适合互联网的场景。那为什么Redis依旧要用Hash-based的设计方式呢？是为了更高并发的写入性能吗？</p><p>如果是根据某个字段的取值范围进行range-based分片，有可能的一个问题是：某个range内的记录数量很多，这就会导致相应的数据分片比较大，一般也叫做数据倾斜。对这个数据分片的访问量也可能大，导致负载不均衡。<br>基于记录key进行哈希后再取模，好处是能把数据打得比较散，不太容易引起数据倾斜，还是为了访问时请求负载能在不同数据分片分布地均衡些，提高访问性能。</p></div><div class="note info modern"><p>集群中的每个切片都是主从配置的吗？</p><p>切片集群中每个切片可以配置从库，也可以不配置。不过一般生产环境中还是建议对每个切片做主从配置。<br>可以使用cluster replicate命令进行配置。</p></div>]]></content>
+      
+      
+      <categories>
+          
+          <category> Redis </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Redis </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>JK-Redis-哨兵机制2</title>
+      <link href="/JeckFS/2022/07/14/JK-Redis-%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B62/"/>
+      <url>/JeckFS/2022/07/14/JK-Redis-%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B62/</url>
+      
+        <content type="html"><![CDATA[<p>当某个哨兵实例宕机后，仍然可以完成主从切换的工作。包括判定主库是不是处于下线状态，选择新主库，以及通知从库和客户端。</p><p>在配置哨兵信息时，仅仅是设置主库的 IP 和端口，并没有配置其他哨兵的连接信息。如下：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sentinel monitor &lt;master-name&gt; &lt;ip&gt; &lt;redis-port&gt; &lt;quorum&gt; </span><br></pre></td></tr></table></figure><p>这些哨兵实例既然都不知道彼此的地址，又是怎么组成集群的呢？</p><h1 id="基于-pub-sub-机制的哨兵集群组成"><a href="#基于-pub-sub-机制的哨兵集群组成" class="headerlink" title="基于 pub/sub 机制的哨兵集群组成"></a>基于 pub/sub 机制的哨兵集群组成</h1><p>哨兵通过 sentinel 命令与主库建立连接，并在主库中发布消息（如自己的 IP 和 port 等）。同时，哨兵也可以通过在主库上订阅消息，获得其他哨兵发布的连接信息。<br>在主从集群中，主库上有一个名为 <code>__sentinel__:hello</code> 的频道，不同哨兵就是通过它来相互发现，实现互相通信的。当所有哨兵都在该频道上订阅并发布消息后，就可以建立哨兵集群了。<br>哨兵除了彼此之间建立起连接形成集群外，还需要和从库建立连接。这是因为，在哨兵的监控任务中，它需要对主从库都进行心跳判断，而且在主从库切换完成后，它还需要通知从库，让它们和新主库进行同步。</p><h1 id="哨兵获取从库的端口和-IP"><a href="#哨兵获取从库的端口和-IP" class="headerlink" title="哨兵获取从库的端口和 IP"></a>哨兵获取从库的端口和 IP</h1><p>每个哨兵向主库发送 INFO 命令，主库接受到这个命令后，就会把从库列表返回给哨兵。接着，哨兵就可以根据从库列表中的连接信息，和每个从库建立连接，并在这个连接上持续地对从库进行监控。</p><h1 id="基于-pub-sub-机制的客户端事件通知"><a href="#基于-pub-sub-机制的客户端事件通知" class="headerlink" title="基于 pub/sub 机制的客户端事件通知"></a>基于 pub/sub 机制的客户端事件通知</h1><p>从本质上说，哨兵就是一个运行在特定模式下的 Redis 实例，只不过它并不服务请求操作，只是完成监控、选主和通知的任务。所以，每个哨兵实例也提供 pub/sub 机制，客户端可以从哨兵订阅消息。哨兵提供的消息订阅频道有很多，不同频道包含了主从库切换过程中的不同关键事件。</p><img src="/JeckFS/2022/07/14/JK-Redis-%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B62/Snipaste_2022-07-14_16-46-50.png" class="" title="This is 2-th image."><p>客户端读取哨兵的配置文件后，可以获得哨兵的地址和端口，和哨兵建立网络连接。然后，我们可以在客户端执行订阅命令，来获取不同的事件消息。</p><p>当哨兵把新主库选择出来后，客户端就会看到下面的 switch-master 事件。这个事件表示主库已经切换了，新主库的 IP 地址和端口信息已经有了。这个时候，客户端就可以用这里面的新主库地址和端口进行通信了。</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">switch-master &lt;master name&gt; &lt;oldip&gt; &lt;oldport&gt; &lt;newip&gt; &lt;newport&gt;</span><br></pre></td></tr></table></figure><p>客户端通过订阅这些事件通知，来感知主从切换的进度。</p><p>综上，通过 pub/sub 机制，哨兵和哨兵之间、哨兵和从库之间、哨兵和客户端之间就都能建立起连接了，再加上我们上节课介绍主库下线判断和选主依据，哨兵集群的监控、选主和通知三个任务就基本可以正常工作了。</p><h1 id="选择哨兵-Leader"><a href="#选择哨兵-Leader" class="headerlink" title="选择哨兵 Leader"></a>选择哨兵 Leader</h1><p>Leader 来完成主从切换的具体工作。即任何一个实例只要自身判断主库“主观下线”后，就会给其他实例发送 is-master-down-by-addr 命令。接着，其他实例会根据自己和主库的连接情况，做出 Y 或 N 的响应，Y 相当于赞成票，N 相当于反对票。当哨兵收集到的赞成票超过参数 quorum 配置（在哨兵配置文件中）的值后，就可以将主库标记为 主观下线 了。</p><img src="/JeckFS/2022/07/14/JK-Redis-%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B62/Snipaste_2022-07-14_16-58-38.png" class="" title="This is 2-th image."><p>Leader 选举过程：当赞成票<strong>超过半数</strong>以上就可以成为 Leader 。当哨兵为 2 个时，必须获得两张赞成票才可以成为 Leader 。</p><img src="/JeckFS/2022/07/14/JK-Redis-%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B62/Snipaste_2022-07-14_17-01-22.png" class="" title="This is 2-th image."><p>选举过程中当给某个哨兵投了赞成票后，后续只能投反对票。</p><p>当由于网络原因导致无法获得半数赞成票，就会等待<strong>哨兵故障转移超时时间的 2 倍</strong> 的时间重新选举。</p><div class="note info modern"><p>注意1: <strong>要保证所有哨兵实例的配置是一致的，尤其是主观下线的判断值 down-after-milliseconds</strong></p><p>如果这个值在不同的哨兵实例上配置不一致，就会导致哨兵集群一直没有对有故障的主库形成共识，也就没有及时切换主库，最终的结果就是集群服务不稳定。</p></div><div class="note info modern"><p>问题1: 为什么 Redis 不担心每个哨兵给自己投票</p><p>要发生同时同自己投票的情况，这需要这三个哨兵基本同时判定了主库客观下线。但是，不同哨兵的网络连接、系统压力不完全一样，接收到下线协商消息的时间也可能不同，所以，它们同时做出主库客观下线判定的概率较小，一般都有个先后关系。</p><p>其次，哨兵对主从库进行的在线状态检查等操作，是属于一种时间事件，用一个定时器来完成，一般来说每 100ms 执行一次这些事件。每个哨兵的定时器执行周期都会加上一个小小的<strong>随机时间偏移</strong>，目的是让每个哨兵执行上述操作的时间能稍微错开些，也是为了避免它们都同时判定主库下线，同时选举Leader。</p><p>最后，即使出现了都投给自己一票的情况，导致无法选出Leader，哨兵会停一段时间（一般是故障转移超时时间failover_timeout的2倍），然后再可以进行下一轮投票。</p></div><div class="note info modern"><p>假设有一个 Redis 集群，是“一主四从”，同时配置了包含 5 个哨兵实例的集群，quorum 值设为 2。在运行过程中，如果有 3 个哨兵实例都发生故障了，此时，Redis 主库如果有故障，还能正确地判断主库“客观下线”吗？如果可以的话，还能进行主从库自动切换吗？此外，哨兵实例是不是越多越好呢，如果同时调大 down-after-milliseconds 值，对减少误判是不是也有好处呢？</p><p>1、哨兵集群可以判定主库“主观下线”。由于quorum=2，所以当一个哨兵判断主库“主观下线”后，询问另外一个哨兵后也会得到同样的结果，2个哨兵都判定“主观下线”，达到了quorum的值，因此，哨兵集群可以判定主库为“客观下线”。</p><p>2、但哨兵不能完成主从切换。哨兵标记主库“客观下线后”，在选举“哨兵领导者”时，一个哨兵必须拿到超过多数的选票(5/2+1=3票)。但目前只有2个哨兵活着，无论怎么投票，一个哨兵最多只能拿到2票，永远无法达到多数选票的结果。</p><p>哨兵实例是不是越多越好？</p><p>并不是，我们也看到了，哨兵在判定“主观下线”和选举“哨兵领导者”时，都需要和其他节点进行通信，交换信息，哨兵实例越多，通信的次数也就越多，而且部署多个哨兵时，会分布在不同机器上，节点越多带来的机器故障风险也会越大，这些问题都会影响到哨兵的通信和选举，出问题时也就意味着选举时间会变长，切换主从的时间变久。</p><p>调大down-after-milliseconds值，对减少误判是不是有好处？</p><p>是有好处的，适当调大down-after-milliseconds值，当哨兵与主库之间网络存在短时波动时，可以降低误判的概率。但是调大down-after-milliseconds值也意味着主从切换的时间会变长，对业务的影响时间越久，我们需要根据实际场景进行权衡，设置合理的阈值。</p></div>]]></content>
+      
+      
+      <categories>
+          
+          <category> Redis </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Redis </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>JK-Redis-哨兵机制</title>
+      <link href="/JeckFS/2022/07/13/JK-Redis-%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6/"/>
+      <url>/JeckFS/2022/07/13/JK-Redis-%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6/</url>
+      
+        <content type="html"><![CDATA[<p>哨兵机制主要是解决主库挂掉的情况。</p><img src="/JeckFS/2022/07/13/JK-Redis-%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6/Snipaste_2022-07-13_16-20-27.png" class="" title="This is 2-th image."><h1 id="监控"><a href="#监控" class="headerlink" title="监控"></a>监控</h1><p>哨兵对主库的下线判断有“主观下线”和“客观下线”两种。</p><p>主观下线：哨兵进程会使用 PING 命令检测它自己和主、从库的网络连接情况，用来判断实例的状态。如果哨兵发现主库或从库对 PING 命令的响应超时了，那么，哨兵就会先把它标记为“主观下线”。<br>如果检测的是从库，那么，哨兵简单地把它标记为“主观下线”就行了，因为从库的下线影响一般不太大，集群的对外服务不会间断。<br>如果检测的是主库，那么，哨兵不能简单将其标记为 主观下线 ，因为可能会误判，一旦误判，会导致引起没有必要的主从切换带来的开销。</p><p>误判一般是发生在集群网络压力较大、网络拥塞，或者是主库本身压力较大的情况下。<br>哨兵机制通常会采用多实例组成的集群模式进行部署，这也被称为<strong>哨兵集群</strong>。当有 N 个哨兵实例时，最好要有 <code>N/2 + 1</code> 个实例判断主库为“主观下线”，才能最终判定主库为“<strong>客观下线</strong>”。</p><h1 id="选主"><a href="#选主" class="headerlink" title="选主"></a>选主</h1><p>哨兵先按照 <strong>一定的筛选条件</strong> (如不在线的从库会被排除，网络差的从库会被排除)将不符合条件的从库排除。然后按照 <strong>一定的规则</strong> 给剩下的从库进行打分，得分最高的成为主库。</p><h2 id="筛选"><a href="#筛选" class="headerlink" title="筛选"></a>筛选</h2><p>因此<strong>除了要检查从库的当前在线状态，还要判断它之前的网络连接状态。</strong> 如果从库总是和主库断连，而且断连次数超出了一定的阈值，我们就有理由相信，这个从库的网络状况并不是太好，就可以把这个从库筛掉了。</p><p>具体怎么判断呢？你使用配置项 <code>down-after-milliseconds * 10</code> 。其中，down-after-milliseconds 是我们认定主从库断连的最大连接超时时间。如果在 down-after-milliseconds 毫秒内，主从节点都没有通过网络联系上，我们就可以认为主从节点断连了。如果发生断连的次数超过了 10 次，就说明这个从库的网络状况不好，不适合作为新主库。</p><h2 id="打分"><a href="#打分" class="headerlink" title="打分"></a>打分</h2><p>从 <strong>从库优先级、从库复制进度以及从库 ID 号</strong> 三个方面 <strong>依次</strong> 进行打分，若某轮打分中选出该轮得分最高的则其就被选为主库。</p><p>第一轮：优先级最高的从库得分高。</p><p>用户可以通过 slave-priority 配置项，依据某些方面（如内存大、CPU 资源多等）给不同的从库设置不同优先级。</p><p>第二轮：和旧主库同步程度最接近的从库得分高。</p><p>从库同步时有个命令传播的过程。在这个过程中，主库会用 master_repl_offset 记录当前的最新写操作在 repl_backlog_buffer 中的位置，而从库会用 slave_repl_offset 这个值记录当前的复制进度。如果在所有从库中，有从库的 slave_repl_offset 最接近 master_repl_offset，那么它的得分就最高，可以作为新主库。</p><p>第三轮：ID 号小的从库得分高。</p><p>每个实例都会有一个 ID，这个 ID 就类似于这里的从库的编号。目前，Redis 在选主库时，有一个默认的规定： <strong>在优先级和复制进度都相同的情况下，ID 号最小的从库得分最高，会被选为新主库</strong>。</p><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>哨兵机制一般采用集群的方式进行部署，满足少数服从多数的原则判断主库是否<strong>客观下线</strong>。当判定主库客观下线后，首先，哨兵会按照在线状态、网络状态，筛选过滤掉一部分不符合要求的从库，然后，依次按照优先级、复制进度、ID 号大小再对剩余的从库进行打分，只要有得分最高的从库出现，就把它选为新主库。最后通知其他从库以及客户端与主库建立新链接。</p><div class="note info modern"><p>问题1: master_repl_offset是存储在主库的，但主库已经挂了，怎么获取的这个值？</p><p>master_repl_offset 是单调递增的，它的值可以大于repl_backlog_size 。Redis会用一个名为 repl_backlog_idx 的值记录在环形缓冲区中的最新写入位置。而在实际的选主代码层面，sentinel是直接比较从库的 slave_repl_offset ，来选择和主库最接近的从库。</p></div><div class="note info modern"><p>问题2: 哨兵如何相互感知</p><p>Redis哨兵集群中，哨兵配置文件中只用配置主节点的IP、端口号。每个哨兵会和主节点连接，并把自己的连接信息发布到主节点的 <code>__sentinel__:hello</code> 频道上，同时，每个哨兵会订阅这个频道获取其他哨兵的连接地址，这样，哨兵通过主节点上的 <code>__sentinel__:hello</code> 频道就相互感知了。</p></div><div class="note info modern"><p>问题3: 新主库选好后（此时新主库并没有环形缓冲区），如何进行数据同步。</p><p>Redis 4.0 之前是全量同步，在 Redis 4.0 之后使用 psync2 命令进行增量同步。</p></div>]]></content>
+      
+      
+      <categories>
+          
+          <category> Redis </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Redis </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>DNS详解</title>
       <link href="/JeckFS/2022/07/12/DNS%E8%AF%A6%E8%A7%A3/"/>
       <url>/JeckFS/2022/07/12/DNS%E8%AF%A6%E8%A7%A3/</url>
