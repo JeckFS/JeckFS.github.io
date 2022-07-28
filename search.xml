@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>JK-Redis-亿级集合数据统计</title>
+      <link href="/JeckFS/2022/07/28/JK-Redis-%E4%BA%BF%E7%BA%A7%E9%9B%86%E5%90%88%E6%95%B0%E6%8D%AE%E7%BB%9F%E8%AE%A1/"/>
+      <url>/JeckFS/2022/07/28/JK-Redis-%E4%BA%BF%E7%BA%A7%E9%9B%86%E5%90%88%E6%95%B0%E6%8D%AE%E7%BB%9F%E8%AE%A1/</url>
+      
+        <content type="html"><![CDATA[<h1 id="1-应用场景"><a href="#1-应用场景" class="headerlink" title="1. 应用场景"></a>1. 应用场景</h1><ul><li>场景1: 手机 App 中的每天的用户登录信息：一天对应一系列用户 ID 或移动设备 ID。需求：统计每天的新增用户数和第二天的留存用户数</li><li>场景2: 电商网站上商品的用户评论列表：一个商品对应了一系列的评论。需求：统计评论列表中的最新评论</li><li>场景3: 用户在手机 App 上的签到打卡信息：一天对应一系列用户的签到记录。需求：统计一个月内连续打卡的用户数</li><li>场景4: 应用网站上的网页访问信息：一个网页对应一系列的访问点击。需求：需要统计独立访客（Unique Visitor，UV）量。</li></ul><h1 id="2-常用的集合统计模式"><a href="#2-常用的集合统计模式" class="headerlink" title="2. 常用的集合统计模式"></a>2. 常用的集合统计模式</h1><h2 id="2-1-聚合统计"><a href="#2-1-聚合统计" class="headerlink" title="2.1 聚合统计"></a>2.1 聚合统计</h2><p>所谓的聚合统计，就是指统计多个集合元素的聚合结果，包括：统计多个集合的共有元素（交集统计）；把两个集合相比，统计其中一个集合独有的元素（差集统计）；统计多个集合的所有元素（并集统计）。</p><p><strong>场景1：使用 Set 类型完成统计</strong> ：</p><ul><li>key=user:id，value=所有登陆过 App 的用户 ID</li><li>key=user:id:年月日，value=当前登陆 App 的用户 ID</li></ul><p>假设 App 在 2022.08.03 上线，此时 user:id 为空，user:id:20220803 中保存了当天新增用户。<br>然后将 20220803 中的新增用户保存在 user:id 中： <code>SUNIONSTORE  user:id  user:id  user:id:20200803</code> 。<br>8 月 4 日通过计算当天登陆用户与总用户集合的差集作为新增用户集： <code>SDIFFSTORE  user:new  user:id:20220804 user:id</code> 。8 月 4 日新增用户保存在 user:new 中（其中元素在 user:id:20220804 中存在，在 user:id 中不存在）。<br>8 月 4 日存留用户（8.3登陆且8.4又登陆的用户），即 8 月 3 日与 8 月 4 日登陆用户的交集： <code>SINTERSTORE user:id:rem user:id:20200803 user:id:20200804</code>。</p><p><strong>注意：</strong> Set 的差集、并集和交集的计算复杂度较高，在数据量较大的情况下，如果直接执行这些计算，会导致 Redis 实例阻塞。 <strong>可以从主从集群中选择一个从库，让它专门负责聚合计算，或者是把数据读取到客户端，在客户端来完成聚合统计，这样就可以规避阻塞主库实例和其他从库实例的风险了。</strong></p><h2 id="2-2-排序统计"><a href="#2-2-排序统计" class="headerlink" title="2.2 排序统计"></a>2.2 排序统计</h2><p><strong>场景2: 使用 List 与 Sorted Set 统计最新评论数据</strong></p><p>List 是按照元素进入 List 的顺序进行排序的，而 Sorted Set 可以根据元素的权重来排序，我们可以自己来决定每个元素的权重值。比如说，我们可以根据元素插入 Sorted Set 的时间确定权重值，先插入的元素权重小，后插入的元素权重大。</p><p>使用 List 出现的问题：在分页查询的场景下，当查询完第一页数据，将要查询第二页数据的时候，突然新插入一条最新评论数据，那么第一页数据的末尾数据就会在第二页中重复展示。</p><p>Sorted Set 可以解决使用 List 出现的问题： Sorted Set 的 ZRANGEBYSCORE 命令就可以按权重排序后返回元素。这样的话，即使集合中的元素频繁更新，Sorted Set 也能通过 ZRANGEBYSCORE 命令准确地获取到按序排列的数据。所以，在面对需要展示最新列表、排行榜等场景时，如果数据更新频繁或者需要分页显示，建议你优先考虑使用 Sorted Set。</p><h2 id="2-3-二值状态统计"><a href="#2-3-二值状态统计" class="headerlink" title="2.3 二值状态统计"></a>2.3 二值状态统计</h2><p>所谓二值状态就是指集合元素的取值就只有 0 和 1 两种。在签到打卡的场景中，我们只用记录签到（1）或未签到（0）</p><p><strong>场景3: 使用 Bitmap 统计一个月内连续打卡数</strong></p><p>Bitmap 本身是用 String 类型作为底层数据结构实现的一种统计二值状态的数据类型。可以把 Bitmap 看作是一个 bit 数组。Redis 会将 Bitmap 以 String 类型的形式保存为二进制的字节数组。</p><p>Bitmap 提供了 GETBIT/SETBIT 操作，使用一个偏移值 offset 对 bit 数组的某一个 bit 位进行读和写。不过，需要注意的是，Bitmap 的偏移量是从 0 开始算的，也就是说 offset 的最小值是 0。当使用 SETBIT 对一个 bit 位进行写操作时，这个 bit 位会被设置为 1。Bitmap 还提供了 BITCOUNT 操作，用来统计这个 bit 数组中所有“1”的个数。</p><p>记录该用户 8 月 3 号已签到：<code>SETBIT uid:sign:3000:202208 2 1</code><br>检查该用户 8 月 3 日是否签到：<code>GETBIT uid:sign:3000:202208 2</code><br>统计该用户在 8 月份的签到次数：<code>BITCOUNT uid:sign:3000:202208</code></p><p><strong>延伸：已记录了 1 亿个用户 10 天的签到情况，尝试统计出这 10 天连续签到的用户总数</strong></p><p>Bitmap 支持用 BITOP 命令对多个 Bitmap 按位做“与”“或”“异或”的操作，操作的结果会保存到一个新的 Bitmap 中。</p><img src="/JeckFS/2022/07/28/JK-Redis-%E4%BA%BF%E7%BA%A7%E9%9B%86%E5%90%88%E6%95%B0%E6%8D%AE%E7%BB%9F%E8%AE%A1/Snipaste_2022-07-28_15-32-01.png" class="" title="This is 2-th image."><p>在统计 1 亿个用户连续 10 天的签到情况时，你可以把每天的日期作为 key，每个 key 对应一个 1 亿位的 Bitmap，每一个 bit 对应一个用户当天的签到情况。接下来，我们对 10 个 Bitmap 做“与”操作，得到的结果也是一个 Bitmap。在这个 Bitmap 中，只有 10 天都签到的用户对应的 bit 位上的值才会是 1。最后，我们可以用 BITCOUNT 统计下 Bitmap 中的 1 的个数，这就是连续签到 10 天的用户总数了。</p><h2 id="2-4-基数统计"><a href="#2-4-基数统计" class="headerlink" title="2.4 基数统计"></a>2.4 基数统计</h2><p>基数统计就是指统计一个集合中不重复的元素个数。场景 4 中独立访客量可以使用基数统计。</p><p>网页 UV 统计中的难点：对于一个搞大促的电商网站而言，一个 page1 的 UV 可能高达千万，类似这种的 page 可能有成千上万个。如果采用 Set 或者 Hash 虽然可以达到去重的效果，但是对内存的消耗会非常大。</p><p>因此可以使用 Redis 中提供的 HyperLogLog 。<br>HyperLogLog 是一种用于统计基数的数据集合类型，它的最大优势就在于，当集合元素数量非常多时，它计算基数所需的空间总是固定的，而且还很小。在 Redis 中，每个 HyperLogLog 只需要花费 12 KB 内存，就可以计算接近 2^64 个元素的基数。</p><p>在统计 UV 时，你可以用 PFADD 命令（用于向 HyperLogLog 中添加新元素）把访问页面的每个用户都添加到 HyperLogLog 中。即 <code>PFADD page1:uv user1 user2 user3 user4 user5</code><br>接下来，就可以用 PFCOUNT 命令直接获得 page1 的 UV 值了，这个命令的作用就是返回 HyperLogLog 的统计结果。即 <code>PFCOUNT page1:uv</code></p><p>注意：HyperLogLog 的统计规则是基于概率完成的，所以它给出的统计结果是有一定误差的，标准误算率是 0.81%。这也就意味着，你使用 HyperLogLog 统计的 UV 是 100 万，但实际的 UV 可能是 101 万。虽然误差率不算大，但是，如果你需要精确统计结果的话，最好还是继续用 Set 或 Hash 类型。</p><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><img src="/JeckFS/2022/07/28/JK-Redis-%E4%BA%BF%E7%BA%A7%E9%9B%86%E5%90%88%E6%95%B0%E6%8D%AE%E7%BB%9F%E8%AE%A1/Snipaste_2022-07-28_15-49-23.png" class="" title="This is 2-th image."><p>当需要进行排序统计时，List 中的元素虽然有序，但是一旦有新元素插入，原来的元素在 List 中的位置就会移动，那么，按位置读取的排序结果可能就不准确了。而 Sorted Set 本身是按照集合元素的权重排序，可以准确地按序获取结果，所以建议你优先使用它。</p><p>如果我们记录的数据只有 0 和 1 两个值的状态，Bitmap 会是一个很好的选择，这主要归功于 Bitmap 对于一个数据只用 1 个 bit 记录，可以节省内存。</p><p>对于基数统计来说，如果集合元素量达到亿级别而且不需要精确统计时，我建议你使用 HyperLogLog。</p><p>可以不断总结每种数据结构的应用场景。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Redis </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Redis </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>JK-Redis-使用String类型中需要注意的点</title>
       <link href="/JeckFS/2022/07/27/JK-Redis-%E4%BD%BF%E7%94%A8String%E7%B1%BB%E5%9E%8B%E4%B8%AD%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E7%82%B9/"/>
       <url>/JeckFS/2022/07/27/JK-Redis-%E4%BD%BF%E7%94%A8String%E7%B1%BB%E5%9E%8B%E4%B8%AD%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E7%82%B9/</url>
