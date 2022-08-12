@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>iterm2使用教程</title>
+      <link href="/JeckFS/2022/08/12/iterm2%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/"/>
+      <url>/JeckFS/2022/08/12/iterm2%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
+      
+        <content type="html"><![CDATA[<h1 id="常用快捷键"><a href="#常用快捷键" class="headerlink" title="常用快捷键"></a>常用快捷键</h1><div class="table-container"><table><thead><tr><th style="text-align:center">命令</th><th style="text-align:center">解释</th></tr></thead><tbody><tr><td style="text-align:center">command + shift + i</td><td style="text-align:center">启动 / 关闭多窗口同时输入相同命令</td></tr><tr><td style="text-align:center">command + ;</td><td style="text-align:center">查看历史命令</td></tr><tr><td style="text-align:center">ctrl + r</td><td style="text-align:center">搜索历史命令</td></tr><tr><td style="text-align:center">command + shift + d</td><td style="text-align:center">垂直分屏</td></tr><tr><td style="text-align:center">command + d</td><td style="text-align:center">水平分屏</td></tr><tr><td style="text-align:center">command + t</td><td style="text-align:center">新建 tab 页</td></tr></tbody></table></div>]]></content>
+      
+      
+      <categories>
+          
+          <category> iterm2 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 工具 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>JK-Redis-亿级集合数据统计</title>
       <link href="/JeckFS/2022/07/28/JK-Redis-%E4%BA%BF%E7%BA%A7%E9%9B%86%E5%90%88%E6%95%B0%E6%8D%AE%E7%BB%9F%E8%AE%A1/"/>
       <url>/JeckFS/2022/07/28/JK-Redis-%E4%BA%BF%E7%BA%A7%E9%9B%86%E5%90%88%E6%95%B0%E6%8D%AE%E7%BB%9F%E8%AE%A1/</url>
