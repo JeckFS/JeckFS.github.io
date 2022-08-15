@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>Linux防火墙设置</title>
+      <link href="/JeckFS/2022/08/15/Linux%E9%98%B2%E7%81%AB%E5%A2%99%E8%AE%BE%E7%BD%AE/"/>
+      <url>/JeckFS/2022/08/15/Linux%E9%98%B2%E7%81%AB%E5%A2%99%E8%AE%BE%E7%BD%AE/</url>
+      
+        <content type="html"><![CDATA[<p>1.iptables-save   —-查看暴露的端口号</p><p>2.firewall-cmd    —zone=public —add-port=80/tcp —permanent  —-开放端口号</p><p>3.firewall-cmd    —reload  —重新加载</p><h1 id="firewall防火墙"><a href="#firewall防火墙" class="headerlink" title="firewall防火墙"></a>firewall防火墙</h1><ul><li>查看firewall服务状态</li></ul><p><code>systemctl status firewalld</code></p><p>出现Active: active (running)切高亮显示则表示是启动状态。</p><p>出现 Active: inactive (dead)灰色表示停止，看单词也行。</p><ul><li>查看firewall的状态</li></ul><p><code>firewall-cmd --state</code></p><ul><li>开启、重启、关闭、firewalld.service服务</li></ul><p>开启</p><p><code>service firewalld start</code></p><p>重启</p><p><code>service firewalld restart</code></p><p>关闭</p><p><code>service firewalld stop</code></p><ul><li>查看防火墙规则</li></ul><p><code>firewall-cmd --list-all</code></p><ul><li>查询端口是否开放</li></ul><p><code>firewall-cmd --query-port=8080/tcp</code></p><ul><li>开放80端口</li></ul><p><code>firewall-cmd --permanent --add-port=80/tcp</code></p><ul><li>移除端口</li></ul><p><code>firewall-cmd --permanent --remove-port=8080/tcp</code></p><ul><li>重启防火墙(修改配置后要重启防火墙)</li></ul><p><code>firewall-cmd --reload</code></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> Linux防火墙 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Linux </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>iterm2使用教程</title>
       <link href="/JeckFS/2022/08/12/iterm2%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/"/>
       <url>/JeckFS/2022/08/12/iterm2%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
