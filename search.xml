@@ -4,6 +4,56 @@
   
     
     <entry>
+      <title>vim手册</title>
+      <link href="/JeckFS/2022/09/16/vim%E6%89%8B%E5%86%8C/"/>
+      <url>/JeckFS/2022/09/16/vim%E6%89%8B%E5%86%8C/</url>
+      
+        <content type="html"><![CDATA[<h1 id="折叠命令"><a href="#折叠命令" class="headerlink" title="折叠命令"></a>折叠命令</h1><p>使用 vim 打开文档后，输入 <code>:help folding</code> 可查看帮助文档。</p><img src="/JeckFS/2022/09/16/vim%E6%89%8B%E5%86%8C/27828ccbef6c4ba787f1e0e81458fbd6.png" class="" title="This is 2-th image.">]]></content>
+      
+      
+      <categories>
+          
+          <category> 工具 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> vim </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>openGauss-管理及开发工具</title>
+      <link href="/JeckFS/2022/09/15/openGauss-%E7%AE%A1%E7%90%86%E5%8F%8A%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/"/>
+      <url>/JeckFS/2022/09/15/openGauss-%E7%AE%A1%E7%90%86%E5%8F%8A%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/</url>
+      
+        <content type="html"><![CDATA[<img src="/JeckFS/2022/09/15/openGauss-%E7%AE%A1%E7%90%86%E5%8F%8A%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/Snipaste_2022-09-15_16-36-05.png" class="" title="This is 2-th image."><img src="/JeckFS/2022/09/15/openGauss-%E7%AE%A1%E7%90%86%E5%8F%8A%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/Snipaste_2022-09-15_16-39-56.png" class="" title="This is 2-th image."><img src="/JeckFS/2022/09/15/openGauss-%E7%AE%A1%E7%90%86%E5%8F%8A%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/Snipaste_2022-09-15_16-45-16.png" class="" title="This is 2-th image."><img src="/JeckFS/2022/09/15/openGauss-%E7%AE%A1%E7%90%86%E5%8F%8A%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/Snipaste_2022-09-15_16-45-48.png" class="" title="This is 2-th image."><p>gsql -l sql-name.sql ：直接运行 sql-name.sql 中的语句。<br>gsql -1 参数：一般与 -l 参数配合使用， -l 指定的 sql 文件执行时所有文件内的语句放在一个事务中执行，若出错则整个文件的 sql 都回滚。<br>gsql -L query.log ：将本次会话中所有的执行语句的结果存放在 query.log 中<br>gsql -A ：输出结果不进行对齐，而是逐个字符输出。<br>gsql -t：仅显示数据行，不显示列名<br>gsql -L：指定数据行之间列分隔符<br>gsql -H：查询结果以 HTML 格式进行输出</p><img src="/JeckFS/2022/09/15/openGauss-%E7%AE%A1%E7%90%86%E5%8F%8A%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/Snipaste_2022-09-15_17-24-53.png" class="" title="This is 2-th image."><p>gsql -x：同 mysql <code>\G</code></p><p><code>\copy</code>：将查询输出导出到文件中文件中。或者将 copy 出的结果导入到另一个表中。<br><code>\i</code>：执行指定的 sql 文件中的脚本<br><code>\d</code>：显示所有的关系表<br><code>\d tablename</code>：显示 tablename 的详细信息</p><p><code>\a</code>：切换对齐方式<br><code>\x</code>：切换输出是按行还是按列<br><code>\t</code>：切换是否显示列名</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 数据库 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> openGauss </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>diff详解</title>
       <link href="/JeckFS/2022/09/14/diff%E8%AF%A6%E8%A7%A3/"/>
       <url>/JeckFS/2022/09/14/diff%E8%AF%A6%E8%A7%A3/</url>
