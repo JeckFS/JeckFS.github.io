@@ -1,0 +1,588 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Unix-高级IO | JeckFS</title><meta name="keywords" content="Unix"><meta name="author" content="YFS"><meta name="copyright" content="YFS"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="非阻塞IO将描述符设置为非阻塞 IO 的方法：  调用 open() 时，指定 O_NONBLOCK 标志 若描述符已经打开，可调用 fcntl() 并将文件状态标志只为 O_NONBLOCK。  12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unix-高级IO">
+<meta property="og:url" content="http://jeckfs.gitee.io/JeckFS/2022/11/24/Unix-%E9%AB%98%E7%BA%A7IO/index.html">
+<meta property="og:site_name" content="JeckFS">
+<meta property="og:description" content="非阻塞IO将描述符设置为非阻塞 IO 的方法：  调用 open() 时，指定 O_NONBLOCK 标志 若描述符已经打开，可调用 fcntl() 并将文件状态标志只为 O_NONBLOCK。  12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img0.baidu.com/it/u=4226681601,4255880919&fm=253&fmt=auto&app=120&f=JPEG?w=641&h=361">
+<meta property="article:published_time" content="2022-11-24T09:56:58.000Z">
+<meta property="article:modified_time" content="2022-11-28T08:40:08.721Z">
+<meta property="article:author" content="YFS">
+<meta property="article:tag" content="Unix">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img0.baidu.com/it/u=4226681601,4255880919&fm=253&fmt=auto&app=120&f=JPEG?w=641&h=361"><link rel="shortcut icon" href="/JeckFS/img/favicon.png"><link rel="canonical" href="http://jeckfs.gitee.io/JeckFS/2022/11/24/Unix-%E9%AB%98%E7%BA%A7IO/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/JeckFS/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/JeckFS/',
+  algolia: undefined,
+  localSearch: {"path":"/JeckFS/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Unix-高级IO',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-11-28 16:40:08'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/JeckFS/archives/"><div class="headline">文章</div><div class="length-num">241</div></a><a href="/JeckFS/tags/"><div class="headline">标签</div><div class="length-num">68</div></a><a href="/JeckFS/categories/"><div class="headline">分类</div><div class="length-num">64</div></a></div><hr/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://img0.baidu.com/it/u=4226681601,4255880919&amp;fm=253&amp;fmt=auto&amp;app=120&amp;f=JPEG?w=641&amp;h=361')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/JeckFS/">JeckFS</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Unix-高级IO</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-11-24T09:56:58.000Z" title="发表于 2022-11-24 17:56:58">2022-11-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-11-28T08:40:08.721Z" title="更新于 2022-11-28 16:40:08">2022-11-28</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/JeckFS/categories/Unix/">Unix</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Unix-高级IO"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="非阻塞IO"><a href="#非阻塞IO" class="headerlink" title="非阻塞IO"></a>非阻塞IO</h1><p>将描述符设置为非阻塞 IO 的方法：</p>
+<ul>
+<li>调用 open() 时，指定 O_NONBLOCK 标志</li>
+<li>若描述符已经打开，可调用 fcntl() 并将文件状态标志只为 O_NONBLOCK。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;apue.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="type">void</span></span><br><span class="line"><span class="title function_">clr_fl</span><span class="params">(<span class="type">int</span> fd, <span class="type">int</span> flags)</span></span><br><span class="line">				<span class="comment">/* flags are the file status flags to turn off */</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">int</span>		val;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> ((val = fcntl(fd, F_GETFL, <span class="number">0</span>)) &lt; <span class="number">0</span>)</span><br><span class="line">		err_sys(<span class="string">&quot;fcntl F_GETFL error&quot;</span>);</span><br><span class="line"></span><br><span class="line">	val &amp;= ~flags;		<span class="comment">/* turn flags off */</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (fcntl(fd, F_SETFL, val) &lt; <span class="number">0</span>)</span><br><span class="line">		err_sys(<span class="string">&quot;fcntl F_SETFL error&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="type">void</span></span><br><span class="line"><span class="title function_">set_fl</span><span class="params">(<span class="type">int</span> fd, <span class="type">int</span> flags)</span> <span class="comment">/* flags are file status flags to turn on */</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">int</span>		val;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> ((val = fcntl(fd, F_GETFL, <span class="number">0</span>)) &lt; <span class="number">0</span>)</span><br><span class="line">		err_sys(<span class="string">&quot;fcntl F_GETFL error&quot;</span>);</span><br><span class="line"></span><br><span class="line">	val |= flags;		<span class="comment">/* turn on flags */</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (fcntl(fd, F_SETFL, val) &lt; <span class="number">0</span>)</span><br><span class="line">		err_sys(<span class="string">&quot;fcntl F_SETFL error&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="type">char</span>	buf[<span class="number">500000</span>];</span><br><span class="line"></span><br><span class="line"><span class="type">int</span></span><br><span class="line"><span class="title function_">nonblock</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">int</span>		ntowrite, nwrite;</span><br><span class="line">	<span class="type">char</span>	*ptr;</span><br><span class="line"></span><br><span class="line">	ntowrite = read(STDIN_FILENO, buf, <span class="keyword">sizeof</span>(buf));</span><br><span class="line">	<span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;read %d bytes\n&quot;</span>, ntowrite);</span><br><span class="line"></span><br><span class="line">	set_fl(STDOUT_FILENO, O_NONBLOCK);	<span class="comment">/* set nonblocking */</span></span><br><span class="line"></span><br><span class="line">	ptr = buf;</span><br><span class="line">	<span class="keyword">while</span> (ntowrite &gt; <span class="number">0</span>) &#123;</span><br><span class="line">		errno = <span class="number">0</span>;</span><br><span class="line">		nwrite = write(STDOUT_FILENO, ptr, ntowrite);</span><br><span class="line">		<span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;nwrite = %d, errno = %d\n&quot;</span>, nwrite, errno);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (nwrite &gt; <span class="number">0</span>) &#123;</span><br><span class="line">			ptr += nwrite;</span><br><span class="line">			ntowrite -= nwrite;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	clr_fl(STDOUT_FILENO, O_NONBLOCK);	<span class="comment">/* clear nonblocking */</span></span><br><span class="line"></span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="记录锁"><a href="#记录锁" class="headerlink" title="记录锁"></a>记录锁</h1><p>记录锁可以以字节为单位锁住文件的一部分。</p>
+<p>不同 Unix 系统所支持的加锁方式：</p>
+<p><img src="Snipaste_2022-11-25_11-38-42.png" width="100%" height="100%"></p>
+<h2 id="fcntl-记录锁"><a href="#fcntl-记录锁" class="headerlink" title="fcntl 记录锁"></a>fcntl 记录锁</h2><p><img src="Snipaste_2022-11-25_11-40-33.png" width="100%" height="100%"></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">flock</span> &#123;</span></span><br><span class="line">  <span class="type">short</span>  l_type;   <span class="comment">/* F_RDLCK（读锁）, F_WRLCK（写锁）, or F_UNLCK（解锁） */</span></span><br><span class="line">  <span class="type">short</span>  l_whence; <span class="comment">/* SEEK_SET, SEEK_CUR, or SEEK_END */</span></span><br><span class="line">  <span class="type">off_t</span>  l_start;  <span class="comment">/* offset in bytes, relative to l_whence */</span></span><br><span class="line">  <span class="type">off_t</span>  l_len;    <span class="comment">/* length, in bytes; 0 means lock to EOF */</span></span><br><span class="line">  <span class="type">pid_t</span>  l_pid;    <span class="comment">/* returned with F_GETLK */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><strong>参数说明：</strong></p>
+<p>cmd：取值为 F_GETLK, F_SETLK, or F_SETLKW。</p>
+<ul>
+<li>F_GETLK：若锁存在，则获取锁失败，并存在的锁信息将重写 flockptr 中的内容；若锁不存在，flockptr 中出了 l_type 被设置为 F_UNLCK 外其他内容不变。<br>F_GETLK 命令不能用来检测本线程是否持有锁。</li>
+<li>F_SETLK：设置由 flockptr 所描述的锁。当不满足加锁规则时，fcntl 将会立即返回，并将 error 设置为 EACCES 或 EAGAIN。<br>该命令也可以通过设置 l_type 为 F_UNLCK 来清除 flockptr 描述的锁</li>
+<li>F_SETLKW：F_SETLK 的阻塞版本。当与其他进程存在锁竞争时陷入休眠（当锁可用时或被信号终端时被唤醒）。其中 W 表示 wait</li>
+</ul>
+<p><strong>函数说明：</strong></p>
+<ul>
+<li>锁的起始位置可以超过当前文件的结束位置，但不能在文件开始位置之前加锁。</li>
+<li>l_len 为 0 时，表示锁的范围可以扩展到最大可能的范围。可以锁住从起始位置（可以是文件任意位置）开始到文件末尾的内容以及未来追加的文件内容。</li>
+<li>锁整个文件：l_start = 0； l_whence = SEEK_SET；</li>
+</ul>
+<p>同一个进程若对某段文件内容加锁后，再次加锁，新加的锁将会替换旧锁。如当前进程在文件第 16-32 字节上加了写锁，之后又在相同的位置添加了读锁，那么写锁将会被替换为读锁。<br>但是多进程之间的加锁规则应满足如下图所示规则：</p>
+<p><img src="Snipaste_2022-11-25_16-04-20.png" width="100%" height="100%"></p>
+<p>在加锁写锁前应该在打开该文件时指定读写的权限：读锁（读权限），写锁（写权限）。</p>
+<p><strong>锁的分裂与合并：</strong><br><img src="Snipaste_2022-11-25_16-39-49.png" width="100%" height="100%"></p>
+<h3 id="锁的隐含继承与释放："><a href="#锁的隐含继承与释放：" class="headerlink" title="锁的隐含继承与释放："></a>锁的隐含继承与释放：</h3><p>锁的隐含继承与释放应满足如下三条规则：</p>
+<ul>
+<li><p>锁是与某个进程和某个文件相关联的。<br>这表现在：一是当进程终止后，它的所有锁将被释放；二是：当描述符关闭时，该进程引用的该文件上的所有锁都将被释放。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">fd1 = open(pathname, ...);</span><br><span class="line">read_lock(fd1, ...);</span><br><span class="line">fd2 = dup(fd1);</span><br><span class="line">close(fd2); <span class="comment">// 会释放在 fd1 上加的锁</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">fd1 = open(pathname, ...);</span><br><span class="line">read_lock(fd1, ...);</span><br><span class="line">fd2 = open(pathname, ...)</span><br><span class="line">close(fd2); <span class="comment">// 会释放在 fd1 上加的锁</span></span><br></pre></td></tr></table></figure></li>
+<li>fork 后的子进程并不会继承父进程的锁。<br>锁本身就是防止多进程出现并发问题的，若父子进程共享同一把锁，会有并发问题。</li>
+<li>当不设置 close-on-exec 标志时，调用 exec 后的程序会继承锁</li>
+</ul>
+<h3 id="FreeBSD-的实现"><a href="#FreeBSD-的实现" class="headerlink" title="FreeBSD 的实现"></a>FreeBSD 的实现</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">fd1 = open(pathname, ...);</span><br><span class="line">write_lock(fd1, <span class="number">0</span>, SEEK_SET, <span class="number">1</span>); <span class="comment">/* parent write locks byte 0 */</span></span><br><span class="line"><span class="keyword">if</span> ((pid = fork()) &gt; <span class="number">0</span>) &#123; <span class="comment">/* parent */</span></span><br><span class="line">    fd2 = dup(fd1);</span><br><span class="line">    fd3 = open(pathname, ...);</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">    read_lock(fd1, <span class="number">1</span>, SEEK_SET, <span class="number">1</span>); <span class="comment">/* child read locks byte 1 */</span></span><br><span class="line">&#125;</span><br><span class="line">pause();</span><br></pre></td></tr></table></figure>
+<p>上述代码的锁结构对应下图所示：</p>
+<p><img src="Snipaste_2022-11-26_09-51-17.png" width="100%" height="100%"></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 给整个文件上写锁</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="type">int</span></span><br><span class="line"><span class="title function_">lockfile</span><span class="params">(<span class="type">int</span> fd)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">flock</span> <span class="title">fl</span>;</span></span><br><span class="line">    fl.l_type = F_WRLCK;</span><br><span class="line">    fl.l_start = <span class="number">0</span>;</span><br><span class="line">    fl.l_whence = SEEK_SET;</span><br><span class="line">    fl.l_len = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">return</span>(fcntl(fd, F_SETLK, &amp;fl));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="锁文件结尾时应注意的地方"><a href="#锁文件结尾时应注意的地方" class="headerlink" title="锁文件结尾时应注意的地方"></a>锁文件结尾时应注意的地方</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">writew_lock(fd, <span class="number">0</span>, SEEK_END, <span class="number">0</span>); <span class="comment">// 锁住文件追加内容</span></span><br><span class="line">write(fd, buf, <span class="number">1</span>); <span class="comment">// 新添加的这一字节被锁住</span></span><br><span class="line">un_lock(fd, <span class="number">0</span>, SEEK_END); <span class="comment">// 解锁后续追加内容</span></span><br><span class="line">write(fd, buf, <span class="number">1</span>); <span class="comment">// 这以字节将不会被锁住</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 整个过程中，第一个写入的字节总是被锁住。</span></span><br></pre></td></tr></table></figure>
+<p><img src="Snipaste_2022-11-26_10-33-48.png" width="100%" height="100%"></p>
+<p>解决办法是解锁是将长度设置为 -1。</p>
+<h3 id="建议性锁（advisory-locking）和强制性（mandatory-locking）锁"><a href="#建议性锁（advisory-locking）和强制性（mandatory-locking）锁" class="headerlink" title="建议性锁（advisory locking）和强制性（mandatory locking）锁"></a>建议性锁（advisory locking）和强制性（mandatory locking）锁</h3><p>在数据库使用相关的库来访问例程中，若库中的所有函数以一致的方式来处理记录锁，那么任何使用这些函数访问数据库的进程集合都是 <strong>合作进程</strong> 。不使用该库中的函数就对数据库文件进行访问的进程称为 <strong>非合作进程</strong>。</p>
+<p>如果这些数据库访问函数是唯一访问数据库的入口的话，那么这些函数是可以使用 advisory 锁的。<br>但 advisory 锁并不能阻止其他有权进程写入数据库文件。</p>
+<p>使用 mandatory 锁时，内核会检查每个 open()、read()、write() 是否会违反锁规则。</p>
+<blockquote>
+<p>在 Linux 中使用 mandatory locking 需要在 mount 命令中使用 <code>-o mand</code> 选项开启。</p>
+</blockquote>
+<p>对于开启 set-group-ID 位且关闭 group-execute 位的文件（当 group-e execute 位关闭时 set-group-ID 位将无意义，可以用来表明该文件是一个 mandatory locking）来说，mandatory locking 自动启用。</p>
+<p><img src="Snipaste_2022-11-26_16-41-40.png" width="100%" height="100%"></p>
+<p>使用 mandatory locking 时，读写锁的兼容规则：</p>
+<ul>
+<li><p>read() &amp; write()<br><img src="Snipaste_2022-11-26_16-46-29.png" width="100%" height="100%"></p>
+</li>
+<li><p>open()<br>调用 open 函数时指定了 O_TRUNC 或 O_CREAT 标志时，无论是否指定了 O_NONBLOCK ，open 函数将立即返回出错，errno 置为 EAGAIN。除此之外 open 函数都是可以正常调用。</p>
+</li>
+</ul>
+<p><strong>注意</strong></p>
+<ol>
+<li>在使用 mandatory locking 时，即使出现读写锁冲突时，通过 ed 命令仍然是可以修改文件。<blockquote>
+<p>ed 命令将文件内容先临时存在一个临时文件中，然后替换旧文件。mandatory locking 对 unlink() 无影响。</p>
+</blockquote>
+</li>
+<li>vi 命令可以读取文件内容，但不能修改。</li>
+<li>在 Korn shell 中，重定向符 <code>&gt;</code> 以及 <code>&gt;&gt;</code> 将失败，并报 “cannot create” 错误。</li>
+<li>在 Bourne shell 中 <code>&gt;</code> 会报错，<code>&gt;&gt;</code> 只是阻塞直到 mandatory locking 移除。<blockquote>
+<p>这主要是因为：Korn shell 在 open() 时同时指定了 O_CREAT 以及 O_APPEND 标志，而 Bourne shell 并没有指定 O_CREAT</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;apue.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/wait.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span></span><br><span class="line"><span class="title function_">support_mandatory_or_not</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">int</span>				fd;</span><br><span class="line">	<span class="type">pid_t</span>			pid;</span><br><span class="line">	<span class="type">char</span>			buf[<span class="number">5</span>];</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">stat</span>		<span class="title">statbuf</span>;</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (argc != <span class="number">2</span>) &#123;</span><br><span class="line">		<span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">&quot;usage: %s filename\n&quot;</span>, argv[<span class="number">0</span>]);</span><br><span class="line">		<span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> ((fd = open(argv[<span class="number">1</span>], O_RDWR | O_CREAT | O_TRUNC, FILE_MODE)) &lt; <span class="number">0</span>)</span><br><span class="line">		err_sys(<span class="string">&quot;open error&quot;</span>);</span><br><span class="line">	<span class="keyword">if</span> (write(fd, <span class="string">&quot;abcdef&quot;</span>, <span class="number">6</span>) != <span class="number">6</span>)</span><br><span class="line">		err_sys(<span class="string">&quot;write error&quot;</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* turn on set-group-ID and turn off group-execute */</span></span><br><span class="line">	<span class="keyword">if</span> (fstat(fd, &amp;statbuf) &lt; <span class="number">0</span>)</span><br><span class="line">		err_sys(<span class="string">&quot;fstat error&quot;</span>);</span><br><span class="line">	<span class="keyword">if</span> (fchmod(fd, (statbuf.st_mode &amp; ~S_IXGRP) | S_ISGID) &lt; <span class="number">0</span>)</span><br><span class="line">		err_sys(<span class="string">&quot;fchmod error&quot;</span>);</span><br><span class="line"></span><br><span class="line">	TELL_WAIT();</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> ((pid = fork()) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">		err_sys(<span class="string">&quot;fork error&quot;</span>);</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid &gt; <span class="number">0</span>) &#123;	<span class="comment">/* parent */</span></span><br><span class="line">		<span class="comment">/* write lock entire file */</span></span><br><span class="line">		<span class="keyword">if</span> (write_lock(fd, <span class="number">0</span>, SEEK_SET, <span class="number">0</span>) &lt; <span class="number">0</span>)</span><br><span class="line">			err_sys(<span class="string">&quot;write_lock error&quot;</span>);</span><br><span class="line"></span><br><span class="line">		TELL_CHILD(pid);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (waitpid(pid, <span class="literal">NULL</span>, <span class="number">0</span>) &lt; <span class="number">0</span>)</span><br><span class="line">			err_sys(<span class="string">&quot;waitpid error&quot;</span>);</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;				<span class="comment">/* child */</span></span><br><span class="line">		WAIT_PARENT();		<span class="comment">/* wait for parent to set lock */</span></span><br><span class="line"></span><br><span class="line">		set_fl(fd, O_NONBLOCK);</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* first let&#x27;s see what error we get if region is locked */</span></span><br><span class="line">		<span class="keyword">if</span> (read_lock(fd, <span class="number">0</span>, SEEK_SET, <span class="number">0</span>) != <span class="number">-1</span>)	<span class="comment">/* no wait */</span></span><br><span class="line">			err_sys(<span class="string">&quot;child: read_lock succeeded&quot;</span>);</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;read_lock of already-locked region returns %d\n&quot;</span>,</span><br><span class="line">		  errno);</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* now try to read the mandatory locked file */</span></span><br><span class="line">		<span class="keyword">if</span> (lseek(fd, <span class="number">0</span>, SEEK_SET) == <span class="number">-1</span>)</span><br><span class="line">			err_sys(<span class="string">&quot;lseek error&quot;</span>);</span><br><span class="line">    <span class="comment">// 若支持 mandatory locking ，read 函数将返回 EACCES 或 EAGAIN</span></span><br><span class="line">		<span class="keyword">if</span> (read(fd, buf, <span class="number">2</span>) &lt; <span class="number">0</span>)</span><br><span class="line">			err_ret(<span class="string">&quot;read failed (mandatory locking works)&quot;</span>);</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">&quot;read OK (no mandatory locking), buf = %2.2s\n&quot;</span>,</span><br><span class="line">			  buf);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;apue.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span></span><br><span class="line"><span class="title function_">lock_reg</span><span class="params">(<span class="type">int</span> fd, <span class="type">int</span> cmd, <span class="type">int</span> type, <span class="type">off_t</span> offset, <span class="type">int</span> whence, <span class="type">off_t</span> len)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">flock</span>	<span class="title">lock</span>;</span></span><br><span class="line"></span><br><span class="line">	lock.l_type = type;		<span class="comment">/* F_RDLCK, F_WRLCK, F_UNLCK */</span></span><br><span class="line">	lock.l_start = offset;	<span class="comment">/* byte offset, relative to l_whence */</span></span><br><span class="line">	lock.l_whence = whence;	<span class="comment">/* SEEK_SET, SEEK_CUR, SEEK_END */</span></span><br><span class="line">	lock.l_len = len;		<span class="comment">/* #bytes (0 means to EOF) */</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span>(fcntl(fd, cmd, &amp;lock));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;apue.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="keyword">volatile</span> <span class="type">sig_atomic_t</span> sigflag; <span class="comment">/* set nonzero by sig handler */</span></span><br><span class="line"><span class="type">static</span> <span class="type">sigset_t</span> newmask, oldmask, zeromask;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">void</span></span><br><span class="line"><span class="title function_">sig_usr</span><span class="params">(<span class="type">int</span> signo)</span>	<span class="comment">/* one signal handler for SIGUSR1 and SIGUSR2 */</span></span><br><span class="line">&#123;</span><br><span class="line">	sigflag = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span></span><br><span class="line"><span class="title function_">TELL_WAIT</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span> (signal(SIGUSR1, sig_usr) == SIG_ERR)</span><br><span class="line">		err_sys(<span class="string">&quot;signal(SIGUSR1) error&quot;</span>);</span><br><span class="line">	<span class="keyword">if</span> (signal(SIGUSR2, sig_usr) == SIG_ERR)</span><br><span class="line">		err_sys(<span class="string">&quot;signal(SIGUSR2) error&quot;</span>);</span><br><span class="line">	sigemptyset(&amp;zeromask);</span><br><span class="line">	sigemptyset(&amp;newmask);</span><br><span class="line">	sigaddset(&amp;newmask, SIGUSR1);</span><br><span class="line">	sigaddset(&amp;newmask, SIGUSR2);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Block SIGUSR1 and SIGUSR2, and save current signal mask */</span></span><br><span class="line">	<span class="keyword">if</span> (sigprocmask(SIG_BLOCK, &amp;newmask, &amp;oldmask) &lt; <span class="number">0</span>)</span><br><span class="line">		err_sys(<span class="string">&quot;SIG_BLOCK error&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span></span><br><span class="line"><span class="title function_">TELL_PARENT</span><span class="params">(<span class="type">pid_t</span> pid)</span></span><br><span class="line">&#123;</span><br><span class="line">	kill(pid, SIGUSR2);		<span class="comment">/* tell parent we&#x27;re done */</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span></span><br><span class="line"><span class="title function_">WAIT_PARENT</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">while</span> (sigflag == <span class="number">0</span>)</span><br><span class="line">		sigsuspend(&amp;zeromask);	<span class="comment">/* and wait for parent */</span></span><br><span class="line">	sigflag = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Reset signal mask to original value */</span></span><br><span class="line">	<span class="keyword">if</span> (sigprocmask(SIG_SETMASK, &amp;oldmask, <span class="literal">NULL</span>) &lt; <span class="number">0</span>)</span><br><span class="line">		err_sys(<span class="string">&quot;SIG_SETMASK error&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span></span><br><span class="line"><span class="title function_">TELL_CHILD</span><span class="params">(<span class="type">pid_t</span> pid)</span></span><br><span class="line">&#123;</span><br><span class="line">	kill(pid, SIGUSR1);			<span class="comment">/* tell child we&#x27;re done */</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span></span><br><span class="line"><span class="title function_">WAIT_CHILD</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">while</span> (sigflag == <span class="number">0</span>)</span><br><span class="line">		sigsuspend(&amp;zeromask);	<span class="comment">/* and wait for child */</span></span><br><span class="line">	sigflag = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* Reset signal mask to original value */</span></span><br><span class="line">	<span class="keyword">if</span> (sigprocmask(SIG_SETMASK, &amp;oldmask, <span class="literal">NULL</span>) &lt; <span class="number">0</span>)</span><br><span class="line">		err_sys(<span class="string">&quot;SIG_SETMASK error&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="Snipaste_2022-11-26_17-22-43.png" width="100%" height="100%"></p>
+<blockquote>
+<p>EAGAIN: 11, try again<br>EACCES: 13, Permission denied</p>
+</blockquote>
+<h1 id="IO-多路复用"><a href="#IO-多路复用" class="headerlink" title="IO 多路复用"></a>IO 多路复用</h1><h2 id="select-和-pselect"><a href="#select-和-pselect" class="headerlink" title="select() 和 pselect()"></a>select() 和 pselect()</h2><p><img src="Snipaste_2022-11-27_10-15-44.png" width="100%" height="100%"></p>
+<p>描述符是否阻塞与 select 函数是否阻塞并无关系。对于非阻塞描述符，可以将 select 的超时时间设置为 5s，5s 之内没有就绪，仅阻塞 5s。若超时时间设置为一个无限大的数字，select 函数将会一直阻塞直到就绪或者捕捉到信号。</p>
+<p><strong>参数说明：</strong></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">tvptr</th>
+<th style="text-align:center">取值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">NULL</td>
+<td style="text-align:center">永远等待（可被信号打断）。当描述符就绪或捕捉到信号（返回 -1，errno 设置为 EINTR）时函数返回。</td>
+</tr>
+<tr>
+<td style="text-align:center">tvptr-&gt;tv_sec == 0 &amp;&amp; tvptr-&gt;tv_usec == 0</td>
+<td style="text-align:center">不等待立即返回。以轮询的方式找出不阻塞的多个描述符</td>
+</tr>
+<tr>
+<td style="text-align:center">tvptr-&gt;tv_sec != 0 \</td>
+<td style="text-align:center">\</td>
+<td>tvptr-&gt;tv_usec != 0</td>
+<td>等待指定的时间。当某个描述符就绪后或者等待超时（返回 0）后返回</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>select 调用返回后，在 Linux 中会将剩余的未超时时间通过 tvptr 参数返回。</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">参数</th>
+<th style="text-align:center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">readfds</td>
+<td style="text-align:center">指向可读描述符集合</td>
+</tr>
+<tr>
+<td style="text-align:center">writefds</td>
+<td style="text-align:center">指向可写描述符集合</td>
+</tr>
+<tr>
+<td style="text-align:center">exceptfds</td>
+<td style="text-align:center">指向异常条件描述符集合</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>当中间三个条件参数为空指针时，select 相当于一个能够提供高精度的 sleep()。</p>
+<p><strong>关于数据类型 fd_set</strong></p>
+<p>fd_set 可以看作是一个 bit 数组，每个描述符占一个比特位。</p>
+<p><img src="Snipaste_2022-11-27_14-20-18.png" width="100%" height="100%"></p>
+<p><strong>fd_set 允许的运算符操作</strong></p>
+<ul>
+<li>同类型赋值</li>
+<li>调用如下函数<br><img src="Snipaste_2022-11-27_14-21-42.png" width="100%" height="100%"></li>
+</ul>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">函数名</th>
+<th style="text-align:center">作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">FD_ZERO</td>
+<td style="text-align:center">将 fd_set 清零</td>
+</tr>
+<tr>
+<td style="text-align:center">FD_SET</td>
+<td style="text-align:center">设置某一比特位</td>
+</tr>
+<tr>
+<td style="text-align:center">FD_CLR</td>
+<td style="text-align:center">清除某一比特位</td>
+</tr>
+<tr>
+<td style="text-align:center">FD_ISSET</td>
+<td style="text-align:center">是否启用某个比特位</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>在使用 fd_set 时，应先调用 FD_ZERO 将其清零，然后使用 FD_SET 为感兴趣的描述符设置比特位。</p>
+<p>参数 maxfdp1 是 readfds、writefds、exceptfds 三个集合的描述符个数之和 + 1，它指定了在内核检查启用比特位的范围。通常该值为 FD_SETSIZE（一般是 1024，定义在 sys/select.h 中）。一般按需定义自己的 maxfdp1，以避免性能浪费。</p>
+<p><img src="Snipaste_2022-11-27_14-54-44.png" width="100%" height="100%"></p>
+<p><strong>返回值说明</strong></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">返回值</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">-1</td>
+<td style="text-align:center">出错返回。如在描述符就绪前捕捉到信号。描述符集合不会被修改</td>
+</tr>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">无描述符就绪。一般是超时后返回。所有描述符集合将被清零</td>
+</tr>
+<tr>
+<td style="text-align:center">正数</td>
+<td style="text-align:center">三个描述符集合中总的就绪描述符的数量。若同一个描述符在不同集合中出现多次，则按多次统计。集合中保留就绪的描述符</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>关于描述符就绪的说明</strong></p>
+<ul>
+<li>readfds 中的描述符就绪指的是 read 函数不再阻塞</li>
+<li>writefds 中的描述符就绪指的是 write 函数不再阻塞</li>
+<li>exceptfds 中的描述符就绪指的是对应描述符挂起了某个异常条件。异常条件主要有：网络连接中达到了带外数据；packet 模式的伪终端发生了某种条件。</li>
+<li>对于普通文件的描述符总是返回就绪</li>
+</ul>
+<hr>
+<p>select 函数的变种函数： pselect()</p>
+<p><img src="Snipaste_2022-11-27_15-47-26.png" width="100%" height="100%"></p>
+<p>pselect 与 select 的不同点（除此之外都相同）：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">不同点</th>
+<th style="text-align:center">pselect</th>
+<th style="text-align:center">select</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">超时参数数据类型</td>
+<td style="text-align:center">timespec，可指定秒、纳秒</td>
+<td style="text-align:center">timeval，可指定秒、毫秒</td>
+</tr>
+<tr>
+<td style="text-align:center">超时参数的修饰符</td>
+<td style="text-align:center">const，调用前后超时参数值不变</td>
+<td style="text-align:center">调用前后超时参数保留剩余未超时时间</td>
+</tr>
+<tr>
+<td style="text-align:center">sigmask 参数</td>
+<td style="text-align:center">以原子性方式安装自定义信号屏蔽字。若为 NULL，则对信号的处理与 select 相同。返回时 sigmask 恢复原先的屏蔽字</td>
+<td style="text-align:center">无</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="函数-poll"><a href="#函数-poll" class="headerlink" title="函数 poll()"></a>函数 poll()</h2><p><img src="Snipaste_2022-11-27_16-23-53.png" width="100%" height="100%"></p>
+<p>当某个描述符被挂起后（POLLHUP）就不能再向该描述符中写入，但是可能仍旧可以从该描述符中读取数据。</p>
+<p><strong>参数说明</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">pollfd</span> &#123;</span></span><br><span class="line">	<span class="type">int</span>    fd;       <span class="comment">/* file descriptor to check, or &lt;0 to ignore */</span> /</span><br><span class="line">	<span class="type">short</span>  events;   <span class="comment">/* events of interest on fd */</span> <span class="comment">// 由用户设置</span></span><br><span class="line">	<span class="type">short</span>  revents;  <span class="comment">/* events that occurred on fd */</span> <span class="comment">// 由内核设置，用于指明对应描述符发生了什么事件</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>select 是通过修改参数 fd_set 实现哪些描述符就绪；poll 不会修改参数值，所有的信息同构 structure pollfd 结构体来返回。</p>
+</blockquote>
+<p>参数 nfds：指定了 fdarray 数组的长度。</p>
+<p>evnets 与 revents 的取值：</p>
+<p><img src="Snipaste_2022-11-27_16-32-04.png" width="100%" height="100%"></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">条件</th>
+<th style="text-align:center">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">timeout == -1</td>
+<td style="text-align:center">永远等待。当指定的描述符就绪或者捕捉到一个信号（返回 -1 并置 errno 为 EINTR）时返回。</td>
+</tr>
+<tr>
+<td style="text-align:center">timeout == 0</td>
+<td style="text-align:center">不等待，立即返回。找出多个描述符的状态而不阻塞 poll 函数</td>
+</tr>
+<tr>
+<td style="text-align:center">timeout &gt; 0</td>
+<td style="text-align:center">等待指定的时间。超时返回 0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>文件结束与挂起的区别</strong><br>若从终端输入数据并且键入文件结束符，POLLINT 就会被打开，read 函数可以读取该文件结束符并返回 0。<br>POLLHUP 并不会再 revents 中打开。一般在从调制解调器中读取或者电话线挂断是，将会收到 POLLHUP 的通知。</p>
+<h3 id="select-与-poll-的可中断性"><a href="#select-与-poll-的可中断性" class="headerlink" title="select 与 poll 的可中断性"></a>select 与 poll 的可中断性</h3><p>即使设置了 SA_RESTART 选项，在 select 和 poll 函数遭到中断时也是不重启的。但是在 SVR4 派生的系统中，select 与 poll 是自动重启的。考虑到移植到 SVR4 系统上应考虑调用 signal_intr() 以阻止系统调用重启动。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;apue.h&quot;</span></span></span><br><span class="line"></span><br><span class="line">Sigfunc *</span><br><span class="line"><span class="title function_">signal_intr</span><span class="params">(<span class="type">int</span> signo, Sigfunc *func)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">sigaction</span>	<span class="title">act</span>, <span class="title">oact</span>;</span></span><br><span class="line"></span><br><span class="line">	act.sa_handler = func;</span><br><span class="line">	sigemptyset(&amp;act.sa_mask);</span><br><span class="line">	act.sa_flags = <span class="number">0</span>;</span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span>	SA_INTERRUPT</span></span><br><span class="line">	act.sa_flags |= SA_INTERRUPT;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">	<span class="keyword">if</span> (sigaction(signo, &amp;act, &amp;oact) &lt; <span class="number">0</span>)</span><br><span class="line">		<span class="keyword">return</span>(SIG_ERR);</span><br><span class="line">	<span class="keyword">return</span>(oact.sa_handler);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="异步-IO"><a href="#异步-IO" class="headerlink" title="异步 IO"></a>异步 IO</h1><p>select 与 poll 都属于同步 IO。SIGPOLL 信号（System V 系统中）和 SIGIO 信号（BSD 系统中）可以用来实现异步 IO。</p>
+<p>异步 IO 的限制：</p>
+<ul>
+<li>不能在所有文件类型中使用，并且仅允许使用过一个信号</li>
+<li>在多个描述符上使用异步 IO ，难于知晓信号相对应于哪个描述符。</li>
+</ul>
+<h2 id="System-V-异步-IO"><a href="#System-V-异步-IO" class="headerlink" title="System V 异步 IO"></a>System V 异步 IO</h2><p>System V 中的异步 IO 仅能用在 STREAMS 设备和 STREAMS 管道中。使用信号 SIGPOLL 来实现。</p>
+<p>启用 STREAMS 设备的方法：<br>通过调用 ioctl() ，并制定第二个参数（request） 为 I_SETSIG，第三个参数为图 12.18 所示的整数常量（定义在 stropts.h 头文件中）。</p>
+<p><img src="Snipaste_2022-11-28_09-32-59.png" width="100%" height="100%"></p>
+<p>调用 ioctl 函数之前应该指定生成 SIGPOLL 信号的条件，并定义该信号的信号处理程序。</p>
+<h2 id="BSD-异步-IO"><a href="#BSD-异步-IO" class="headerlink" title="BSD 异步 IO"></a>BSD 异步 IO</h2><p>在 BSD 派生系统中使用 SIGIO 和 SIGURG 两个信号来实现异步 IO。SIGIO 用于生成异步 IO 的信号，SIGURG 用于通知进程：网络上带外数据已经到达。</p>
+<p>接收 SIGIO 信号：</p>
+<ol>
+<li>通过调用 signal 或者 sigaction 函数，建立 SIGIO 的信号处理程序</li>
+<li>通过 fcntl 函数（设置 F_SETOWN 命令）设置进程 ID 或者进程组 ID 来接收有关该描述符的信号。</li>
+<li>通过 fcntl 函数（设置 F_SETFL 命令，设置文件状态标志为 O_ASYNC）启用该描述符上的异步 IO。</li>
+</ol>
+<p>第三步：对于 BSD 异步 IO 设备来说，这一步仅适用于终端或网络相关的描述符</p>
+<p>对于 SIGURG 信号来说，需要执行第一二步。SIGURG 仅能用于支持带外数据的网络连接，比如 TCP 连接。</p>
+<h2 id="POSIX-异步-IO"><a href="#POSIX-异步-IO" class="headerlink" title="POSIX 异步 IO"></a>POSIX 异步 IO</h2><p>POSIX 使用 AIO 控制块来描述 IO 操作，POSIX 中的异步  IO 通常用于实时系统中。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">aiocb</span> &#123;</span></span><br><span class="line">  <span class="type">int</span>             aio_fildes;		<span class="comment">// file descriptor</span></span><br><span class="line">  <span class="type">off_t</span>           aio_offset;		<span class="comment">// file offset for IO</span></span><br><span class="line">  <span class="keyword">volatile</span> <span class="type">void</span>  *aio_buf;			<span class="comment">// buffer for IO</span></span><br><span class="line">  <span class="type">size_t</span>          aio_nbytes;		<span class="comment">// number of bytes to transfer</span></span><br><span class="line">  <span class="type">int</span>             aio_reqprio;		<span class="comment">// priority</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">sigevent</span> <span class="title">aio_sigevent</span>;</span>		<span class="comment">// signal information. 控制应用如何通知 IO 事件完成</span></span><br><span class="line">  <span class="type">int</span>             aio_lio_opcode; 	<span class="comment">/* operation for list I/O */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>AIO 控制块中的 aio_lio_opcode 属性指定了操作类型（LIO_READ：读操作〈该 AIO 控制块会被传给 aio_read 处理〉，LIO_WRITE：写操作〈AIO 控制块会被 aio_write 函数处理〉，KIO_NOP：无操作）。</p>
+<p>在具体的实现中，操作系统会限制未完成的异步 IO 操作数量。如下所示：</p>
+<p><img src="Snipaste_2022-11-28_15-38-04.png" width="100%" height="100%"></p>
+<p>在运行中可以分别通过如下方式获取具体的值：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Name</th>
+<th style="text-align:center">the way to obtain</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">AIO_LISTIO_MAX</td>
+<td style="text-align:center">sysconf(_SC_IO_LISTIO_MAX)</td>
+</tr>
+<tr>
+<td style="text-align:center">AIO_MAX</td>
+<td style="text-align:center">sysconf(_SC_AIO_MAX)</td>
+</tr>
+<tr>
+<td style="text-align:center">AIO_PRIO_DELTA_MAX</td>
+<td style="text-align:center">sysconf(_SC_AIO_PRIO_DELTA_MAX)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sigevent</span> &#123;</span></span><br><span class="line">	<span class="type">int</span>	sigev_notify;							<span class="comment">/* notify type*/</span></span><br><span class="line">	<span class="type">int</span>	sigev_signo;							<span class="comment">/* signal number */</span></span><br><span class="line">	<span class="class"><span class="keyword">union</span> <span class="title">sigval_value</span>;</span>							<span class="comment">/* notify argument */</span></span><br><span class="line">	<span class="type">void</span> (*sigev_notify_function)(<span class="keyword">union</span> sigval); <span class="comment">/* notify function */</span></span><br><span class="line">	<span class="type">pthread_attr_t</span> *sigev_notify_attributes;     <span class="comment">/* notify attrs */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><strong>sigev_notify 字段取值：</strong><br><img src="Snipaste_2022-11-28_10-55-26.png" width="100%" height="100%"></p>
+<hr>
+<p><img src="Snipaste_2022-11-28_13-46-42.png" width="100%" height="100%"></p>
+<p>当 aio_read() 与 aio_write() 返回成功时，异步 IO 请求将被<strong>排队</strong>处理。其返回值与实际的 IO 操作并无关系。当 IO 操作挂起时，AIO 控制块以及缓冲数据对应的内存不能被重用，除非 IO 操作已经完成。</p>
+<hr>
+<p><img src="Snipaste_2022-11-28_13-51-13.png" width="100%" height="100%"></p>
+<p><strong>函数说明</strong><br>对所有的挂起的异步写入提供无等待地一致性存储功能。<br>在安排了同步时 aio_fsync() 返回。在异步同步操作完成前，数据不会被持久化。AIO 控制块控制我们如何被通知。</p>
+<p><strong>参数说明</strong></p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">参数</th>
+<th style="text-align:center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">aio_fildes</td>
+<td style="text-align:center">指定了异步写入操作被同步的文件描述符</td>
+</tr>
+<tr>
+<td style="text-align:center">op（设置了 O_DSYNC 标志）</td>
+<td style="text-align:center">等价于调用 fdatasync()</td>
+</tr>
+<tr>
+<td style="text-align:center">op（设置了 O_SYNC 标志）</td>
+<td style="text-align:center">等价于调用 fsync()</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+<p><img src="Snipaste_2022-11-28_14-07-08.png" width="100%" height="100%"></p>
+<p><strong>函数说明</strong><br>用于确定异步读写或同步操作的完成状态。</p>
+<p><strong>返回值说明</strong></p>
+<p><img src="Snipaste_2022-11-28_14-09-20.png" width="100%" height="100%"></p>
+<hr>
+<p><img src="Snipaste_2022-11-28_14-09-48.png" width="100%" height="100%"></p>
+<p><strong>函数说明</strong><br>获取已完成的异步操作的返回值。<br>在异步操作完成前应避免调用 aio_return()，否则结果将是未定义的。同时，也应避免每次异步 IO 操作后就调用一次 aio_return。一旦调用该函数，操作系统就会自由地释放包含 IO 操作返回值的记录。</p>
+<p><strong>返回值说明</strong></p>
+<p>若aio_return 出现内部错误，将返回 -1，并设置 errno；否则返回 write、read 或者 fsync 成功返回的结果。</p>
+<p><img src="Snipaste_2022-11-28_14-22-24.png" width="100%" height="100%"></p>
+<p><strong>函数说明</strong><br>执行异步 IO 操作后，转而处理其他任务而不阻塞。但当其他任务处理完毕后，异步 IO 操作仍未完成，则可以使用 aio_suspend 阻塞直到操作完成。若调用 aio_suspend 前所有的异步 IO 操作都完成，则该函数直接返回且不会阻塞。</p>
+<p><strong>返回值说明</strong><br>引起 aio_suspend 函数返回的情况：</p>
+<ul>
+<li>捕捉到信号，返回 -1 并置 errno 为 EINTR</li>
+<li>超时时间过后无任何 IO 操作完成时，返回 -1 并置 errno 为 EAGAIN。</li>
+<li>部分 IO 操作完成时，返回 0.</li>
+</ul>
+<p><strong>参数说明</strong></p>
+<ul>
+<li>list 指向一个 AIO 控制块的数组。其中的空指针将被自动跳过，其他的元素指向已被用来初始化异步 IO 操作 AIO 控制块</li>
+<li>nent 为 list 数组的长度</li>
+</ul>
+<hr>
+<p><img src="Snipaste_2022-11-28_14-58-30.png" width="100%" height="100%"></p>
+<p><strong>函数说明</strong><br>尝试（并不保证系统一定能取消所有正在进行的操作）取消未完成的异步 IO 操作。</p>
+<p>在异步 IO 操作成功取消的 AIO 控制块上调用 aio_error() 会返回 ECANCELED 的错误。</p>
+<p>当调用 aio_cancel() 失败不会更改对应的 AIO 控制块。</p>
+<p><strong>参数说明</strong><br>fd：未完成的异步 IO 操作的文件描述符<br>aiocb：为 NULL，表示尝试取消对应文件的所有未完成的异步 IO 操作。否则尝试取消 AIO 控制块指定的某个异步 IO 操作。</p>
+<p><strong>返回值说明</strong><br><img src="Snipaste_2022-11-28_15-03-20.png" width="100%" height="100%"></p>
+<hr>
+<p><img src="Snipaste_2022-11-28_15-06-53.png" width="100%" height="100%"></p>
+<p><strong>函数说明</strong></p>
+<p>用于提交一组由 AIO 控制块描述的 IO 请求。该函数以同步方式或异步方式下调用都可以。</p>
+<p><strong>参数说明</strong><br>参数 mode 决定了 IO 是否是真正的异步。</p>
+<p>当 mode == LIO_WAIT 时，参数 list 指定的所有 IO 操作都完成，lio_listio 函数才会返回。这时，参数 sigev 被自动忽略。</p>
+<p>当 mode == LIO_NOWAIT 时，IO 请求一被放入队列就立即返回。当所有 IO 操作完成时，程序会异步收到通知（具体由参数 sigev 设置）。若不想被通知 sigev 可被设置为 NULL。<em>注意：每个 AIO 控制块本身也可能弃用了在各自草走完成时的异步通知。被 sigev 参数指定的异步通知是在此之外另加的，并且只会在所有的 IO 操作完成后发送</em>。</p>
+<p>参数 list 指向的 AIO 控制块数组指定了要运行的 IO 操作。为 NULL 的元素将被自动忽略。 </p>
+<p>参数 nent 为 list 数组的长度。</p>
+<p><strong>示例</strong><br>将文件中的内容所有的 a-z 字符和 A-Z 字符向右偏移 13 位。</p>
+<div class="tabs" id="异步-io-实践"><ul class="nav-tabs"><li class="tab"><button type="button" data-href="#异步-io-实践-1">不使用异步IO</button></li><li class="tab"><button type="button" data-href="#异步-io-实践-2">异步IO版本</button></li></ul><div class="tab-contents"><div class="tab-item-content" id="异步-io-实践-1"><hr>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;apue.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;ctype.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BSZ 4096</span></span><br><span class="line"></span><br><span class="line"><span class="type">unsigned</span> <span class="type">char</span> buf[BSZ];</span><br><span class="line"></span><br><span class="line"><span class="type">unsigned</span> <span class="type">char</span></span><br><span class="line"><span class="title function_">translate</span><span class="params">(<span class="type">unsigned</span> <span class="type">char</span> c)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span> (<span class="built_in">isalpha</span>(c)) &#123;</span><br><span class="line">		<span class="keyword">if</span> (c &gt;= <span class="string">&#x27;n&#x27;</span>)</span><br><span class="line">			c -= <span class="number">13</span>;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span> (c &gt;= <span class="string">&#x27;a&#x27;</span>)</span><br><span class="line">			c += <span class="number">13</span>;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span> (c &gt;= <span class="string">&#x27;N&#x27;</span>)</span><br><span class="line">			c -= <span class="number">13</span>;</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">			c += <span class="number">13</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span>(c);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span></span><br><span class="line"><span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>* argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">int</span>	ifd, ofd, i, n, nw;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (argc != <span class="number">3</span>)</span><br><span class="line">		err_quit(<span class="string">&quot;usage: rot13 infile outfile&quot;</span>);</span><br><span class="line">	<span class="keyword">if</span> ((ifd = open(argv[<span class="number">1</span>], O_RDONLY)) &lt; <span class="number">0</span>)</span><br><span class="line">		err_sys(<span class="string">&quot;can&#x27;t open %s&quot;</span>, argv[<span class="number">1</span>]);</span><br><span class="line">	<span class="keyword">if</span> ((ofd = open(argv[<span class="number">2</span>], O_RDWR|O_CREAT|O_TRUNC, FILE_MODE)) &lt; <span class="number">0</span>)</span><br><span class="line">		err_sys(<span class="string">&quot;can&#x27;t create %s&quot;</span>, argv[<span class="number">2</span>]);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">while</span> ((n = read(ifd, buf, BSZ)) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; n; i++)</span><br><span class="line">			buf[i] = translate(buf[i]);</span><br><span class="line">		<span class="keyword">if</span> ((nw = write(ofd, buf, n)) != n) &#123;</span><br><span class="line">			<span class="keyword">if</span> (nw &lt; <span class="number">0</span>)</span><br><span class="line">				err_sys(<span class="string">&quot;write failed&quot;</span>);</span><br><span class="line">			<span class="keyword">else</span></span><br><span class="line">				err_quit(<span class="string">&quot;short write (%d/%d)&quot;</span>, nw, n);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	fsync(ofd);</span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div><div class="tab-item-content" id="异步-io-实践-2"><hr>
+<p>本示例并没有使用异步通知。若在 IO 操作进行时还有别的事情要做，那么额外的工作可以包含在 for 循环中。然而，若需要阻止这些额外的工作延迟翻译文件的任务，那么就需要使用异步通知。<br>多任务情况下，决定程序如何建构之前需要先考虑各个任务的优先级。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;apue.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;ctype.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;aio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;errno.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> BSZ 4096</span></span><br><span class="line"><span class="comment">// 最多8个异步IO请求处于等待状态。当读操作是以</span></span><br><span class="line"><span class="comment">// 无序的方式提交给文件系统时，操作系统的提前读</span></span><br><span class="line"><span class="comment">// 算法会失效，这是性能会降低。</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> NBUF 8 </span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">rwop</span> &#123;</span></span><br><span class="line">	UNUSED = <span class="number">0</span>,</span><br><span class="line">	READ_PENDING = <span class="number">1</span>,</span><br><span class="line">	WRITE_PENDING = <span class="number">2</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">buf</span> &#123;</span></span><br><span class="line">	<span class="class"><span class="keyword">enum</span> <span class="title">rwop</span>     <span class="title">op</span>;</span></span><br><span class="line">	<span class="type">int</span>           last;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">aiocb</span>  <span class="title">aiocb</span>;</span></span><br><span class="line">	<span class="type">unsigned</span> <span class="type">char</span> data[BSZ];</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">buf</span> <span class="title">bufs</span>[<span class="title">NBUF</span>];</span></span><br><span class="line"></span><br><span class="line"><span class="type">unsigned</span> <span class="type">char</span></span><br><span class="line"><span class="title function_">translate</span><span class="params">(<span class="type">unsigned</span> <span class="type">char</span> c)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">/* same as before */</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span></span><br><span class="line"><span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span>* argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="type">int</span>					ifd, ofd, i, j, n, err, numop;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">stat</span>			<span class="title">sbuf</span>;</span></span><br><span class="line">	<span class="type">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">aiocb</span>	*<span class="title">aiolist</span>[<span class="title">NBUF</span>];</span></span><br><span class="line">	<span class="type">off_t</span>				off = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (argc != <span class="number">3</span>)</span><br><span class="line">		err_quit(<span class="string">&quot;usage: rot13 infile outfile&quot;</span>);</span><br><span class="line">	<span class="keyword">if</span> ((ifd = open(argv[<span class="number">1</span>], O_RDONLY)) &lt; <span class="number">0</span>)</span><br><span class="line">		err_sys(<span class="string">&quot;can&#x27;t open %s&quot;</span>, argv[<span class="number">1</span>]);</span><br><span class="line">	<span class="keyword">if</span> ((ofd = open(argv[<span class="number">2</span>], O_RDWR|O_CREAT|O_TRUNC, FILE_MODE)) &lt; <span class="number">0</span>)</span><br><span class="line">		err_sys(<span class="string">&quot;can&#x27;t create %s&quot;</span>, argv[<span class="number">2</span>]);</span><br><span class="line">	<span class="keyword">if</span> (fstat(ifd, &amp;sbuf) &lt; <span class="number">0</span>)</span><br><span class="line">		err_sys(<span class="string">&quot;fstat failed&quot;</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* initialize the buffers */</span></span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; NBUF; i++) &#123;</span><br><span class="line">		bufs[i].op = UNUSED;</span><br><span class="line">		bufs[i].aiocb.aio_buf = bufs[i].data;</span><br><span class="line">		bufs[i].aiocb.aio_sigevent.sigev_notify = SIGEV_NONE;</span><br><span class="line">		aiolist[i] = <span class="literal">NULL</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	numop = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span> (;;) &#123;</span><br><span class="line">		<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; NBUF; i++) &#123;</span><br><span class="line">			<span class="keyword">switch</span> (bufs[i].op) &#123;</span><br><span class="line">			<span class="keyword">case</span> UNUSED:</span><br><span class="line">				<span class="comment">/*</span></span><br><span class="line"><span class="comment">				 * Read from the input file if more data</span></span><br><span class="line"><span class="comment">				 * remains unread.</span></span><br><span class="line"><span class="comment">				 */</span></span><br><span class="line">				<span class="keyword">if</span> (off &lt; sbuf.st_size) &#123;</span><br><span class="line">					bufs[i].op = READ_PENDING;</span><br><span class="line">					bufs[i].aiocb.aio_fildes = ifd;</span><br><span class="line">					bufs[i].aiocb.aio_offset = off;</span><br><span class="line">					off += BSZ;</span><br><span class="line">					<span class="keyword">if</span> (off &gt;= sbuf.st_size)</span><br><span class="line">						bufs[i].last = <span class="number">1</span>;</span><br><span class="line">					bufs[i].aiocb.aio_nbytes = BSZ;</span><br><span class="line">					<span class="keyword">if</span> (aio_read(&amp;bufs[i].aiocb) &lt; <span class="number">0</span>)</span><br><span class="line">						err_sys(<span class="string">&quot;aio_read failed&quot;</span>);</span><br><span class="line">					aiolist[i] = &amp;bufs[i].aiocb;</span><br><span class="line">					numop++;</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">case</span> READ_PENDING:</span><br><span class="line">				<span class="keyword">if</span> ((err = aio_error(&amp;bufs[i].aiocb)) == EINPROGRESS)</span><br><span class="line">					<span class="keyword">continue</span>;</span><br><span class="line">				<span class="keyword">if</span> (err != <span class="number">0</span>) &#123;</span><br><span class="line">					<span class="keyword">if</span> (err == <span class="number">-1</span>)</span><br><span class="line">						err_sys(<span class="string">&quot;aio_error failed&quot;</span>);</span><br><span class="line">					<span class="keyword">else</span></span><br><span class="line">						err_exit(err, <span class="string">&quot;read failed&quot;</span>);</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				<span class="comment">/*</span></span><br><span class="line"><span class="comment">				 * A read is complete; translate the buffer</span></span><br><span class="line"><span class="comment">				 * and write it.</span></span><br><span class="line"><span class="comment">				 * 在检查操作的返回值前，必须确认操作已经完成。当 </span></span><br><span class="line"><span class="comment">				 * aio_error 函数返回值非 EINPROGRESS 或者 -1 </span></span><br><span class="line"><span class="comment">				 * 时，表明操作完成 。除这些值外，若返回值非 0，也</span></span><br><span class="line"><span class="comment">				 * 说明操作失败。</span></span><br><span class="line"><span class="comment">				 */</span></span><br><span class="line">				<span class="keyword">if</span> ((n = aio_return(&amp;bufs[i].aiocb)) &lt; <span class="number">0</span>)</span><br><span class="line">					err_sys(<span class="string">&quot;aio_return failed&quot;</span>);</span><br><span class="line">				<span class="keyword">if</span> (n != BSZ &amp;&amp; !bufs[i].last)</span><br><span class="line">					err_quit(<span class="string">&quot;short read (%d/%d)&quot;</span>, n, BSZ);</span><br><span class="line">				<span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; n; j++)</span><br><span class="line">					bufs[i].data[j] = translate(bufs[i].data[j]);</span><br><span class="line">				bufs[i].op = WRITE_PENDING;</span><br><span class="line">				bufs[i].aiocb.aio_fildes = ofd;</span><br><span class="line">				bufs[i].aiocb.aio_nbytes = n;</span><br><span class="line">				<span class="keyword">if</span> (aio_write(&amp;bufs[i].aiocb) &lt; <span class="number">0</span>)</span><br><span class="line">					err_sys(<span class="string">&quot;aio_write failed&quot;</span>);</span><br><span class="line">				<span class="comment">/* retain our spot in aiolist */</span></span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">case</span> WRITE_PENDING:</span><br><span class="line">				<span class="keyword">if</span> ((err = aio_error(&amp;bufs[i].aiocb)) == EINPROGRESS)</span><br><span class="line">					<span class="keyword">continue</span>;</span><br><span class="line">				<span class="keyword">if</span> (err != <span class="number">0</span>) &#123;</span><br><span class="line">					<span class="keyword">if</span> (err == <span class="number">-1</span>)</span><br><span class="line">						err_sys(<span class="string">&quot;aio_error failed&quot;</span>);</span><br><span class="line">					<span class="keyword">else</span></span><br><span class="line">						err_exit(err, <span class="string">&quot;write failed&quot;</span>);</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				<span class="comment">/*</span></span><br><span class="line"><span class="comment">				 * A write is complete; mark the buffer as unused.</span></span><br><span class="line"><span class="comment">				 */</span></span><br><span class="line">				<span class="keyword">if</span> ((n = aio_return(&amp;bufs[i].aiocb)) &lt; <span class="number">0</span>)</span><br><span class="line">					err_sys(<span class="string">&quot;aio_return failed&quot;</span>);</span><br><span class="line">				<span class="keyword">if</span> (n != bufs[i].aiocb.aio_nbytes)</span><br><span class="line">					err_quit(<span class="string">&quot;short write (%d/%d)&quot;</span>, n, BSZ);</span><br><span class="line">				aiolist[i] = <span class="literal">NULL</span>;</span><br><span class="line">				bufs[i].op = UNUSED;</span><br><span class="line">				numop--;</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> (numop == <span class="number">0</span>) &#123;</span><br><span class="line">			<span class="keyword">if</span> (off &gt;= sbuf.st_size)</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="comment">// 当所有 AIO 控制块都在使用时，通过调用 aio_suspend 等待操作完成</span></span><br><span class="line">			<span class="keyword">if</span> (aio_suspend(aiolist, NBUF, <span class="literal">NULL</span>) &lt; <span class="number">0</span>)</span><br><span class="line">				err_sys(<span class="string">&quot;aio_suspend failed&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	bufs[<span class="number">0</span>].aiocb.aio_fildes = ofd;</span><br><span class="line">	<span class="keyword">if</span> (aio_fsync(O_SYNC, &amp;bufs[<span class="number">0</span>].aiocb) &lt; <span class="number">0</span>)</span><br><span class="line">		err_sys(<span class="string">&quot;aio_fsync failed&quot;</span>);</span><br><span class="line">	<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><button type="button" class="tab-to-top" aria-label="scroll to top"><i class="fas fa-arrow-up"></i></button></div></div></div>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://jeckfs.gitee.io/JeckFS">YFS</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://jeckfs.gitee.io/JeckFS/2022/11/24/Unix-%E9%AB%98%E7%BA%A7IO/">http://jeckfs.gitee.io/JeckFS/2022/11/24/Unix-%E9%AB%98%E7%BA%A7IO/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://jeckfs.gitee.io/JeckFS" target="_blank">JeckFS</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/JeckFS/tags/Unix/">Unix</a></div><div class="post_share"><div class="social-share" data-image="https://img0.baidu.com/it/u=4226681601,4255880919&amp;fm=253&amp;fmt=auto&amp;app=120&amp;f=JPEG?w=641&amp;h=361" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/gh/overtrue/share.js@master/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/JeckFS/2022/11/22/Unix-%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/"><img class="next-cover" src="https://img2.baidu.com/it/u=1787475710,2159333383&amp;fm=253&amp;fmt=auto&amp;app=120&amp;f=JPEG?w=1280&amp;h=800" onerror="onerror=null;src='/JeckFS/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Unix-守护进程</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/JeckFS/2022/11/22/Unix-%E4%BC%AA%E7%BB%88%E7%AB%AF/" title="Unix-伪终端"><img class="cover" src="https://img2.baidu.com/it/u=341242123,757592285&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-22</div><div class="title">Unix-伪终端</div></div></a></div><div><a href="/JeckFS/2022/11/15/Unix-%E7%BA%BF%E7%A8%8B/" title="Unix-线程"><img class="cover" src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-15</div><div class="title">Unix-线程</div></div></a></div><div><a href="/JeckFS/2022/11/22/Unix-%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/" title="Unix-守护进程"><img class="cover" src="https://img2.baidu.com/it/u=1787475710,2159333383&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-22</div><div class="title">Unix-守护进程</div></div></a></div><div><a href="/JeckFS/2022/11/21/Unix-%E7%BB%88%E7%AB%AFIO/" title="Unix-终端IO"><img class="cover" src="https://img1.baidu.com/it/u=4132836557,2626223199&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=281" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-21</div><div class="title">Unix-终端IO</div></div></a></div><div><a href="/JeckFS/2022/11/11/Unix-%E4%BF%A1%E5%8F%B7/" title="Unix-信号"><img class="cover" src="https://img2.baidu.com/it/u=3747114911,414713113&fm=253&fmt=auto&app=138&f=JPEG?w=882&h=500" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-11</div><div class="title">Unix-信号</div></div></a></div><div><a href="/JeckFS/2022/11/17/Unix-%E7%BA%BF%E7%A8%8B%E6%8E%A7%E5%88%B6/" title="Unix-线程控制"><img class="cover" src="https://img2.baidu.com/it/u=1787475710,2159333383&fm=253&fmt=auto&app=120&f=JPEG?w=1280&h=800" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-17</div><div class="title">Unix-线程控制</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/JeckFS/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">YFS</div><div class="author-info__description">快乐每一天</div></div><div class="card-info-data site-data is-center"><a href="/JeckFS/archives/"><div class="headline">文章</div><div class="length-num">241</div></a><a href="/JeckFS/tags/"><div class="headline">标签</div><div class="length-num">68</div></a><a href="/JeckFS/categories/"><div class="headline">分类</div><div class="length-num">64</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%9D%9E%E9%98%BB%E5%A1%9EIO"><span class="toc-number">1.</span> <span class="toc-text">非阻塞IO</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AE%B0%E5%BD%95%E9%94%81"><span class="toc-number">2.</span> <span class="toc-text">记录锁</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#fcntl-%E8%AE%B0%E5%BD%95%E9%94%81"><span class="toc-number">2.1.</span> <span class="toc-text">fcntl 记录锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%94%81%E7%9A%84%E9%9A%90%E5%90%AB%E7%BB%A7%E6%89%BF%E4%B8%8E%E9%87%8A%E6%94%BE%EF%BC%9A"><span class="toc-number">2.1.1.</span> <span class="toc-text">锁的隐含继承与释放：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#FreeBSD-%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-number">2.1.2.</span> <span class="toc-text">FreeBSD 的实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%94%81%E6%96%87%E4%BB%B6%E7%BB%93%E5%B0%BE%E6%97%B6%E5%BA%94%E6%B3%A8%E6%84%8F%E7%9A%84%E5%9C%B0%E6%96%B9"><span class="toc-number">2.1.3.</span> <span class="toc-text">锁文件结尾时应注意的地方</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BB%BA%E8%AE%AE%E6%80%A7%E9%94%81%EF%BC%88advisory-locking%EF%BC%89%E5%92%8C%E5%BC%BA%E5%88%B6%E6%80%A7%EF%BC%88mandatory-locking%EF%BC%89%E9%94%81"><span class="toc-number">2.1.4.</span> <span class="toc-text">建议性锁（advisory locking）和强制性（mandatory locking）锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B"><span class="toc-number">2.1.5.</span> <span class="toc-text">示例</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#IO-%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8"><span class="toc-number">3.</span> <span class="toc-text">IO 多路复用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#select-%E5%92%8C-pselect"><span class="toc-number">3.1.</span> <span class="toc-text">select() 和 pselect()</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%BD%E6%95%B0-poll"><span class="toc-number">3.2.</span> <span class="toc-text">函数 poll()</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#select-%E4%B8%8E-poll-%E7%9A%84%E5%8F%AF%E4%B8%AD%E6%96%AD%E6%80%A7"><span class="toc-number">3.2.1.</span> <span class="toc-text">select 与 poll 的可中断性</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BC%82%E6%AD%A5-IO"><span class="toc-number">4.</span> <span class="toc-text">异步 IO</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#System-V-%E5%BC%82%E6%AD%A5-IO"><span class="toc-number">4.1.</span> <span class="toc-text">System V 异步 IO</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#BSD-%E5%BC%82%E6%AD%A5-IO"><span class="toc-number">4.2.</span> <span class="toc-text">BSD 异步 IO</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#POSIX-%E5%BC%82%E6%AD%A5-IO"><span class="toc-number">4.3.</span> <span class="toc-text">POSIX 异步 IO</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/11/24/Unix-%E9%AB%98%E7%BA%A7IO/" title="Unix-高级IO"><img src="https://img0.baidu.com/it/u=4226681601,4255880919&amp;fm=253&amp;fmt=auto&amp;app=120&amp;f=JPEG?w=641&amp;h=361" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Unix-高级IO"/></a><div class="content"><a class="title" href="/JeckFS/2022/11/24/Unix-%E9%AB%98%E7%BA%A7IO/" title="Unix-高级IO">Unix-高级IO</a><time datetime="2022-11-24T09:56:58.000Z" title="发表于 2022-11-24 17:56:58">2022-11-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/11/22/Unix-%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/" title="Unix-守护进程"><img src="https://img2.baidu.com/it/u=1787475710,2159333383&amp;fm=253&amp;fmt=auto&amp;app=120&amp;f=JPEG?w=1280&amp;h=800" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Unix-守护进程"/></a><div class="content"><a class="title" href="/JeckFS/2022/11/22/Unix-%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/" title="Unix-守护进程">Unix-守护进程</a><time datetime="2022-11-22T10:50:58.000Z" title="发表于 2022-11-22 18:50:58">2022-11-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/11/22/Unix-%E4%BC%AA%E7%BB%88%E7%AB%AF/" title="Unix-伪终端"><img src="https://img2.baidu.com/it/u=341242123,757592285&amp;fm=253&amp;fmt=auto&amp;app=120&amp;f=JPEG?w=1280&amp;h=800" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Unix-伪终端"/></a><div class="content"><a class="title" href="/JeckFS/2022/11/22/Unix-%E4%BC%AA%E7%BB%88%E7%AB%AF/" title="Unix-伪终端">Unix-伪终端</a><time datetime="2022-11-22T07:28:04.000Z" title="发表于 2022-11-22 15:28:04">2022-11-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/11/21/Unix-%E7%BB%88%E7%AB%AFIO/" title="Unix-终端IO"><img src="https://img1.baidu.com/it/u=4132836557,2626223199&amp;fm=253&amp;fmt=auto&amp;app=138&amp;f=JPEG?w=500&amp;h=281" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Unix-终端IO"/></a><div class="content"><a class="title" href="/JeckFS/2022/11/21/Unix-%E7%BB%88%E7%AB%AFIO/" title="Unix-终端IO">Unix-终端IO</a><time datetime="2022-11-21T15:21:40.000Z" title="发表于 2022-11-21 23:21:40">2022-11-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/JeckFS/2022/11/17/Unix-%E7%BA%BF%E7%A8%8B%E6%8E%A7%E5%88%B6/" title="Unix-线程控制"><img src="https://img2.baidu.com/it/u=1787475710,2159333383&amp;fm=253&amp;fmt=auto&amp;app=120&amp;f=JPEG?w=1280&amp;h=800" onerror="this.onerror=null;this.src='/JeckFS/img/404.jpg'" alt="Unix-线程控制"/></a><div class="content"><a class="title" href="/JeckFS/2022/11/17/Unix-%E7%BA%BF%E7%A8%8B%E6%8E%A7%E5%88%B6/" title="Unix-线程控制">Unix-线程控制</a><time datetime="2022-11-17T07:00:31.000Z" title="发表于 2022-11-17 15:00:31">2022-11-17</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By YFS</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/JeckFS/js/utils.js"></script><script src="/JeckFS/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/JeckFS/js/search/local-search.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
